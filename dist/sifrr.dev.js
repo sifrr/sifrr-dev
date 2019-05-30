@@ -1,4 +1,4 @@
-/*! sifrr.dev v0.0.1-rc1 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
+/*! sifrr.dev v0.0.1-rc2 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
