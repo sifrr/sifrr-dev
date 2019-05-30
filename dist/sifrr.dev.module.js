@@ -100,10 +100,10 @@ function type(value) {
   }
   return typeof value;
 }
-function deepMerge(target, merger) {
+function deepMerge(target, merger, mergeArray = false) {
   switch (type(target)) {
   case 'array':
-    return [...target, ...merger];
+    return mergeArray ? [...target, ...merger] : [...merger];
   case 'object':
     Object.keys(merger).forEach(k => {
       target[k] = deepMerge(target[k], merger[k]);
@@ -158,7 +158,7 @@ function moduleConfig({
       }
     }));
   }
-  return deepmerge(ret, extraConfig);
+  return deepmerge(ret, extraConfig, true);
 }
 var getrollupconfig = moduleConfig;
 

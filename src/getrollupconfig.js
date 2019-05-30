@@ -53,7 +53,7 @@ function moduleConfig({
     }));
   }
 
-  return deepMerge(ret, extraConfig);
+  return deepMerge(ret, extraConfig, true);
 }
 
 module.exports = moduleConfig;
