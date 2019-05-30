@@ -1,5 +1,5 @@
 const exec = require('../exec');
-const loadDir = require('./loaddir');
+const loadDir = require('../../src/loaddir');
 
 module.exports = async (relativeDir, mocha, { runUnitTests, runBrowserTests }, filter = ['']) => {
   const dir = path.join(__dirname, '../../', relativeDir);
@@ -9,9 +9,12 @@ module.exports = async (relativeDir, mocha, { runUnitTests, runBrowserTests }, f
   // load test files
   if ((runUnitTests || !runBrowserTests) && fs.existsSync(unitTestDir)) {
     // Add unit test.js files to the mocha instance
-    loadDir(unitTestDir, (filePath) => {
-      if (filter.map(bf => filePath.indexOf(bf) >= 0).indexOf(true) >= 0) {
-        if (filePath.endsWith('.test.js')) mocha.addFile(filePath);
+    loadDir({
+      dir: unitTestDir,
+      onFile: (filePath) => {
+        if (filter.map(bf => filePath.indexOf(bf) >= 0).indexOf(true) >= 0) {
+          if (filePath.endsWith('.test.js')) mocha.addFile(filePath);
+        }
       }
     });
   }
@@ -29,9 +32,12 @@ module.exports = async (relativeDir, mocha, { runUnitTests, runBrowserTests }, f
     if (fs.existsSync(path.join(testPublicPath, './rollup.config.js'))) await exec(`cd ${testPublicPath} && ../../node_modules/.bin/rollup -c`);
 
     // Add browser test.js files to the mocha instance
-    loadDir(browserTestDir, (filePath) => {
-      if (filter.map(bf => filePath.indexOf(bf) >= 0).indexOf(true) >= 0) {
-        if (filePath.endsWith('.test.js')) mocha.addFile(filePath);
+    loadDir({
+      dir: browserTestDir,
+      onFile: (filePath) => {
+        if (filter.map(bf => filePath.indexOf(bf) >= 0).indexOf(true) >= 0) {
+          if (filePath.endsWith('.test.js')) mocha.addFile(filePath);
+        }
       }
     });
   }

@@ -5,7 +5,7 @@ const fs = require('fs'),
   cov = require('istanbul-lib-coverage'),
   srcmap = require('istanbul-lib-source-maps'),
   { createInstrumenter } = require('istanbul-lib-instrument'),
-  loadDir = require('./loaddir'),
+  loadDir = require('../../src/loaddir'),
   reporter = require('istanbul-api').createReporter();
 
 let map = cov.createCoverageMap();
@@ -16,8 +16,11 @@ const nycReport = path.join(__dirname, '../../.nyc_output');
 if (fs.existsSync(nycReport)) {
   // Browser tests
   const browserFiles = [];
-  loadDir(nycReport, (file) => {
-    if (file.match(/browser-coverage\.json$/)) browserFiles.push(file);
+  loadDir({
+    dir: nycReport,
+    onFile: (file) => {
+      if (file.match(/browser-coverage\.json$/)) browserFiles.push(file);
+    }
   });
 
   browserFiles.forEach((file) => {
@@ -29,8 +32,11 @@ if (fs.existsSync(nycReport)) {
 
   // unit tests
   const unitFiles = [];
-  loadDir(nycReport, (file) => {
-    if (file.match(/unit-coverage\.json$/)) unitFiles.push(file);
+  loadDir({
+    dir: nycReport,
+    onFile: (file) => {
+      if (file.match(/unit-coverage\.json$/)) unitFiles.push(file);
+    }
   });
 
   unitFiles.forEach((file) => {
@@ -39,14 +45,17 @@ if (fs.existsSync(nycReport)) {
   });
 
   // Add Other files without coverage
-  loadDir(path.join(__dirname, '../../'), (file) => {
-    if (file.match(/sifrr-[a-z-]+\/src\/.*\.js$/)) {
-      if (!map.data[file]) {
-        const content = fs.readFileSync(file).toString();
-        instrumenter.instrumentSync(content, file);
-        const emptyCov = {};
-        emptyCov[file] = instrumenter.fileCoverage;
-        map.merge(emptyCov);
+  loadDir({
+    dir: path.join(__dirname, '../../'),
+    onFile: (file) => {
+      if (file.match(/sifrr-[a-z-]+\/src\/.*\.js$/)) {
+        if (!map.data[file]) {
+          const content = fs.readFileSync(file).toString();
+          instrumenter.instrumentSync(content, file);
+          const emptyCov = {};
+          emptyCov[file] = instrumenter.fileCoverage;
+          map.merge(emptyCov);
+        }
       }
     }
   });
