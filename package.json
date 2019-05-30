@@ -1,26 +1,26 @@
 {
-  "name": "@sifrr/animate",
-  "description": "Sifrr animation library. Animate any mutable object's property(s) in JS using requestAnimationFrame.",
+  "name": "@sifrr/dev",
+  "description": "All you need to develop sifrr packages.",
   "version": "0.0.1-dev",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sifrr/sifrr-animate.git"
+    "url": "git+https://github.com/sifrr/sifrr-dev.git"
   },
   "keywords": [
     "sifrr",
-    "animate",
+    "dev",
     "anime",
     "raf"
   ],
   "author": "Sifrr",
   "bugs": {
-    "url": "https://github.com/sifrr/sifrr-animate/issues"
+    "url": "https://github.com/sifrr/sifrr-dev/issues"
   },
-  "main": "src/animate.js",
-  "module": "dist/sifrr.animate.module.js",
-  "browser": "dist/sifrr.animate.js",
-  "homepage": "https://github.com/sifrr/sifrr-animate",
+  "main": "src/dev.js",
+  "module": "dist/sifrr.dev.module.js",
+  "browser": "dist/sifrr.dev.js",
+  "homepage": "https://github.com/sifrr/sifrr-dev",
   "browserslist": [
     "chrome >= 55",
     "safari >= 10.1",

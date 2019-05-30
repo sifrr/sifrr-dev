@@ -8,7 +8,7 @@
   <a href="https://dependabot.com/"><img src="https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot" alt="Dependabot badge" /></a>
 </p>
 
-> All you need to develop sifrr node packages
+> All you need to develop sifrr packages
 
 ## Size
 
