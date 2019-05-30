@@ -1,6 +1,11 @@
-/*! Sifrr.Dev v0.0.1-dev - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-elements */
+/*! sifrr.dev v0.0.1-dev - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
 import fs from 'fs';
 import path from 'path';
+import rollupPluginBabel from 'rollup-plugin-babel';
+import rollupPluginTerser from 'rollup-plugin-terser';
+import rollupPluginNodeResolve from 'rollup-plugin-node-resolve';
+import rollupPluginCommonjs from 'rollup-plugin-commonjs';
+import rollupPluginCleanup from 'rollup-plugin-cleanup';
 
 var eslintrc = {
   env: {
@@ -88,14 +93,87 @@ function loadDir(dir, onFile, deep = 100) {
 }
 var loaddir = loadDir;
 
-var dev = {
-  eslintrc: eslintrc,
-  loaddir: loaddir
-};
-var dev_1 = dev.eslintrc;
-var dev_2 = dev.loaddir;
+function type(value) {
+  if (value === null) return 'null';
+  if (typeof value === 'object') {
+    if (Array.isArray(value)) return 'array';
+  }
+  return typeof value;
+}
+function deepMerge(target, merger) {
+  switch (type(target)) {
+  case 'array':
+    return [...target, ...merger];
+  case 'object':
+    Object.keys(merger).forEach(k => {
+      target[k] = deepMerge(target[k], merger[k]);
+    });
+    return target;
+  default:
+    return typeof merger === 'undefined' ? target : merger;
+  }
+}
+var deepmerge = deepMerge;
 
-export default dev;
-export { dev_1 as eslintrc, dev_2 as loaddir };
+const terser = rollupPluginTerser.terser;
+function moduleConfig({
+  name,
+  inputFile,
+  outputFolder,
+  min = false,
+  type = 'cjs',
+  outputFileName
+}, extraConfig) {
+  const filename = path.basename(inputFile).slice(0, path.basename(inputFile).lastIndexOf('.')).toLowerCase();
+  const format = type === 'cjs' ? 'cjs' : (type === 'browser' ? 'umd' : 'es');
+  const ret = {
+    input: inputFile,
+    output: {
+      file: path.join(outputFolder, `./${(outputFileName || filename) + (type === 'module' ? '.module' : '') + (min ? '.min' : '')}.js`),
+      format,
+      name: name,
+      sourcemap: !min,
+      preferConst: true,
+      exports: 'named'
+    },
+    plugins: [
+      rollupPluginNodeResolve({
+        browser: type === 'browser',
+        mainFields: ['module', 'main']
+      }),
+      rollupPluginCommonjs()
+    ]
+  };
+  if (type !== 'module') {
+    ret.plugins.push(rollupPluginBabel({
+      exclude: 'node_modules/**',
+      rootMode: 'upward'
+    }));
+  }
+  ret.plugins.push(rollupPluginCleanup());
+  if (min) {
+    ret.plugins.push(terser({
+      output: {
+        comments: 'all'
+      }
+    }));
+  }
+  return deepmerge(ret, extraConfig);
+}
+var getrollupconfig = moduleConfig;
+
+var sifrr_dev = {
+  eslintrc: eslintrc,
+  loadDir: loaddir,
+  deepMerge: deepmerge,
+  getRollupConfig: getrollupconfig
+};
+var sifrr_dev_1 = sifrr_dev.eslintrc;
+var sifrr_dev_2 = sifrr_dev.loadDir;
+var sifrr_dev_3 = sifrr_dev.deepMerge;
+var sifrr_dev_4 = sifrr_dev.getRollupConfig;
+
+export default sifrr_dev;
+export { sifrr_dev_3 as deepMerge, sifrr_dev_1 as eslintrc, sifrr_dev_4 as getRollupConfig, sifrr_dev_2 as loadDir };
 /*! (c) @aadityataparia */
 //# sourceMappingURL=sifrr.dev.module.js.map
