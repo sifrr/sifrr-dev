@@ -6,6 +6,7 @@ import rollupPluginTerser from 'rollup-plugin-terser';
 import rollupPluginNodeResolve from 'rollup-plugin-node-resolve';
 import rollupPluginCommonjs from 'rollup-plugin-commonjs';
 import rollupPluginCleanup from 'rollup-plugin-cleanup';
+import conventionalChangelog from 'conventional-changelog';
 
 var eslintrc = {
   env: {
@@ -162,18 +163,69 @@ function moduleConfig({
 }
 var getrollupconfig = moduleConfig;
 
+const rtag = /tag:\s*[v=]?(.+?)[,)]/gi;
+var generatechangelog = ({
+  folder = process.cwd(),
+  releaseCount = 0,
+  changelogFile = path.join(folder, './CHANGELOG.md'),
+  outputUnreleased = false,
+  multiRepo = false
+} = {}) => {
+  let oldChangelog = '';
+  const transform = function(cm, cb) {
+    let match = rtag.exec(cm.gitTags);
+    rtag.lastIndex = 0;
+    if (match) cm.version = match[1];
+    cb(null, cm);
+  };
+  const options = {
+    pkg: {
+      path: path.join(folder, './package.json'),
+    },
+    preset: 'angular',
+    releaseCount,
+    outputUnreleased,
+    gitRawCommitsOpts: {
+      path: folder
+    },
+    transform
+  };
+  if (fs.existsSync(changelogFile)) {
+    if (releaseCount === 0) fs.writeFileSync(changelogFile, '');
+    oldChangelog = fs.readFileSync(changelogFile, 'utf-8');
+  }
+  if (multiRepo) {
+    options.transform = (cm, cb) => {
+      if (cm.scope && cm.scope === multiRepo) cm.scope = null;
+      else cm.type = 'chore';
+      transform(cm, cb);
+    };
+  }
+  return new Promise((res, rej) => {
+    conventionalChangelog(options)
+      .pipe(fs.createWriteStream(changelogFile))
+      .on('error', rej)
+      .on('finish', () => {
+        fs.appendFileSync(changelogFile, oldChangelog);
+        res(changelogFile);
+      });
+  });
+};
+
 var sifrr_dev = {
   eslintrc: eslintrc,
   loadDir: loaddir,
   deepMerge: deepmerge,
-  getRollupConfig: getrollupconfig
+  getRollupConfig: getrollupconfig,
+  generateChangelog: generatechangelog
 };
 var sifrr_dev_1 = sifrr_dev.eslintrc;
 var sifrr_dev_2 = sifrr_dev.loadDir;
 var sifrr_dev_3 = sifrr_dev.deepMerge;
 var sifrr_dev_4 = sifrr_dev.getRollupConfig;
+var sifrr_dev_5 = sifrr_dev.generateChangelog;
 
 export default sifrr_dev;
-export { sifrr_dev_3 as deepMerge, sifrr_dev_1 as eslintrc, sifrr_dev_4 as getRollupConfig, sifrr_dev_2 as loadDir };
+export { sifrr_dev_3 as deepMerge, sifrr_dev_1 as eslintrc, sifrr_dev_5 as generateChangelog, sifrr_dev_4 as getRollupConfig, sifrr_dev_2 as loadDir };
 /*! (c) @aadityataparia */
 //# sourceMappingURL=sifrr.dev.module.js.map

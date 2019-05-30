@@ -19,7 +19,8 @@ function moduleConfig(name, root, minify = false, isModule = false) {
     external: id => {
       const packages = [
         'fs',
-        'path'
+        'path',
+        'conventional-changelog'
       ];
       if (packages.indexOf(id) > -1) return true;
       return /rollup-plugin/.test(id);
