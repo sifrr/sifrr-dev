@@ -1,1 +1,1 @@
-const dev = require('../../src/dev');
+const dev = require('../../src/sifrr.dev');

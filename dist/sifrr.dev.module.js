@@ -1,4 +1,4 @@
-/*! sifrr.dev v0.0.1-dev - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
+/*! sifrr.dev v0.0.1-rc1 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
 import fs from 'fs';
 import path from 'path';
 import rollupPluginBabel from 'rollup-plugin-babel';
@@ -106,7 +106,7 @@ function deepMerge(target, merger, mergeArray = false) {
     return mergeArray ? [...target, ...merger] : [...merger];
   case 'object':
     Object.keys(merger).forEach(k => {
-      target[k] = deepMerge(target[k], merger[k]);
+      target[k] = deepMerge(target[k], merger[k], mergeArray);
     });
     return target;
   default:
