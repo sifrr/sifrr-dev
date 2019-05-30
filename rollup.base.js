@@ -20,7 +20,8 @@ function moduleConfig(name, root, min = false, isModule = false) {
       banner: banner,
       footer: footer,
       sourcemap: !min,
-      preferConst: true
+      preferConst: true,
+      exports: 'named'
     },
     plugins: [
       resolve({

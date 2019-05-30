@@ -1,14 +1,11 @@
-/*! Sifrr.Dev v0.0.1-dev - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-elements */
-import fs from 'fs';
-import path from 'path';
-
-var eslintrc = {
+module.exports = {
   env: {
     browser: true,
     node: true,
     es6: true,
     mocha: true
   },
+  // for tests
   globals: {
     ENV: true,
     fs: false,
@@ -65,7 +62,7 @@ var eslintrc = {
     ],
     'max-lines': [
       'error',
-      220
+      220 // Change to 200 after refactoring API.Model
     ],
     'mocha/no-exclusive-tests': 'error'
   },
@@ -77,25 +74,3 @@ var eslintrc = {
     'html/indent': '+2'
   }
 };
-
-function loadDir(dir, onFile, deep = 100) {
-  fs.readdirSync(dir).forEach(file => {
-    const filePath = path.join(dir, file);
-    fs.statSync(filePath).isDirectory()
-      ? (deep > 0 ? loadDir(filePath, onFile, deep - 1) : () => {})
-      : onFile(filePath);
-  });
-}
-var loaddir = loadDir;
-
-var dev = {
-  eslintrc: eslintrc,
-  loaddir: loaddir
-};
-var dev_1 = dev.eslintrc;
-var dev_2 = dev.loaddir;
-
-export default dev;
-export { dev_1 as eslintrc, dev_2 as loaddir };
-/*! (c) @aadityataparia */
-//# sourceMappingURL=sifrr.dev.module.js.map
