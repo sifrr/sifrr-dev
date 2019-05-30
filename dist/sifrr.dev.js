@@ -1,4 +1,4 @@
-/*! sifrr.dev v0.0.1-dev - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
+/*! sifrr.dev v0.0.1-rc1 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -87,7 +87,7 @@ function deepMerge(target, merger, mergeArray = false) {
       return mergeArray ? [...target, ...merger] : [...merger];
     case 'object':
       Object.keys(merger).forEach(k => {
-        target[k] = deepMerge(target[k], merger[k]);
+        target[k] = deepMerge(target[k], merger[k], mergeArray);
       });
       return target;
     default:

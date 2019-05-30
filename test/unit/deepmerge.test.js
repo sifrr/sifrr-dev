@@ -37,7 +37,8 @@ describe('deepMerge', () => {
     });
   });
 
-  it('merges arrays', () => {
-    expect(deepMerge({ a: ['b'] }, { a: ['ok', 'haha'] })).to.deep.equal({ a: ['b', 'ok', 'haha'] });
+  it('merges arrays when asked', () => {
+    expect(deepMerge({ a: ['b'] }, { a: ['ok', 'haha'] })).to.deep.equal({ a: ['ok', 'haha'] });
+    expect(deepMerge({ a: ['b'] }, { a: ['ok', 'haha'] }, true)).to.deep.equal({ a: ['b', 'ok', 'haha'] });
   });
 });
