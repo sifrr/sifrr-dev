@@ -120,7 +120,7 @@ function moduleConfig({
   name,
   inputFile,
   outputFolder,
-  min = false,
+  minify = false,
   type = 'cjs',
   outputFileName
 }, extraConfig) {
@@ -129,10 +129,10 @@ function moduleConfig({
   const ret = {
     input: inputFile,
     output: {
-      file: path.join(outputFolder, `./${(outputFileName || filename) + (type === 'module' ? '.module' : '') + (min ? '.min' : '')}.js`),
+      file: path.join(outputFolder, `./${(outputFileName || filename) + (type === 'module' ? '.module' : '') + (minify ? '.min' : '')}.js`),
       format,
       name: name,
-      sourcemap: !min,
+      sourcemap: !minify,
       preferConst: true,
       exports: 'named'
     },
@@ -151,7 +151,7 @@ function moduleConfig({
     }));
   }
   ret.plugins.push(rollupPluginCleanup());
-  if (min) {
+  if (minify) {
     ret.plugins.push(terser({
       output: {
         comments: 'all'
