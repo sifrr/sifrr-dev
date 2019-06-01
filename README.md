@@ -19,10 +19,11 @@
 
 ## Tools
 
--   Rollup configs to bundle JavaScripts to use in node, es modules or browser.
--   Generate Changelog during release
--   Load directory recursively
--   ESLint config
--   Deep Merge Objects
--   check if a tag exists on github
--   async execute a shell command with stdout and stderr
+-   `getRollupConfig` Rollup configs to bundle JavaScripts to use in node, es modules or browser.
+-   `generateChangelog` Generate Changelog during release
+-   `loadDir` Load directory recursively
+-   `eslintrc` ESLint config
+-   `deepMerge` Deep Merge Objects
+-   `checkTag` check if a tag exists on github
+-   `exec` async execute a shell command with stdout and stderr
+-   `gitAddCommitPush` run command > git add files > git commit > git push

@@ -5,5 +5,6 @@ module.exports = {
   getRollupConfig: require('./getrollupconfig'),
   generateChangelog: require('./generatechangelog'),
   exec: require('./exec'),
-  checkTag: require('./checktag')
+  checkTag: require('./checktag'),
+  gitAddCommitPush: require('./gitaddcommitpush')
 };

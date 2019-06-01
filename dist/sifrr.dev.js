@@ -192,22 +192,42 @@ var generatechangelog = ({
   });
 };
 
+const spawn = child_process.spawn;
 const execa = child_process.exec;
 function exec(command, options = {}) {
-  return new Promise((res, rej) => {
-    execa(command, options, (err, stdout, stderr) => {
-      if (stdout) process.stdout.write(`out: ${stdout}`);
-      if (stderr) process.stderr.write(`err: ${stderr}`);
-      if (err !== null) {
-        process.stderr.write(`exec error: ${err}`);
-        rej(err);
-      }
-      res({
-        stdout,
-        stderr
+  process.stdout.write(`Running command: ${command} \n`);
+  if (command.indexOf('sh') === 0) {
+    options.stdio = options.stdio || 'inherit';
+    return new Promise((res, rej) => {
+      const [c, ...args] = command.split(' ');
+      const runner = spawn(c, args, options);
+      runner.on('close', code => {
+        if (code !== 0) {
+          process.stdout.write(`Command exited with code ${code}: ${command} \n`);
+          rej(code);
+        } else {
+          process.stdout.write(`Finished command: ${command} \n`);
+          res();
+        }
       });
     });
-  });
+  } else {
+    return new Promise((res, rej) => {
+      execa(command, options, (err, stdout, stderr) => {
+        if (stdout) process.stdout.write(`out: ${stdout} \n`);
+        if (stderr) process.stderr.write(`err: ${stderr} \n`);
+        if (err !== null) {
+          process.stderr.write(`exec error: ${err}`);
+          rej(err);
+        }
+        res({
+          stdout,
+          stderr
+        });
+        process.stdout.write(`Finished command: ${command} \n`);
+      });
+    });
+  }
 }
 var exec_1 = exec;
 
@@ -228,6 +248,35 @@ async function checkTag(version, prefix = 'v') {
 }
 var checktag = checkTag;
 
+var gitaddcommitpush = async function ({
+  preCommand = false,
+  files = '*',
+  commitMsg = 'chore: add new files',
+  push = true
+} = {}) {
+  if (preCommand) {
+    if (Array.isArray(preCommand)) {
+      for (let i = 0; i < preCommand.length; i++) {
+        await exec_1(preCommand[i]);
+      }
+    } else {
+      await exec_1(preCommand);
+    }
+  }
+  if (Array.isArray(files)) {
+    for (let i = 0; i < files.length; i++) {
+      await exec_1(`git ls-files '${files[i]}' | xargs git add`);
+    }
+  } else {
+    await exec_1(`git ls-files '${files}' | xargs git add`);
+  }
+  await exec_1(`git commit -m "${commitMsg}"`).then(() => {
+    if (push) exec_1(`git push`);
+  }).catch(() => {
+    process.stdout.write('Nothing to commit, not running git push. \n');
+  });
+};
+
 var sifrr_dev = {
   eslintrc: eslintrc,
   loadDir: loaddir,
@@ -235,7 +284,8 @@ var sifrr_dev = {
   getRollupConfig: getrollupconfig,
   generateChangelog: generatechangelog,
   exec: exec_1,
-  checkTag: checktag
+  checkTag: checktag,
+  gitAddCommitPush: gitaddcommitpush
 };
 var sifrr_dev_1 = sifrr_dev.eslintrc;
 var sifrr_dev_2 = sifrr_dev.loadDir;
@@ -244,6 +294,7 @@ var sifrr_dev_4 = sifrr_dev.getRollupConfig;
 var sifrr_dev_5 = sifrr_dev.generateChangelog;
 var sifrr_dev_6 = sifrr_dev.exec;
 var sifrr_dev_7 = sifrr_dev.checkTag;
+var sifrr_dev_8 = sifrr_dev.gitAddCommitPush;
 
 exports.checkTag = sifrr_dev_7;
 exports.deepMerge = sifrr_dev_3;
@@ -252,6 +303,7 @@ exports.eslintrc = sifrr_dev_1;
 exports.exec = sifrr_dev_6;
 exports.generateChangelog = sifrr_dev_5;
 exports.getRollupConfig = sifrr_dev_4;
+exports.gitAddCommitPush = sifrr_dev_8;
 exports.loadDir = sifrr_dev_2;
 /*! (c) @aadityataparia */
 //# sourceMappingURL=sifrr.dev.js.map
