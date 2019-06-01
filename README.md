@@ -7,7 +7,7 @@
   <a href="https://dependabot.com/"><img src="https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot" alt="Dependabot badge" /></a>
 </p>
 
-> All you need to develop sifrr packages
+> Development tools for sifrr packages, webapps
 
 ## Size
 
@@ -16,3 +16,13 @@
 | Normal (`dist/sifrr.dev.js`)                 |                    [![Normal](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.js)                   |
 | Minified (`dist/sifrr.dev.min.js`)           |               [![Minified](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.min.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.min.js)              |
 | Minified + Gzipped (`dist/sifrr.dev.min.js`) | [![Minified + Gzipped](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.min.js?compression=gzip&maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.min.js) |
+
+## Tools
+
+-   Rollup configs to bundle JavaScripts to use in node, es modules or browser.
+-   Generate Changelog during release
+-   Load directory recursively
+-   ESLint config
+-   Deep Merge Objects
+-   check if a tag exists on github
+-   async execute a shell command with stdout and stderr
