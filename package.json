@@ -22,10 +22,8 @@
   "browser": "dist/sifrr.dev.js",
   "homepage": "https://github.com/sifrr/sifrr-dev",
   "browserslist": [
-    "chrome >= 55",
-    "safari >= 10.1",
-    "opera >= 42",
-    "firefox >= 63"
+    "last 2 Chrome versions",
+    "maintained node versions"
   ],
   "scripts": {
     "test": "rm -rf ./.nyc_output; ./scripts/test/runall",

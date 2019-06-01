@@ -3,5 +3,7 @@ module.exports = {
   loadDir: require('./loaddir'),
   deepMerge: require('./deepmerge'),
   getRollupConfig: require('./getrollupconfig'),
-  generateChangelog: require('./generatechangelog')
+  generateChangelog: require('./generatechangelog'),
+  exec: require('./exec'),
+  checkTag: require('./checktag')
 };

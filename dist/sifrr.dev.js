@@ -13,6 +13,7 @@ const rollupPluginNodeResolve = _interopDefault(require('rollup-plugin-node-reso
 const rollupPluginCommonjs = _interopDefault(require('rollup-plugin-commonjs'));
 const rollupPluginCleanup = _interopDefault(require('rollup-plugin-cleanup'));
 const conventionalChangelog = _interopDefault(require('conventional-changelog'));
+const child_process = _interopDefault(require('child_process'));
 
 var eslintrc = {
   env: {
@@ -23,8 +24,6 @@ var eslintrc = {
   },
   globals: {
     ENV: true,
-    fs: false,
-    path: false,
     chai: false,
     sinon: false,
     assert: false,
@@ -37,9 +36,7 @@ var eslintrc = {
     port: false,
     PATH: false,
     page: false,
-    browser: false,
-    Sifrr: false,
-    SifrrStorage: false
+    browser: false
   },
   extends: 'eslint:recommended',
   parserOptions: {
@@ -120,7 +117,7 @@ function moduleConfig({
   const ret = {
     input: inputFile,
     output: {
-      file: path.join(outputFolder, "./".concat((outputFileName || filename) + (type === 'module' ? '.module' : '') + (minify ? '.min' : ''), ".js")),
+      file: path.join(outputFolder, `./${(outputFileName || filename) + (type === 'module' ? '.module' : '') + (minify ? '.min' : '')}.js`),
       format,
       name: name,
       sourcemap: !minify,
@@ -195,22 +192,64 @@ var generatechangelog = ({
   });
 };
 
+const execa = child_process.exec;
+function exec(command, options = {}) {
+  return new Promise((res, rej) => {
+    execa(command, options, (err, stdout, stderr) => {
+      if (stdout) process.stdout.write(`out: ${stdout}`);
+      if (stderr) process.stderr.write(`err: ${stderr}`);
+      if (err !== null) {
+        process.stderr.write(`exec error: ${err}`);
+        rej(err);
+      }
+      res({
+        stdout,
+        stderr
+      });
+    });
+  });
+}
+var exec_1 = exec;
+
+function commonjsRequire () {
+	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
+}
+
+async function checkTag(version, prefix = 'v') {
+  version = version || commonjsRequire(path.resolve('./package.json')).version;
+  const tag = prefix + version;
+  await exec_1('git pull');
+  return exec_1(`git rev-parse ${tag}`).then(() => {
+    process.stdout.write(`Tag ${tag} already exists.`);
+    return true;
+  }).catch(async () => {
+    return false;
+  });
+}
+var checktag = checkTag;
+
 var sifrr_dev = {
   eslintrc: eslintrc,
   loadDir: loaddir,
   deepMerge: deepmerge,
   getRollupConfig: getrollupconfig,
-  generateChangelog: generatechangelog
+  generateChangelog: generatechangelog,
+  exec: exec_1,
+  checkTag: checktag
 };
 var sifrr_dev_1 = sifrr_dev.eslintrc;
 var sifrr_dev_2 = sifrr_dev.loadDir;
 var sifrr_dev_3 = sifrr_dev.deepMerge;
 var sifrr_dev_4 = sifrr_dev.getRollupConfig;
 var sifrr_dev_5 = sifrr_dev.generateChangelog;
+var sifrr_dev_6 = sifrr_dev.exec;
+var sifrr_dev_7 = sifrr_dev.checkTag;
 
+exports.checkTag = sifrr_dev_7;
 exports.deepMerge = sifrr_dev_3;
 exports.default = sifrr_dev;
 exports.eslintrc = sifrr_dev_1;
+exports.exec = sifrr_dev_6;
 exports.generateChangelog = sifrr_dev_5;
 exports.getRollupConfig = sifrr_dev_4;
 exports.loadDir = sifrr_dev_2;

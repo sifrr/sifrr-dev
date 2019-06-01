@@ -20,7 +20,8 @@ function moduleConfig(name, root, minify = false, isModule = false) {
       const packages = [
         'fs',
         'path',
-        'conventional-changelog'
+        'conventional-changelog',
+        'child_process'
       ];
       if (packages.indexOf(id) > -1) return true;
       return /rollup-plugin/.test(id);

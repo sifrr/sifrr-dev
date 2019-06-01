@@ -8,8 +8,6 @@ module.exports = {
   // for tests
   globals: {
     ENV: true,
-    fs: false,
-    path: false,
     chai: false,
     sinon: false,
     assert: false,
@@ -22,9 +20,7 @@ module.exports = {
     port: false,
     PATH: false,
     page: false,
-    browser: false,
-    Sifrr: false,
-    SifrrStorage: false
+    browser: false
   },
   extends: 'eslint:recommended',
   parserOptions: {
