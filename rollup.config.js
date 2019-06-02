@@ -24,7 +24,9 @@ function moduleConfig(name, root, minify = false, isModule = false) {
         'child_process'
       ];
       if (packages.indexOf(id) > -1) return true;
-      return /rollup-plugin/.test(id);
+      if (id.indexOf('rollup-plugin') > -1) return true;
+      if (id.indexOf('istanbul') > -1) return true;
+      return false;
     }
   });
 }
