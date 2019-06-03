@@ -27,3 +27,4 @@
 -   `checkTag` check if a tag exists on github
 -   `exec` async execute a shell command with stdout and stderr
 -   `gitAddCommitPush` run command > git add files > git commit > git push
+-   `runTets` Run a full fledged test suite using mocha, chai, sinon, puppeteer, etc.
