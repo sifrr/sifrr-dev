@@ -312,15 +312,16 @@ function staticInstrument(app, folder, coverage = false) {
   loaddir({
     dir: folder,
     onFile: filePath => {
-      if (coverage && path.slice(-3) === '.js') {
+      if (coverage && filePath.slice(-3) === '.js') {
         app.get('/' + path.relative(folder, filePath), res => {
+          res.onAborted(commonjsGlobal.console.log);
           const text = fs.readFileSync(filePath, 'utf-8');
-          if (fs.existsSync(path + '.map')) {
+          if (fs.existsSync(filePath + '.map')) {
             res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-            res.send(instrumenter.instrumentSync(text, path, JSON.parse(fs.readFileSync(path + '.map'))));
+            res.end(instrumenter.instrumentSync(text, filePath, JSON.parse(fs.readFileSync(filePath + '.map'))));
           } else {
             res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-            res.send(text);
+            res.end(text);
           }
         });
       } else {

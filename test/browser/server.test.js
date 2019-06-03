@@ -6,6 +6,7 @@ describe('Test Server', () => {
 
   it('hosts dist folder', async () => {
     await page.goto(`${PATH}/sifrr.dev.js`);
-    expect(await page.content()).to.have.string('sifrr project');
+    expect(await page.content()).to.have.string('sifrr');
+    if (process.env.COVERAGE === 'true') expect(await page.content()).to.have.string('cov_');
   });
 });
