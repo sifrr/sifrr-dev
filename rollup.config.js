@@ -40,5 +40,6 @@ function moduleConfig(name, root, minify = false, isModule = false) {
 
 module.exports = [
   moduleConfig('sifrr.dev', __dirname),
+  moduleConfig('sifrr.dev', __dirname, true),
   moduleConfig('sifrr.dev', __dirname, false, true)
 ];
