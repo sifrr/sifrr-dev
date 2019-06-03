@@ -14,6 +14,7 @@ import server$1 from '@sifrr/server';
 import chai$1 from 'chai';
 import sinon from 'sinon';
 import chaiAsPromised from 'chai-as-promised';
+import puppeteer from 'puppeteer';
 import inspector from 'inspector';
 import istanbulLibHook from 'istanbul-lib-hook';
 
@@ -324,7 +325,8 @@ var gitaddcommitpush = async function({
 const instrumenter = istanbulLibInstrument.createInstrumenter();
 const { App, SSLApp } = server$1;
 function staticInstrument(app, folder, coverage = false) {
-  loaddir(folder, {
+  loaddir({
+    dir: folder,
     onFile: (filePath) => {
       if (coverage && path.slice(-3) === '.js') {
         app.get('/' + path.relative(folder, filePath), (res) => {
@@ -360,7 +362,7 @@ var server = async function(root, {
     listeners.push(() => {
       app.listen(hostingPort, (socket) => {
         if (socket) {
-          commonjsGlobal.console.log(`Test server listening on port ${hostingPort}, serving ${hostingPort}`);
+          commonjsGlobal.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
         } else {
           commonjsGlobal.console.log('Test server failed to listen to port ' + hostingPort);
         }
@@ -517,6 +519,50 @@ var writecoverage = function writeCoverage(coverage, file) {
   }
 };
 
+var loadbrowser = async function(root, coverage) {
+  if (commonjsGlobal.browser) await commonjsGlobal.browser.close();
+  const browser = await puppeteer.launch({
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox'
+    ],
+    ignoreHTTPSErrors: true,
+    headless: process.env.HEADLESS !== 'false',
+    devtools: false
+  });
+  const page = await browser.newPage();
+  const nycReport = path.join(root, './.nyc_output');
+  await page.setViewport( { width: 1280, height: 800 } );
+  function setPageGoto(page) {
+    page.goto = async (url, options) => {
+      const jsCoverage = await page.evaluate(() => window.__coverage__);
+      writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+      const ret = page.mainFrame().goto(url, options);
+      return ret;
+    };
+  }
+  if (coverage) {
+    browser.__newPage = browser.newPage;
+    browser.newPage = async () => {
+      const p = await browser.__newPage();
+      setPageGoto(p);
+    };
+    browser.__close = browser.close;
+    browser.close = async () => {
+      const jsCoverage = await page.evaluate(() => window.__coverage__);
+      writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+      return browser.__close();
+    };
+    setPageGoto(page);
+  }
+  commonjsGlobal.browser = browser;
+  commonjsGlobal.page = page;
+  return {
+    browser,
+    page
+  };
+};
+
 function loadTests(dir, mocha, regex, filters) {
   loaddir({
     dir: dir,
@@ -565,7 +611,10 @@ var run = async function({
     port,
     securePort
   });
-  if (serverOnly) return;
+  if (serverOnly) {
+    servers.listen();
+    return;
+  }
   if (setGlobals) testglobals();
   if (coverage) {
     const { createInstrumenter } = istanbulLibInstrument;
@@ -585,6 +634,7 @@ var run = async function({
   const mocha$1 = new mocha(mochaOptions);
   if (runBrowserTests || !runUnitTests) {
     servers.listen();
+    await loadbrowser(root, coverage);
     loadTests(folders.browserTest, mocha$1, testFileRegex, filters);
   }
   if (runUnitTests || !runBrowserTests) {

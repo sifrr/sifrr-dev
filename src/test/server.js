@@ -5,7 +5,8 @@ const loadDir = require('../loaddir');
 const instrumenter = require('istanbul-lib-instrument').createInstrumenter();
 const { App, SSLApp } = require('@sifrr/server');
 function staticInstrument(app, folder, coverage = false) {
-  loadDir(folder, {
+  loadDir({
+    dir: folder,
     onFile: (filePath) => {
       if (coverage && path.slice(-3) === '.js') {
         app.get('/' + path.relative(folder, filePath), (res) => {
@@ -43,7 +44,7 @@ module.exports = async function(root, {
     listeners.push(() => {
       app.listen(hostingPort, (socket) => {
         if (socket) {
-          global.console.log(`Test server listening on port ${hostingPort}, serving ${hostingPort}`);
+          global.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
         } else {
           global.console.log('Test server failed to listen to port ' + hostingPort);
         }

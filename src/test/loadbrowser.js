@@ -1,3 +1,5 @@
+const path = require('path');
+
 const writeCoverage = require('./writecoverage');
 const puppeteer = require('puppeteer');
 

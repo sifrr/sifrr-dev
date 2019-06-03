@@ -7,6 +7,7 @@ const deepMerge = require('../deepmerge');
 const testGlobals = require('./testglobals');
 const loadDir = require('../loaddir');
 const writeCoverage = require('./writecoverage');
+const loadBrowser = require('./loadbrowser');
 
 function loadTests(dir, mocha, regex, filters) {
   loadDir({
@@ -61,7 +62,10 @@ module.exports = async function({
     securePort
   });
 
-  if (serverOnly) return;
+  if (serverOnly) {
+    servers.listen();
+    return;
+  }
   if (setGlobals) testGlobals();
 
   if (coverage) {
@@ -84,6 +88,7 @@ module.exports = async function({
 
   if (runBrowserTests || !runUnitTests) {
     servers.listen();
+    await loadBrowser(root, coverage);
     loadTests(folders.browserTest, mocha, testFileRegex, filters);
   }
 
