@@ -541,14 +541,14 @@ var run = async function({
   port = 8888,
   securePort = false,
   useJunitReporter = false,
-  junitXmlFile = path$1.resolve(`./test-results/${path$1.basename(root)}/results.xml`),
+  junitXmlFile = path$1.join(root, `./test-results/${path$1.basename(root)}/results.xml`),
   inspect = false
 } = {}) {
   if (inspect) inspector.open(undefined, undefined, true);
   deepmerge(folders, {
-    unitTest: path$1.resolve('./test/unit'),
-    browserTest: path$1.resolve('./test/browser'),
-    public: path$1.resolve('./test/public'),
+    unitTest: path$1.join(root, './test/unit'),
+    browserTest: path$1.join(root, './test/browser'),
+    public: path$1.join(root, './test/public'),
     static: []
   }, true);
   if (Array.isArray(preCommand)) {

@@ -33,15 +33,15 @@ module.exports = async function({
   port = 8888,
   securePort = false,
   useJunitReporter = false,
-  junitXmlFile = path.resolve(`./test-results/${path.basename(root)}/results.xml`),
+  junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
   inspect = false
 } = {}) {
   if (inspect) require('inspector').open(undefined, undefined, true);
 
   deepMerge(folders, {
-    unitTest: path.resolve('./test/unit'),
-    browserTest: path.resolve('./test/browser'),
-    public: path.resolve('./test/public'),
+    unitTest: path.join(root, './test/unit'),
+    browserTest: path.join(root, './test/browser'),
+    public: path.join(root, './test/public'),
     static: []
   }, true);
 
