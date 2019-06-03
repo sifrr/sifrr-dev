@@ -5,8 +5,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-const fs$1 = _interopDefault(require('fs'));
-const path$1 = _interopDefault(require('path'));
+const fs = _interopDefault(require('fs'));
+const path = _interopDefault(require('path'));
 const rollupPluginBabel = _interopDefault(require('rollup-plugin-babel'));
 const rollupPluginTerser = _interopDefault(require('rollup-plugin-terser'));
 const rollupPluginNodeResolve = _interopDefault(require('rollup-plugin-node-resolve'));
@@ -75,10 +75,10 @@ function loadDir({
   onDir = () => {},
   deep = 100
 } = {}) {
-  if (!fs$1.existsSync(dir) || !fs$1.statSync(dir).isDirectory()) return false;
-  fs$1.readdirSync(dir).forEach(file => {
-    const filePath = path$1.join(dir, file);
-    fs$1.statSync(filePath).isDirectory() ? deep > 0 ? (onDir(filePath), loadDir({
+  if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return false;
+  fs.readdirSync(dir).forEach(file => {
+    const filePath = path.join(dir, file);
+    fs.statSync(filePath).isDirectory() ? deep > 0 ? (onDir(filePath), loadDir({
       dir: filePath,
       onFile,
       onDir,
@@ -120,12 +120,12 @@ function moduleConfig({
   type = 'cjs',
   outputFileName
 }, extraConfig) {
-  const filename = path$1.basename(inputFile).slice(0, path$1.basename(inputFile).lastIndexOf('.')).toLowerCase();
+  const filename = path.basename(inputFile).slice(0, path.basename(inputFile).lastIndexOf('.')).toLowerCase();
   const format = type === 'cjs' ? 'cjs' : type === 'browser' ? 'umd' : 'es';
   const ret = {
     input: inputFile,
     output: {
-      file: path$1.join(outputFolder, `./${(outputFileName || filename) + (type === 'module' ? '.module' : '') + (minify ? '.min' : '')}.js`),
+      file: path.join(outputFolder, `./${(outputFileName || filename) + (type === 'module' ? '.module' : '') + (minify ? '.min' : '')}.js`),
       format,
       name: name,
       sourcemap: !minify,
@@ -159,7 +159,7 @@ const rtag = /tag:\s*[v=]?(.+?)[,)]/gi;
 var generatechangelog = ({
   folder = process.cwd(),
   releaseCount = 0,
-  changelogFile = path$1.join(folder, './CHANGELOG.md'),
+  changelogFile = path.join(folder, './CHANGELOG.md'),
   outputUnreleased = false,
   multiRepo = false
 } = {}) => {
@@ -172,7 +172,7 @@ var generatechangelog = ({
   };
   const options = {
     pkg: {
-      path: path$1.join(folder, './package.json')
+      path: path.join(folder, './package.json')
     },
     preset: 'angular',
     releaseCount,
@@ -182,9 +182,9 @@ var generatechangelog = ({
     },
     transform
   };
-  if (fs$1.existsSync(changelogFile)) {
-    if (releaseCount === 0) fs$1.writeFileSync(changelogFile, '');
-    oldChangelog = fs$1.readFileSync(changelogFile, 'utf-8');
+  if (fs.existsSync(changelogFile)) {
+    if (releaseCount === 0) fs.writeFileSync(changelogFile, '');
+    oldChangelog = fs.readFileSync(changelogFile, 'utf-8');
   }
   if (multiRepo) {
     options.transform = (cm, cb) => {
@@ -193,8 +193,8 @@ var generatechangelog = ({
     };
   }
   return new Promise((res, rej) => {
-    conventionalChangelog(options).pipe(fs$1.createWriteStream(changelogFile)).on('error', rej).on('finish', () => {
-      fs$1.appendFileSync(changelogFile, oldChangelog);
+    conventionalChangelog(options).pipe(fs.createWriteStream(changelogFile)).on('error', rej).on('finish', () => {
+      fs.appendFileSync(changelogFile, oldChangelog);
       res(changelogFile);
     });
   });
@@ -246,7 +246,7 @@ function commonjsRequire () {
 }
 
 async function checkTag(version, prefix = 'v') {
-  version = version || commonjsRequire(path$1.resolve('./package.json')).version;
+  version = version || commonjsRequire(path.resolve('./package.json')).version;
   const tag = prefix + version;
   await exec_1('git pull');
   return exec_1(`git rev-parse ${tag}`).then(() => {
@@ -259,7 +259,7 @@ async function checkTag(version, prefix = 'v') {
 var checktag = checkTag;
 
 async function releaseTag(version, prefix = 'v') {
-  version = version || commonjsRequire(path$1.resolve('./package.json')).version;
+  version = version || commonjsRequire(path.resolve('./package.json')).version;
   const tag = prefix + version;
   const exists = await checktag(version, prefix);
   if (!exists) {
@@ -310,19 +310,19 @@ const {
 function staticInstrument(app, folder, coverage = false) {
   loaddir(folder, {
     onFile: filePath => {
-      if (coverage && path$1.slice(-3) === '.js') {
-        app.get('/' + path$1.relative(folder, filePath), res => {
-          const text = fs$1.readFileSync(filePath, 'utf-8');
-          if (fs$1.existsSync(path$1 + '.map')) {
+      if (coverage && path.slice(-3) === '.js') {
+        app.get('/' + path.relative(folder, filePath), res => {
+          const text = fs.readFileSync(filePath, 'utf-8');
+          if (fs.existsSync(path + '.map')) {
             res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-            res.send(instrumenter.instrumentSync(text, path$1, JSON.parse(fs$1.readFileSync(path$1 + '.map'))));
+            res.send(instrumenter.instrumentSync(text, path, JSON.parse(fs.readFileSync(path + '.map'))));
           } else {
             res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
             res.send(text);
           }
         });
       } else {
-        app.file('/' + path$1.relative(folder, filePath), filePath);
+        app.file('/' + path.relative(folder, filePath), filePath);
       }
     }
   });
@@ -337,7 +337,7 @@ var server = async function (root, {
   const listeners = [];
   function startServer(app, hostingPort) {
     staticInstrument(app, root, coverage);
-    staticInstrument(app, path$1.join(root, '../../dist'), coverage);
+    staticInstrument(app, path.join(root, '../../dist'), coverage);
     extraStaticFolders.forEach(folder => {
       staticInstrument(app, folder, coverage);
     });
@@ -358,8 +358,8 @@ var server = async function (root, {
   }
   if (port) {
     let app;
-    if (fs$1.existsSync(path$1.join(root, 'server.js'))) {
-      app = commonjsRequire(path$1.join(root, 'server.js'));
+    if (fs.existsSync(path.join(root, 'server.js'))) {
+      app = commonjsRequire(path.join(root, 'server.js'));
     } else {
       app = new App();
       startServer(app, port);
@@ -372,12 +372,12 @@ var server = async function (root, {
   }
   if (securePort) {
     let app;
-    if (fs$1.existsSync(path$1.join(root, 'secureserver.js'))) {
-      app = commonjsRequire(path$1.join(root, 'secureserver.js'));
+    if (fs.existsSync(path.join(root, 'secureserver.js'))) {
+      app = commonjsRequire(path.join(root, 'secureserver.js'));
     } else {
       app = new SSLApp({
-        key_file_name: path$1.join(__dirname, 'keys/server.key'),
-        cert_file_name: path$1.join(__dirname, 'keys/server.crt')
+        key_file_name: path.join(__dirname, 'keys/server.key'),
+        cert_file_name: path.join(__dirname, 'keys/server.crt')
       });
       startServer(app, securePort);
     }
@@ -425,13 +425,13 @@ function mkdirP (p, opts, f, made) {
         opts = { mode: opts };
     }
     var mode = opts.mode;
-    var xfs = opts.fs || fs$1;
+    var xfs = opts.fs || fs;
     if (mode === undefined) {
         mode = _0777 & (~process.umask());
     }
     if (!made) made = null;
     var cb = f || function () {};
-    p = path$1.resolve(p);
+    p = path.resolve(p);
     xfs.mkdir(p, mode, function (er) {
         if (!er) {
             made = made || p;
@@ -439,7 +439,7 @@ function mkdirP (p, opts, f, made) {
         }
         switch (er.code) {
             case 'ENOENT':
-                mkdirP(path$1.dirname(p), opts, function (er, made) {
+                mkdirP(path.dirname(p), opts, function (er, made) {
                     if (er) cb(er, made);
                     else mkdirP(p, opts, cb, made);
                 });
@@ -458,12 +458,12 @@ mkdirP.sync = function sync (p, opts, made) {
         opts = { mode: opts };
     }
     var mode = opts.mode;
-    var xfs = opts.fs || fs$1;
+    var xfs = opts.fs || fs;
     if (mode === undefined) {
         mode = _0777 & (~process.umask());
     }
     if (!made) made = null;
-    p = path$1.resolve(p);
+    p = path.resolve(p);
     try {
         xfs.mkdirSync(p, mode);
         made = made || p;
@@ -471,7 +471,7 @@ mkdirP.sync = function sync (p, opts, made) {
     catch (err0) {
         switch (err0.code) {
             case 'ENOENT' :
-                made = sync(path$1.dirname(p), opts, made);
+                made = sync(path.dirname(p), opts, made);
                 sync(p, opts, made);
                 break;
             default:
@@ -512,7 +512,7 @@ function loadTests(dir, mocha, regex, filters) {
   });
 }
 var run = async function ({
-  root = path$1.resolve('./'),
+  root = path.resolve('./'),
   serverOnly = false,
   runUnitTests = true,
   runBrowserTests = true,
@@ -525,14 +525,14 @@ var run = async function ({
   port = 8888,
   securePort = false,
   useJunitReporter = false,
-  junitXmlFile = path$1.join(root, `./test-results/${path$1.basename(root)}/results.xml`),
+  junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
   inspect = false
 } = {}) {
   if (inspect) inspector.open(undefined, undefined, true);
   deepmerge(folders, {
-    unitTest: path$1.join(root, './test/unit'),
-    browserTest: path$1.join(root, './test/browser'),
-    public: path$1.join(root, './test/public'),
+    unitTest: path.join(root, './test/unit'),
+    browserTest: path.join(root, './test/browser'),
+    public: path.join(root, './test/public'),
     static: []
   }, true);
   if (Array.isArray(preCommand)) {
@@ -588,7 +588,7 @@ var run = async function ({
     }
     if (commonjsGlobal.browser) await browser.close();
     if (coverage) {
-      writecoverage(commonjsGlobal.__coverage__, path$1.join(root, './.nyc_output', `./${Date.now()}-unit-coverage.json`));
+      writecoverage(commonjsGlobal.__coverage__, path.join(root, './.nyc_output', `./${Date.now()}-unit-coverage.json`));
     }
     process.exit(process.exitCode);
   });

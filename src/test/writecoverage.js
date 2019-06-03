@@ -1,4 +1,6 @@
 const mkdirp = require('mkdirp');
+const path = require('path');
+const fs = require('fs');
 
 module.exports = function writeCoverage(coverage, file) {
   mkdirp.sync(path.dirname(file), (err) => {
