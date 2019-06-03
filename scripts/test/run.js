@@ -54,6 +54,7 @@ runTest({
   filters,
   preCommand: 'cd ./test/public && yarn build',
   port,
+  securePort: 8889,
   useJunitReporter,
   inspect
 });
