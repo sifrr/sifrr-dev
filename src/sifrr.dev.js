@@ -6,5 +6,6 @@ module.exports = {
   generateChangelog: require('./generatechangelog'),
   exec: require('./exec'),
   checkTag: require('./checktag'),
+  releaseTag: require('./releasetag'),
   gitAddCommitPush: require('./gitaddcommitpush')
 };

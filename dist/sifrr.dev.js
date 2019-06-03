@@ -248,6 +248,21 @@ async function checkTag(version, prefix = 'v') {
 }
 var checktag = checkTag;
 
+async function releaseTag(version, prefix = 'v') {
+  version = version || commonjsRequire(path.resolve('./package.json')).version;
+  const tag = prefix + version;
+  const exists = await checktag(version, prefix);
+  if (!exists) {
+    await exec_1(`git tag -a ${tag} -m "Release of ${tag}"`);
+    process.stdout.write('\n');
+    await exec_1(`git push origin ${tag}`);
+    return true;
+  } else {
+    return false;
+  }
+}
+var releasetag = releaseTag;
+
 var gitaddcommitpush = async function ({
   preCommand = false,
   files = '*',
@@ -285,6 +300,7 @@ var sifrr_dev = {
   generateChangelog: generatechangelog,
   exec: exec_1,
   checkTag: checktag,
+  releaseTag: releasetag,
   gitAddCommitPush: gitaddcommitpush
 };
 var sifrr_dev_1 = sifrr_dev.eslintrc;
@@ -294,7 +310,8 @@ var sifrr_dev_4 = sifrr_dev.getRollupConfig;
 var sifrr_dev_5 = sifrr_dev.generateChangelog;
 var sifrr_dev_6 = sifrr_dev.exec;
 var sifrr_dev_7 = sifrr_dev.checkTag;
-var sifrr_dev_8 = sifrr_dev.gitAddCommitPush;
+var sifrr_dev_8 = sifrr_dev.releaseTag;
+var sifrr_dev_9 = sifrr_dev.gitAddCommitPush;
 
 exports.checkTag = sifrr_dev_7;
 exports.deepMerge = sifrr_dev_3;
@@ -303,7 +320,8 @@ exports.eslintrc = sifrr_dev_1;
 exports.exec = sifrr_dev_6;
 exports.generateChangelog = sifrr_dev_5;
 exports.getRollupConfig = sifrr_dev_4;
-exports.gitAddCommitPush = sifrr_dev_8;
+exports.gitAddCommitPush = sifrr_dev_9;
 exports.loadDir = sifrr_dev_2;
+exports.releaseTag = sifrr_dev_8;
 /*! (c) @aadityataparia */
 //# sourceMappingURL=sifrr.dev.js.map
