@@ -41,6 +41,10 @@ if (filter > 0) {
   filters = process.argv[filter + 1].split(',');
 }
 
+// reporters
+const reporters = ['html'];
+if (process.env.LCOV === 'true') reporters.push('lcov');
+
 const root = path.resolve(process.argv[2]) || path.resolve('./');
 
 const runTest = require('../../src/test/run');
@@ -59,5 +63,6 @@ runTest({
   inspect,
   folders: {
     static: [path.resolve('./src/test')]
-  }
+  },
+  reporters
 });

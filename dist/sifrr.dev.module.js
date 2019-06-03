@@ -15,6 +15,9 @@ import chai$1 from 'chai';
 import sinon from 'sinon';
 import chaiAsPromised from 'chai-as-promised';
 import puppeteer from 'puppeteer';
+import istanbulLibCoverage from 'istanbul-lib-coverage';
+import istanbulLibSourceMaps from 'istanbul-lib-source-maps';
+import istanbulApi from 'istanbul-api';
 import inspector from 'inspector';
 import istanbulLibHook from 'istanbul-lib-hook';
 
@@ -520,7 +523,7 @@ var writecoverage = function writeCoverage(coverage, file) {
   }
 };
 
-var loadbrowser = async function(root, coverage) {
+var loadbrowser = async function(root, coverage, nycReport = path.join(root, './.nyc_output')) {
   if (commonjsGlobal.browser) await commonjsGlobal.browser.close();
   const browser = await puppeteer.launch({
     args: [
@@ -532,7 +535,6 @@ var loadbrowser = async function(root, coverage) {
     devtools: false
   });
   const page = await browser.newPage();
-  const nycReport = path.join(root, './.nyc_output');
   await page.setViewport( { width: 1280, height: 800 } );
   function setPageGoto(page) {
     page.goto = async (url, options) => {
@@ -564,6 +566,54 @@ var loadbrowser = async function(root, coverage) {
   };
 };
 
+const { createInstrumenter } = istanbulLibInstrument,
+  reporter = istanbulApi.createReporter();
+let map = istanbulLibCoverage.createCoverageMap();
+const instrumenter$1 = createInstrumenter();
+const sm = istanbulLibSourceMaps.createSourceMapStore({});
+var transformcoverage = function(nycReport, srcFolder, srcFileRegex, reporters = ['html']) {
+  if (fs.existsSync(nycReport)) {
+    const browserFiles = [];
+    loaddir({
+      dir: nycReport,
+      onFile: (file) => {
+        browserFiles.push(file);
+      }
+    });
+    browserFiles.forEach((file) => {
+      const cont = JSON.parse(fs.readFileSync(file));
+      map.merge(cont);
+    });
+    map = sm.transformCoverage(map).map;
+    const unitFiles = [];
+    loaddir({
+      dir: nycReport,
+      onFile: (file) => {
+        if (file.match(/unit-coverage\.json$/)) unitFiles.push(file);
+      }
+    });
+    unitFiles.forEach((file) => {
+      const cont = JSON.parse(fs.readFileSync(file));
+      map.merge(cont);
+    });
+    loaddir({
+      dir: srcFolder,
+      onFile: (file) => {
+        if (file.slice(-3) === '.js' && file.match(srcFileRegex) && !map.data[file]) {
+          const content = fs.readFileSync(file).toString();
+          instrumenter$1.instrumentSync(content, file);
+          const emptyCov = {};
+          emptyCov[file] = instrumenter$1.fileCoverage;
+          map.merge(emptyCov);
+        }
+      }
+    });
+    map.filter((file) => file.match(srcFileRegex));
+    reporters.forEach(r => reporter.add(r));
+    reporter.write(map);
+  }
+};
+
 function loadTests(dir, mocha, regex, filters) {
   loaddir({
     dir: dir,
@@ -582,6 +632,7 @@ var run = async function({
   coverage = false,
   setGlobals = true,
   testFileRegex = /\.test\.js$/,
+  sourceFileRegex = /\.js$/,
   filters = [''],
   folders = {},
   preCommand = [],
@@ -589,14 +640,17 @@ var run = async function({
   securePort = false,
   useJunitReporter = false,
   junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
-  inspect = false
+  inspect = false,
+  reporters = ['html']
 } = {}) {
   if (inspect) inspector.open(undefined, undefined, true);
   deepmerge(folders, {
     unitTest: path.join(root, './test/unit'),
     browserTest: path.join(root, './test/browser'),
     public: path.join(root, './test/public'),
-    static: []
+    static: [],
+    coverage: path.join(root, './.nyc_output'),
+    source: path.join(root, './src')
   }, true);
   if (Array.isArray(preCommand)) {
     for (let i = 0; i < preCommand.length; i++) {
@@ -621,7 +675,7 @@ var run = async function({
     const { createInstrumenter } = istanbulLibInstrument;
     const instrumenter = createInstrumenter();
     const { hookRequire } = istanbulLibHook;
-    hookRequire((filePath) => filePath.indexOf(root + 'src') > -1, (code, { filename }) => instrumenter.instrumentSync(code, filename));
+    hookRequire((filePath) => filePath.indexOf(folders.source) > -1, (code, { filename }) => instrumenter.instrumentSync(code, filename));
     commonjsGlobal.cov = true;
   }
   const mochaOptions = {
@@ -636,7 +690,7 @@ var run = async function({
   const mocha$1 = new mocha(mochaOptions);
   if (runBrowserTests || !runUnitTests) {
     servers.listen();
-    await loadbrowser(root, coverage);
+    await loadbrowser(root, coverage, folders.coverage);
     loadTests(folders.browserTest, mocha$1, testFileRegex, filters);
   }
   if (runUnitTests || !runBrowserTests) {
@@ -650,7 +704,8 @@ var run = async function({
     }
     if (commonjsGlobal.browser) await browser.close();
     if (coverage) {
-      writecoverage(commonjsGlobal.__coverage__, path.join(root, './.nyc_output', `./${Date.now()}-unit-coverage.json`));
+      writecoverage(commonjsGlobal.__coverage__, path.join(folders.coverage, `./${Date.now()}-unit-coverage.json`));
+      transformcoverage(folders.coverage, folders.source, sourceFileRegex, reporters);
     }
     process.exit(process.exitCode);
   });

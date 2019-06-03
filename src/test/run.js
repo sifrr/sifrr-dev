@@ -8,6 +8,7 @@ const testGlobals = require('./testglobals');
 const loadDir = require('../loaddir');
 const writeCoverage = require('./writecoverage');
 const loadBrowser = require('./loadbrowser');
+const transformCoverage = require('./transformcoverage');
 
 function loadTests(dir, mocha, regex, filters) {
   loadDir({
@@ -28,6 +29,7 @@ module.exports = async function({
   coverage = false,
   setGlobals = true,
   testFileRegex = /\.test\.js$/,
+  sourceFileRegex = /\.js$/,
   filters = [''],
   folders = {},
   preCommand = [],
@@ -35,7 +37,8 @@ module.exports = async function({
   securePort = false,
   useJunitReporter = false,
   junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
-  inspect = false
+  inspect = false,
+  reporters = ['html']
 } = {}) {
   if (inspect) require('inspector').open(undefined, undefined, true);
 
@@ -43,7 +46,9 @@ module.exports = async function({
     unitTest: path.join(root, './test/unit'),
     browserTest: path.join(root, './test/browser'),
     public: path.join(root, './test/public'),
-    static: []
+    static: [],
+    coverage: path.join(root, './.nyc_output'),
+    source: path.join(root, './src')
   }, true);
 
   if (Array.isArray(preCommand)) {
@@ -72,7 +77,7 @@ module.exports = async function({
     const { createInstrumenter } = require('istanbul-lib-instrument');
     const instrumenter = createInstrumenter();
     const { hookRequire } = require('istanbul-lib-hook');
-    hookRequire((filePath) => filePath.indexOf(root + 'src') > -1, (code, { filename }) => instrumenter.instrumentSync(code, filename));
+    hookRequire((filePath) => filePath.indexOf(folders.source) > -1, (code, { filename }) => instrumenter.instrumentSync(code, filename));
     global.cov = true;
   }
 
@@ -89,7 +94,7 @@ module.exports = async function({
 
   if (runBrowserTests || !runUnitTests) {
     servers.listen();
-    await loadBrowser(root, coverage);
+    await loadBrowser(root, coverage, folders.coverage);
     loadTests(folders.browserTest, mocha, testFileRegex, filters);
   }
 
@@ -110,7 +115,8 @@ module.exports = async function({
 
     // Get and write code coverage
     if (coverage) {
-      writeCoverage(global.__coverage__, path.join(root, './.nyc_output', `./${Date.now()}-unit-coverage.json`));
+      writeCoverage(global.__coverage__, path.join(folders.coverage, `./${Date.now()}-unit-coverage.json`));
+      transformCoverage(folders.coverage, folders.source, sourceFileRegex, reporters);
     }
 
     process.exit(process.exitCode);

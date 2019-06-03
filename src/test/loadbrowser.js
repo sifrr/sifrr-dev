@@ -3,7 +3,7 @@ const path = require('path');
 const writeCoverage = require('./writecoverage');
 const puppeteer = require('puppeteer');
 
-module.exports = async function(root, coverage) {
+module.exports = async function(root, coverage, nycReport = path.join(root, './.nyc_output')) {
   if (global.browser) await global.browser.close();
   // set browser and page global variables
   const browser = await puppeteer.launch({
@@ -17,7 +17,6 @@ module.exports = async function(root, coverage) {
     devtools: false
   });
   const page = await browser.newPage();
-  const nycReport = path.join(root, './.nyc_output');
 
   await page.setViewport( { width: 1280, height: 800 } );
 
