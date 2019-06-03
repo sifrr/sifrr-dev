@@ -13,12 +13,10 @@ module.exports = {
     assert: false,
     expect: false,
     should: false,
-    window: false,
     delay: false,
-    puppeteer: false,
-    server: false,
     port: false,
     PATH: false,
+    SPATH: false,
     page: false,
     browser: false
   },

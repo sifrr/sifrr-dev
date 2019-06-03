@@ -3,7 +3,7 @@ const execa = require('child_process').exec;
 
 function exec(command, options = {}) {
   process.stdout.write(`Running command: ${command} \n`);
-  if (command.indexOf('sh') === 0) {
+  if (command.indexOf('sh ') === 0) {
     options.stdio = options.stdio || 'inherit';
     return new Promise((res, rej) => {
       const [c, ...args] = command.split(' ');

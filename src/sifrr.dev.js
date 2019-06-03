@@ -7,5 +7,6 @@ module.exports = {
   exec: require('./exec'),
   checkTag: require('./checktag'),
   releaseTag: require('./releasetag'),
-  gitAddCommitPush: require('./gitaddcommitpush')
+  gitAddCommitPush: require('./gitaddcommitpush'),
+  runTests: require('./test/run')
 };

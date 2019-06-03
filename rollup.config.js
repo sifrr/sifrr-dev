@@ -20,8 +20,15 @@ function moduleConfig(name, root, minify = false, isModule = false) {
       const packages = [
         'fs',
         'path',
+        'inspector',
+        '@sifrr/server',
         'conventional-changelog',
-        'child_process'
+        'child_process',
+        'puppeteer',
+        'mocha',
+        'sinon',
+        'chai',
+        'chai-as-promised'
       ];
       if (packages.indexOf(id) > -1) return true;
       if (id.indexOf('rollup-plugin') > -1) return true;
