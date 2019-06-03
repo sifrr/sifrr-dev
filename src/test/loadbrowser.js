@@ -23,6 +23,7 @@ module.exports = async function(root, coverage) {
 
   function setPageGoto(page) {
     page.goto = async (url, options) => {
+      /* istanbul ignore next */
       const jsCoverage = await page.evaluate(() => window.__coverage__);
       writeCoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
       const ret = page.mainFrame().goto(url, options);
@@ -39,6 +40,7 @@ module.exports = async function(root, coverage) {
 
     browser.__close = browser.close;
     browser.close = async () => {
+      /* istanbul ignore next */
       const jsCoverage = await page.evaluate(() => window.__coverage__);
       writeCoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
       return browser.__close();

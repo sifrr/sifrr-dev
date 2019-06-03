@@ -617,11 +617,12 @@ var run = async function({
     return;
   }
   if (setGlobals) testglobals();
-  if (coverage) {
+  if (coverage && !commonjsGlobal.cov) {
     const { createInstrumenter } = istanbulLibInstrument;
     const instrumenter = createInstrumenter();
     const { hookRequire } = istanbulLibHook;
-    hookRequire((filePath) => filePath.match(/\/src/), (code, { filename }) => instrumenter.instrumentSync(code, filename));
+    hookRequire((filePath) => filePath.indexOf(root + 'src') > -1, (code, { filename }) => instrumenter.instrumentSync(code, filename));
+    commonjsGlobal.cov = true;
   }
   const mochaOptions = {
     timeout: 10000

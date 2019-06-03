@@ -1,10 +1,19 @@
 const path = require('path');
 
-// check if should inspect or not
-const inspect = process.argv.indexOf('-i') > 0 || process.argv.indexOf('--inspect') > 0;
-
 // Check if need coverage
 const coverage = process.env.COVERAGE === 'true';
+
+// coverage for require
+if (coverage) {
+  const { createInstrumenter } = require('istanbul-lib-instrument');
+  const instrumenter = createInstrumenter();
+  const { hookRequire } = require('istanbul-lib-hook');
+  hookRequire((filePath) => filePath.match(/\/src/), (code, { filename }) => instrumenter.instrumentSync(code, filename));
+  global.cov = true;
+}
+
+// check if should inspect or not
+const inspect = process.argv.indexOf('-i') > 0 || process.argv.indexOf('--inspect') > 0;
 
 // check if need junit reporter
 const useJunitReporter = process.argv.indexOf('-j') > 0 || process.argv.indexOf('--junit') > 0;

@@ -601,7 +601,7 @@ var run = async function ({
     return;
   }
   if (setGlobals) testglobals();
-  if (coverage) {
+  if (coverage && !commonjsGlobal.cov) {
     const {
       createInstrumenter
     } = istanbulLibInstrument;
@@ -609,9 +609,10 @@ var run = async function ({
     const {
       hookRequire
     } = istanbulLibHook;
-    hookRequire(filePath => filePath.match(/\/src/), (code, {
+    hookRequire(filePath => filePath.indexOf(root + 'src') > -1, (code, {
       filename
     }) => instrumenter.instrumentSync(code, filename));
+    commonjsGlobal.cov = true;
   }
   const mochaOptions = {
     timeout: 10000

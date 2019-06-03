@@ -68,11 +68,12 @@ module.exports = async function({
   }
   if (setGlobals) testGlobals();
 
-  if (coverage) {
+  if (coverage && !global.cov) {
     const { createInstrumenter } = require('istanbul-lib-instrument');
     const instrumenter = createInstrumenter();
     const { hookRequire } = require('istanbul-lib-hook');
-    hookRequire((filePath) => filePath.match(/\/src/), (code, { filename }) => instrumenter.instrumentSync(code, filename));
+    hookRequire((filePath) => filePath.indexOf(root + 'src') > -1, (code, { filename }) => instrumenter.instrumentSync(code, filename));
+    global.cov = true;
   }
 
   const mochaOptions = {
