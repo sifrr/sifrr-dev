@@ -56,5 +56,8 @@ runTest({
   port,
   securePort: 8889,
   useJunitReporter,
-  inspect
+  inspect,
+  folders: {
+    static: [path.resolve('./src/test')]
+  }
 });

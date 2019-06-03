@@ -17,6 +17,14 @@ describe('Test Server', () => {
     if (process.env.COVERAGE === 'true') expect(await page.content()).to.have.string('cov_');
   });
 
+  it('hosts extra static folders', async () => {
+    await page.goto(`${PATH}/run.js`);
+    expect(await page.content()).to.have.string('test');
+
+    await page.goto(`${SPATH}/run.js`);
+    expect(await page.content()).to.have.string('test');
+  });
+
   it('secure path has https', () => {
     expect(PATH).to.not.have.string('https');
     expect(PATH).to.have.string('http');
