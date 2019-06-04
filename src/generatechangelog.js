@@ -20,7 +20,7 @@ module.exports = ({
     }
     let match = rtag.exec(cm.gitTags);
     rtag.lastIndex = 0;
-    if (match && match[1] !== packageVersion) cm.version = match[1];
+    if (match) cm.version = match[1];
     cb(null, cm);
   };
   const options = {
