@@ -1,4 +1,3 @@
 #!/usr/bin/env node
 
-const releaseTag = require('../../src/releasetag');
-releaseTag(require('../../package.json').version);
+require('../../src/releasetag')();
