@@ -51,7 +51,7 @@ add `.huskyrc` to your root folder
 }
 ```
 
-add `commitlint.config.js`
+add `commitlint.config.js` to your root folder
 
 ```js
 module.exports = {
@@ -61,9 +61,7 @@ module.exports = {
 
 ### Upload coverage to Coveralls
 
-set `COVERALLS_REPO_TOKEN` environment variable
-run tests with `lcov` reporter
-Upload with this command:
+set `COVERALLS_REPO_TOKEN` environment variable, run tests with `lcov` reporter, Upload with this command:
 
 ```sh
 cat ./coverage/lcov.info | yarn coveralls
