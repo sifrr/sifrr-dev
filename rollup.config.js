@@ -28,7 +28,9 @@ function moduleConfig(name, root, minify = false, isModule = false) {
         'mocha',
         'sinon',
         'chai',
-        'chai-as-promised'
+        'chai-as-promised',
+        'autoprefixer',
+        'cssnano'
       ];
       if (packages.indexOf(id) > -1) return true;
       if (id.indexOf('rollup-plugin') > -1) return true;

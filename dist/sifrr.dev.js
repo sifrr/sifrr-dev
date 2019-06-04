@@ -12,6 +12,8 @@ const rollupPluginTerser = _interopDefault(require('rollup-plugin-terser'));
 const rollupPluginNodeResolve = _interopDefault(require('rollup-plugin-node-resolve'));
 const rollupPluginCommonjs = _interopDefault(require('rollup-plugin-commonjs'));
 const rollupPluginCleanup = _interopDefault(require('rollup-plugin-cleanup'));
+const rollupPluginPostcss = _interopDefault(require('rollup-plugin-postcss'));
+const rollupPluginHtml = _interopDefault(require('rollup-plugin-html'));
 const cssnano = _interopDefault(require('cssnano'));
 const autoprefixer = _interopDefault(require('autoprefixer'));
 const conventionalChangelog = _interopDefault(require('conventional-changelog'));
@@ -141,13 +143,13 @@ function moduleConfig({
     plugins: [rollupPluginNodeResolve({
       browser: type === 'browser',
       mainFields: ['module', 'main']
-    }), rollupPluginCommonjs(), postcss({
+    }), rollupPluginCommonjs(), rollupPluginPostcss({
       extensions: ['.css', '.scss', '.sass', '.less'],
       inject: false,
       plugins: [minify ? cssnano({
         preset: ['default']
       }) : false, autoprefixer].filter(k => k)
-    }), html({
+    }), rollupPluginHtml({
       htmlMinifierOptions: minify ? {
         collapseWhitespace: true,
         collapseBooleanAttributes: true,

@@ -6,6 +6,8 @@ import rollupPluginTerser from 'rollup-plugin-terser';
 import rollupPluginNodeResolve from 'rollup-plugin-node-resolve';
 import rollupPluginCommonjs from 'rollup-plugin-commonjs';
 import rollupPluginCleanup from 'rollup-plugin-cleanup';
+import rollupPluginPostcss from 'rollup-plugin-postcss';
+import rollupPluginHtml from 'rollup-plugin-html';
 import cssnano from 'cssnano';
 import autoprefixer from 'autoprefixer';
 import conventionalChangelog from 'conventional-changelog';
@@ -159,7 +161,7 @@ function moduleConfig({
         mainFields: ['module', 'main']
       }),
       rollupPluginCommonjs(),
-      postcss({
+      rollupPluginPostcss({
         extensions: ['.css', '.scss', '.sass', '.less'],
         inject: false,
         plugins: [
@@ -169,7 +171,7 @@ function moduleConfig({
           autoprefixer
         ].filter(k => k)
       }),
-      html({
+      rollupPluginHtml({
         htmlMinifierOptions: minify ? {
           collapseWhitespace: true,
           collapseBooleanAttributes: true,
