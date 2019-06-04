@@ -176,19 +176,31 @@ function moduleConfig({
 }
 var getrollupconfig = moduleConfig;
 
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+function commonjsRequire () {
+	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
+}
+
 const rtag = /tag:\s*[v=]?(.+?)[,)]/gi;
 var generatechangelog = ({
-  folder = process.cwd(),
+  folder = path.resolve('./'),
   releaseCount = 0,
   changelogFile = path.join(folder, './CHANGELOG.md'),
   outputUnreleased = false,
   multiRepo = false
 } = {}) => {
   let oldChangelog = '';
+  let first = false;
+  let packageVersion = commonjsRequire(path.join(folder, './package.json')).version;
   const transform = function (cm, cb) {
+    if (!first) {
+      cm.version = packageVersion;
+      first = true;
+    }
     let match = rtag.exec(cm.gitTags);
     rtag.lastIndex = 0;
-    if (match) cm.version = match[1];
+    if (match && match[1] !== packageVersion) cm.version = match[1];
     cb(null, cm);
   };
   const options = {
@@ -259,12 +271,6 @@ function exec(command, options = {}) {
   }
 }
 var exec_1 = exec;
-
-var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-function commonjsRequire () {
-	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
-}
 
 async function checkTag(version, prefix = 'v') {
   version = version || commonjsRequire(path.resolve('./package.json')).version;

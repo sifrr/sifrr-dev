@@ -33,8 +33,8 @@ function moduleConfig(name, root, minify = false, isModule = false) {
         'cssnano'
       ];
       if (packages.indexOf(id) > -1) return true;
-      if (id.indexOf('rollup-plugin') > -1) return true;
-      if (id.indexOf('istanbul') > -1) return true;
+      if (id.indexOf('rollup-plugin') === 0) return true;
+      if (id.indexOf('istanbul') === 0) return true;
       return false;
     }
   });

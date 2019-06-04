@@ -1,3 +1,24 @@
+## 0.0.1-rc3 (2019-06-04 17:08:15 +0900)
+
+
+### Bug Fixes
+
+* fix fs and path in write coverage ([db3f13d](https://github.com/sifrr/sifrr-dev/commit/db3f13d))
+
+
+### Features
+
+* add checktag and exec ([d02ad18](https://github.com/sifrr/sifrr-dev/commit/d02ad18))
+* add conventional changelog generate function ([ac7066a](https://github.com/sifrr/sifrr-dev/commit/ac7066a))
+* add coverage reporters ([66f7647](https://github.com/sifrr/sifrr-dev/commit/66f7647))
+* add gitAddCommitPush ([1c3debb](https://github.com/sifrr/sifrr-dev/commit/1c3debb))
+* add html and css imports in rollup ([d3cf370](https://github.com/sifrr/sifrr-dev/commit/d3cf370))
+* add onDir function to loadDir ([72cae5e](https://github.com/sifrr/sifrr-dev/commit/72cae5e))
+* add release tag ([d73f867](https://github.com/sifrr/sifrr-dev/commit/d73f867))
+* add test runner ([dafcacc](https://github.com/sifrr/sifrr-dev/commit/dafcacc))
+
+
+
 ## [0.0.1-rc2](https://github.com/sifrr/sifrr-dev/compare/72d3a3c...v0.0.1-rc2) (2019-05-30 10:39:49 +0000)
 
 

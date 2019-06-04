@@ -4,17 +4,23 @@ const conventionalChangelog = require('conventional-changelog');
 const rtag = /tag:\s*[v=]?(.+?)[,)]/gi;
 
 module.exports = ({
-  folder = process.cwd(),
+  folder = path.resolve('./'),
   releaseCount = 0,
   changelogFile = path.join(folder, './CHANGELOG.md'),
   outputUnreleased = false,
   multiRepo = false
 } = {}) => {
   let oldChangelog = '';
+  let first = false;
+  let packageVersion = require(path.join(folder, './package.json')).version;
   const transform = function(cm, cb) {
+    if (!first) {
+      cm.version = packageVersion;
+      first = true;
+    }
     let match = rtag.exec(cm.gitTags);
     rtag.lastIndex = 0;
-    if (match) cm.version = match[1];
+    if (match && match[1] !== packageVersion) cm.version = match[1];
     cb(null, cm);
   };
   const options = {
