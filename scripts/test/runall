@@ -15,7 +15,7 @@ NEW_STATUS=$?
 [ $NEW_STATUS -eq 0 ] || STATUS=$NEW_STATUS
 
 if [[ $LCOV == 'true' ]]; then
-  cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  cat ./coverage/lcov.info | yarn coveralls
 fi
 
 exit $STATUS # Exit with 1 if any test failed
