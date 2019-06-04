@@ -104,9 +104,8 @@ function loadDir({
   if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return false;
   fs.readdirSync(dir).forEach(file => {
     const filePath = path.join(dir, file);
-    fs.statSync(filePath).isDirectory()
-      ? (deep > 0 ? (onDir(filePath), loadDir({ dir: filePath, onFile, onDir, deep: deep - 1})) : () => {})
-      : onFile(filePath);
+    fs.statSync(filePath).isDirectory() ? onDir(filePath) : onFile(filePath);
+    if (deep > 0) loadDir({ dir: filePath, onFile, onDir, deep: deep - 1});
   });
   return true;
 }
@@ -595,22 +594,24 @@ var loadbrowser = async function(root, coverage, nycReport = path.join(root, './
 
 const { createInstrumenter } = istanbulLibInstrument,
   reporter = istanbulApi.createReporter();
-const instrumenter$1 = createInstrumenter();
-const sm = istanbulLibSourceMaps.createSourceMapStore({});
+const instrumenter$1 = createInstrumenter({
+  esModules: true
+});
 var transformcoverage = function(nycReport, srcFolder, srcFileRegex, reporters = ['html']) {
+  const sm = istanbulLibSourceMaps.createSourceMapStore({});
   let map = istanbulLibCoverage.createCoverageMap();
   if (fs.existsSync(nycReport)) {
     loaddir({
       dir: nycReport,
       onFile: (file) => {
-        if (file.match(/browser-coverage\.json$/)) map.merge(JSON.parse(fs.readFileSync(file)));
+        if (file.match(/browser/)) map.merge(JSON.parse(fs.readFileSync(file)));
       }
     });
     map = sm.transformCoverage(map).map;
     loaddir({
       dir: nycReport,
       onFile: (file) => {
-        if (file.match(/unit-coverage\.json$/)) map.merge(JSON.parse(fs.readFileSync(file)));
+        if (file.match(/unit/)) map.merge(JSON.parse(fs.readFileSync(file)));
       }
     });
     loaddir({
@@ -661,14 +662,14 @@ var run = async function({
   reporters = ['html']
 } = {}) {
   if (inspect) inspector.open(undefined, undefined, true);
-  deepmerge(folders, {
+  const allFolders = deepmerge({
     unitTest: path.join(root, './test/unit'),
     browserTest: path.join(root, './test/browser'),
     public: path.join(root, './test/public'),
     static: [],
     coverage: path.join(root, './.nyc_output'),
     source: path.join(root, './src')
-  }, true);
+  }, folders, true);
   if (Array.isArray(preCommand)) {
     for (let i = 0; i < preCommand.length; i++) {
       await exec_1(preCommand[i]).catch(commonjsGlobal.console.error);
@@ -676,8 +677,8 @@ var run = async function({
   } else {
     await exec_1(preCommand).catch(commonjsGlobal.console.error);
   }
-  const servers = await server(folders.public, {
-    extraStaticFolders: folders.static,
+  const servers = await server(allFolders.public, {
+    extraStaticFolders: allFolders.static,
     setGlobals,
     coverage,
     port,
@@ -692,7 +693,9 @@ var run = async function({
     const { createInstrumenter } = istanbulLibInstrument;
     const instrumenter = createInstrumenter();
     const { hookRequire } = istanbulLibHook;
-    hookRequire((filePath) => filePath.indexOf(folders.source) > -1, (code, { filename }) => instrumenter.instrumentSync(code, filename));
+    hookRequire((filePath) => {
+      return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex);
+    }, (code, { filename }) => instrumenter.instrumentSync(code, filename));
     commonjsGlobal.cov = true;
   }
   const mochaOptions = {
@@ -707,11 +710,11 @@ var run = async function({
   const mocha$1 = new mocha(mochaOptions);
   if (runBrowserTests || !runUnitTests) {
     servers.listen();
-    await loadbrowser(root, coverage, folders.coverage);
-    loadTests(folders.browserTest, mocha$1, testFileRegex, filters);
+    await loadbrowser(root, coverage, allFolders.coverage);
+    loadTests(allFolders.browserTest, mocha$1, testFileRegex, filters);
   }
   if (runUnitTests || !runBrowserTests) {
-    loadTests(folders.unitTest, mocha$1, testFileRegex, filters);
+    loadTests(allFolders.unitTest, mocha$1, testFileRegex, filters);
   }
   mocha$1.run(async (failures) => {
     servers.close();
@@ -721,8 +724,8 @@ var run = async function({
     }
     if (commonjsGlobal.browser) await browser.close();
     if (coverage) {
-      writecoverage(commonjsGlobal.__coverage__, path.join(folders.coverage, `./${Date.now()}-unit-coverage.json`));
-      transformcoverage(folders.coverage, folders.source, sourceFileRegex, reporters);
+      writecoverage(commonjsGlobal.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
+      transformcoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
     }
     process.exit(process.exitCode);
   });
