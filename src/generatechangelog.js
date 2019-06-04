@@ -14,7 +14,7 @@ module.exports = ({
   let first = false;
   let packageVersion = require(path.join(folder, './package.json')).version;
   const transform = function(cm, cb) {
-    if (!first) {
+    if (outputUnreleased && !first) {
       cm.version = packageVersion;
       first = true;
     }
