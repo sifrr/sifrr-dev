@@ -42,14 +42,14 @@ module.exports = async function({
 } = {}) {
   if (inspect) require('inspector').open(undefined, undefined, true);
 
-  deepMerge(folders, {
+  const allFolders = deepMerge({
     unitTest: path.join(root, './test/unit'),
     browserTest: path.join(root, './test/browser'),
     public: path.join(root, './test/public'),
     static: [],
     coverage: path.join(root, './.nyc_output'),
     source: path.join(root, './src')
-  }, true);
+  }, folders, true);
 
   if (Array.isArray(preCommand)) {
     for (let i = 0; i < preCommand.length; i++) {
@@ -59,8 +59,8 @@ module.exports = async function({
     await exec(preCommand).catch(global.console.error);
   }
 
-  const servers = await server(folders.public, {
-    extraStaticFolders: folders.static,
+  const servers = await server(allFolders.public, {
+    extraStaticFolders: allFolders.static,
     setGlobals,
     coverage,
     port,
@@ -77,7 +77,9 @@ module.exports = async function({
     const { createInstrumenter } = require('istanbul-lib-instrument');
     const instrumenter = createInstrumenter();
     const { hookRequire } = require('istanbul-lib-hook');
-    hookRequire((filePath) => filePath.indexOf(folders.source) > -1, (code, { filename }) => instrumenter.instrumentSync(code, filename));
+    hookRequire((filePath) => {
+      return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex);
+    }, (code, { filename }) => instrumenter.instrumentSync(code, filename));
     global.cov = true;
   }
 
@@ -94,12 +96,12 @@ module.exports = async function({
 
   if (runBrowserTests || !runUnitTests) {
     servers.listen();
-    await loadBrowser(root, coverage, folders.coverage);
-    loadTests(folders.browserTest, mocha, testFileRegex, filters);
+    await loadBrowser(root, coverage, allFolders.coverage);
+    loadTests(allFolders.browserTest, mocha, testFileRegex, filters);
   }
 
   if (runUnitTests || !runBrowserTests) {
-    loadTests(folders.unitTest, mocha, testFileRegex, filters);
+    loadTests(allFolders.unitTest, mocha, testFileRegex, filters);
   }
 
   mocha.run(async (failures) => {
@@ -115,8 +117,8 @@ module.exports = async function({
 
     // Get and write code coverage
     if (coverage) {
-      writeCoverage(global.__coverage__, path.join(folders.coverage, `./${Date.now()}-unit-coverage.json`));
-      transformCoverage(folders.coverage, folders.source, sourceFileRegex, reporters);
+      writeCoverage(global.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
+      transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
     }
 
     process.exit(process.exitCode);
