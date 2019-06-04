@@ -4,6 +4,8 @@ const terser = require('rollup-plugin-terser').terser;
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const cleanup = require('rollup-plugin-cleanup');
+const postcss = require('rollup-plugin-postcss');
+const html = require('rollup-plugin-html');
 
 const deepMerge = require('./deepmerge');
 
@@ -32,7 +34,25 @@ function moduleConfig({
         browser: type === 'browser',
         mainFields: ['module', 'main']
       }),
-      commonjs()
+      commonjs(),
+      postcss({
+        extensions: ['.css', '.scss', '.sass', '.less'],
+        inject: false,
+        plugins: [
+          minify ? require('cssnano')({
+            preset: [ 'default' ],
+          }) : false,
+          require('autoprefixer')
+        ].filter(k => k)
+      }),
+      html({
+        htmlMinifierOptions: minify ? {
+          collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+          conservativeCollapse: true,
+          minifyJS: true
+        } : {}
+      })
     ]
   };
 

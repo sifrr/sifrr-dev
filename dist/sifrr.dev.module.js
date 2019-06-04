@@ -6,6 +6,8 @@ import rollupPluginTerser from 'rollup-plugin-terser';
 import rollupPluginNodeResolve from 'rollup-plugin-node-resolve';
 import rollupPluginCommonjs from 'rollup-plugin-commonjs';
 import rollupPluginCleanup from 'rollup-plugin-cleanup';
+import cssnano from 'cssnano';
+import autoprefixer from 'autoprefixer';
 import conventionalChangelog from 'conventional-changelog';
 import child_process from 'child_process';
 import mocha from 'mocha';
@@ -156,7 +158,25 @@ function moduleConfig({
         browser: type === 'browser',
         mainFields: ['module', 'main']
       }),
-      rollupPluginCommonjs()
+      rollupPluginCommonjs(),
+      postcss({
+        extensions: ['.css', '.scss', '.sass', '.less'],
+        inject: false,
+        plugins: [
+          minify ? cssnano({
+            preset: [ 'default' ],
+          }) : false,
+          autoprefixer
+        ].filter(k => k)
+      }),
+      html({
+        htmlMinifierOptions: minify ? {
+          collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+          conservativeCollapse: true,
+          minifyJS: true
+        } : {}
+      })
     ]
   };
   if (type !== 'module') {

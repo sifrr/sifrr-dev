@@ -19,7 +19,7 @@
 
 ## Tools
 
--   `getRollupConfig` Rollup configs to bundle JavaScripts to use in node, es modules or browser.
+-   `getRollupConfig` Rollup configs to bundle JavaScripts to bundle in node packages, es modules, browser packs.
 -   `generateChangelog` Generate Changelog during release
 -   `loadDir` Load directory recursively
 -   `eslintrc` ESLint config

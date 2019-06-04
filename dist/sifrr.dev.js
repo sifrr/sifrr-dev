@@ -12,6 +12,8 @@ const rollupPluginTerser = _interopDefault(require('rollup-plugin-terser'));
 const rollupPluginNodeResolve = _interopDefault(require('rollup-plugin-node-resolve'));
 const rollupPluginCommonjs = _interopDefault(require('rollup-plugin-commonjs'));
 const rollupPluginCleanup = _interopDefault(require('rollup-plugin-cleanup'));
+const cssnano = _interopDefault(require('cssnano'));
+const autoprefixer = _interopDefault(require('autoprefixer'));
 const conventionalChangelog = _interopDefault(require('conventional-changelog'));
 const child_process = _interopDefault(require('child_process'));
 const mocha = _interopDefault(require('mocha'));
@@ -139,7 +141,20 @@ function moduleConfig({
     plugins: [rollupPluginNodeResolve({
       browser: type === 'browser',
       mainFields: ['module', 'main']
-    }), rollupPluginCommonjs()]
+    }), rollupPluginCommonjs(), postcss({
+      extensions: ['.css', '.scss', '.sass', '.less'],
+      inject: false,
+      plugins: [minify ? cssnano({
+        preset: ['default']
+      }) : false, autoprefixer].filter(k => k)
+    }), html({
+      htmlMinifierOptions: minify ? {
+        collapseWhitespace: true,
+        collapseBooleanAttributes: true,
+        conservativeCollapse: true,
+        minifyJS: true
+      } : {}
+    })]
   };
   if (type !== 'module') {
     ret.plugins.push(rollupPluginBabel({
