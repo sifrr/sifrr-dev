@@ -6,17 +6,19 @@ const cov = require('istanbul-lib-coverage'),
   loadDir = require('../loaddir'),
   reporter = require('istanbul-api').createReporter();
 
-const instrumenter = createInstrumenter();
-const sm = srcmap.createSourceMapStore({});
+const instrumenter = createInstrumenter({
+  esModules: true
+});
 
 module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html']) {
+  const sm = srcmap.createSourceMapStore({});
   let map = cov.createCoverageMap();
   if (fs.existsSync(nycReport)) {
     // Browser tests
     loadDir({
       dir: nycReport,
       onFile: (file) => {
-        if (file.match(/browser-coverage\.json$/)) map.merge(JSON.parse(fs.readFileSync(file)));
+        if (file.match(/browser/)) map.merge(JSON.parse(fs.readFileSync(file)));
       }
     });
 
@@ -26,7 +28,7 @@ module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html
     loadDir({
       dir: nycReport,
       onFile: (file) => {
-        if (file.match(/unit-coverage\.json$/)) map.merge(JSON.parse(fs.readFileSync(file)));
+        if (file.match(/unit/)) map.merge(JSON.parse(fs.readFileSync(file)));
       }
     });
 
