@@ -1,4 +1,13 @@
-## 0.0.3 (2019-06-04 10:46:06 +0000)
+## 0.0.4 (2019-06-04 11:25:56 +0000)
+
+
+### Features
+
+* remove exports named from rollup config ([5480536](https://github.com/sifrr/sifrr-dev/commit/5480536))
+
+
+
+## [0.0.3](https://github.com/sifrr/sifrr-dev/compare/v0.0.2...v0.0.3) (2019-06-04 10:46:18 +0000)
 
 
 ### Bug Fixes
