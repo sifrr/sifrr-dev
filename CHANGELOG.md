@@ -1,4 +1,14 @@
-## 0.0.4 (2019-06-04 11:25:56 +0000)
+## 0.0.5 (2019-06-04 18:10:51 +0000)
+
+
+### Bug Fixes
+
+* reverse merge folders ([248ccca](https://github.com/sifrr/sifrr-dev/commit/248ccca))
+* support esModules in instrumenting ([88dc940](https://github.com/sifrr/sifrr-dev/commit/88dc940))
+
+
+
+## [0.0.4](https://github.com/sifrr/sifrr-dev/compare/v0.0.3...v0.0.4) (2019-06-04 11:26:10 +0000)
 
 
 ### Features
