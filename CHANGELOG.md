@@ -1,4 +1,13 @@
-## 0.0.2 (2019-06-04 10:21:42 +0000)
+## 0.0.3 (2019-06-04 10:46:06 +0000)
+
+
+### Bug Fixes
+
+* merging coverage reports was not working properly ([2bc588e](https://github.com/sifrr/sifrr-dev/commit/2bc588e))
+
+
+
+## [0.0.2](https://github.com/sifrr/sifrr-dev/compare/v0.0.1...v0.0.2) (2019-06-04 10:21:53 +0000)
 
 
 
