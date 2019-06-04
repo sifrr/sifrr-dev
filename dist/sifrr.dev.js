@@ -194,7 +194,7 @@ var generatechangelog = ({
   let first = false;
   let packageVersion = commonjsRequire(path.join(folder, './package.json')).version;
   const transform = function (cm, cb) {
-    if (!first) {
+    if (outputUnreleased && !first) {
       cm.version = packageVersion;
       first = true;
     }
@@ -697,12 +697,12 @@ var run = async function ({
     };
   }
   const mocha$1 = new mocha(mochaOptions);
-  if (runBrowserTests || !runUnitTests) {
+  if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
     servers.listen();
     await loadbrowser(root, coverage, allFolders.coverage);
     loadTests(allFolders.browserTest, mocha$1, testFileRegex, filters);
   }
-  if (runUnitTests || !runBrowserTests) {
+  if ((runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest)) {
     loadTests(allFolders.unitTest, mocha$1, testFileRegex, filters);
   }
   mocha$1.run(async failures => {

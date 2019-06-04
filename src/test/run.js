@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const Mocha = require('mocha');
 
@@ -94,13 +95,13 @@ module.exports = async function({
   }
   const mocha = new Mocha(mochaOptions);
 
-  if (runBrowserTests || !runUnitTests) {
+  if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
     servers.listen();
     await loadBrowser(root, coverage, allFolders.coverage);
     loadTests(allFolders.browserTest, mocha, testFileRegex, filters);
   }
 
-  if (runUnitTests || !runBrowserTests) {
+  if ((runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest)) {
     loadTests(allFolders.unitTest, mocha, testFileRegex, filters);
   }
 
