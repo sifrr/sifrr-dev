@@ -31,17 +31,18 @@
 
 ## Other packages
 
-- [@commitlint/cli](https://github.com/conventional-changelog/commitlint) - Linting commits
-- [Husky](https://github.com/typicode/husky) - Git hooks made easy
-- [browserslist](https://github.com/browserslist/browserslist#readme) - browserlist used by babel, eslint, postcss, etc.
-- [coveralls](https://github.com/nickmerwin/node-coveralls#readme) - upload coverage to coveralls.io
-- [mock-require](https://github.com/boblauer/mock-require) - Simple, intuitive mocking of Node.js modules.
+-   [@commitlint/cli](https://github.com/conventional-changelog/commitlint) - Linting commits
+-   [Husky](https://github.com/typicode/husky) - Git hooks made easy
+-   [browserslist](https://github.com/browserslist/browserslist#readme) - browserlist used by babel, eslint, postcss, etc.
+-   [coveralls](https://github.com/nickmerwin/node-coveralls#readme) - upload coverage to coveralls.io
+-   [mock-require](https://github.com/boblauer/mock-require) - Simple, intuitive mocking of Node.js modules.
 
 ## Usage
 
 ### Husky and commitlint
 
 add `.huskyrc` to your root folder
+
 ```rc
 {
   "hooks": {
@@ -49,19 +50,21 @@ add `.huskyrc` to your root folder
   }
 }
 ```
+
 add `commitlint.config.js`
+
 ```js
 module.exports = {
   extends: ['@commitlint/config-conventional']
 };
 ```
 
-### Upload to Coveralls
+### Upload coverage to Coveralls
 
 set `COVERALLS_REPO_TOKEN` environment variable
 run tests with `lcov` reporter
-Upload with this command
+Upload with this command:
+
 ```sh
 cat ./coverage/lcov.info | yarn coveralls
 ```
-
