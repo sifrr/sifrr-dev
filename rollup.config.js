@@ -14,7 +14,8 @@ function moduleConfig(name, root, minify = false, isModule = false) {
   }, {
     output: {
       banner,
-      footer
+      footer,
+      exports: 'named'
     },
     external: id => {
       const packages = [

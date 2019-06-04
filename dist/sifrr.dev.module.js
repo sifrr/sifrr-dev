@@ -150,10 +150,9 @@ function moduleConfig({
     output: {
       file: path.join(outputFolder, `./${(outputFileName || filename) + (type === 'module' ? '.module' : '') + (minify ? '.min' : '')}.js`),
       format,
-      name: name,
+      name,
       sourcemap: !minify,
       preferConst: true,
-      exports: 'named'
     },
     plugins: [
       rollupPluginNodeResolve({
