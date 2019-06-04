@@ -577,33 +577,23 @@ const {
   createInstrumenter
 } = istanbulLibInstrument,
       reporter = istanbulApi.createReporter();
-let map = istanbulLibCoverage.createCoverageMap();
 const instrumenter$1 = createInstrumenter();
 const sm = istanbulLibSourceMaps.createSourceMapStore({});
 var transformcoverage = function (nycReport, srcFolder, srcFileRegex, reporters = ['html']) {
+  let map = istanbulLibCoverage.createCoverageMap();
   if (fs.existsSync(nycReport)) {
-    const browserFiles = [];
     loaddir({
       dir: nycReport,
       onFile: file => {
-        browserFiles.push(file);
+        if (file.match(/browser-coverage\.json$/)) map.merge(JSON.parse(fs.readFileSync(file)));
       }
-    });
-    browserFiles.forEach(file => {
-      const cont = JSON.parse(fs.readFileSync(file));
-      map.merge(cont);
     });
     map = sm.transformCoverage(map).map;
-    const unitFiles = [];
     loaddir({
       dir: nycReport,
       onFile: file => {
-        if (file.match(/unit-coverage\.json$/)) unitFiles.push(file);
+        if (file.match(/unit-coverage\.json$/)) map.merge(JSON.parse(fs.readFileSync(file)));
       }
-    });
-    unitFiles.forEach(file => {
-      const cont = JSON.parse(fs.readFileSync(file));
-      map.merge(cont);
     });
     loaddir({
       dir: srcFolder,

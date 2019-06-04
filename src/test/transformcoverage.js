@@ -6,40 +6,28 @@ const cov = require('istanbul-lib-coverage'),
   loadDir = require('../loaddir'),
   reporter = require('istanbul-api').createReporter();
 
-let map = cov.createCoverageMap();
 const instrumenter = createInstrumenter();
 const sm = srcmap.createSourceMapStore({});
 
 module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html']) {
+  let map = cov.createCoverageMap();
   if (fs.existsSync(nycReport)) {
     // Browser tests
-    const browserFiles = [];
     loadDir({
       dir: nycReport,
       onFile: (file) => {
-        browserFiles.push(file);
+        if (file.match(/browser-coverage\.json$/)) map.merge(JSON.parse(fs.readFileSync(file)));
       }
-    });
-
-    browserFiles.forEach((file) => {
-      const cont = JSON.parse(fs.readFileSync(file));
-      map.merge(cont);
     });
 
     map = sm.transformCoverage(map).map;
 
     // unit tests
-    const unitFiles = [];
     loadDir({
       dir: nycReport,
       onFile: (file) => {
-        if (file.match(/unit-coverage\.json$/)) unitFiles.push(file);
+        if (file.match(/unit-coverage\.json$/)) map.merge(JSON.parse(fs.readFileSync(file)));
       }
-    });
-
-    unitFiles.forEach((file) => {
-      const cont = JSON.parse(fs.readFileSync(file));
-      map.merge(cont);
     });
 
     // Add Other files without coverage
