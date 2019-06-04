@@ -3,13 +3,13 @@
 const exec = require('../src/exec');
 
 (async function() {
-  const exists = require('../src/checktag')();
+  const exists = await require('../src/checktag')();
   if (exists) return;
   await require('../src/generatechangelog')();
-  require('../src/getrollupconfig')({
+  await require('../src/gitaddcommitpush')({
     files: ['misc/*'],
     commitMsg: 'chore: update changelog'
   });
-  await require('../../src/releasetag')();
+  await require('../src/releasetag')();
   await exec(`npm publish --access=public`);
 })();

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
+#!/usr/bin/env bash
 
-const exec = require('../src/exec');
-exec(`git shortlog -sen | perl -spe 's/^\s+\d+\s+//' > misc/CONTRIBUTORS`);
+git shortlog -sen | perl -spe 's/^\s+\d+\s+//' > misc/CONTRIBUTORS

@@ -8,7 +8,7 @@ async function checkTag(version, prefix = 'v') {
   return exec(`git rev-parse ${tag}`).then(() => {
     process.stdout.write(`Tag ${tag} already exists.`);
     return true;
-  }).catch(async () => {
+  }).catch(() => {
     return false;
   });
 }

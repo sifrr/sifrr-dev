@@ -1,4 +1,4 @@
-/*! sifrr.dev v0.0.1-rc2 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
+/*! sifrr.dev v0.0.1-rc3 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -273,7 +273,7 @@ async function checkTag(version, prefix = 'v') {
   return exec_1(`git rev-parse ${tag}`).then(() => {
     process.stdout.write(`Tag ${tag} already exists.`);
     return true;
-  }).catch(async () => {
+  }).catch(() => {
     return false;
   });
 }
