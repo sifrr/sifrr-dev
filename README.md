@@ -28,3 +28,12 @@
 -   `exec` async execute a shell command with stdout and stderr
 -   `gitAddCommitPush` run command > git add files > git commit > git push
 -   `runTests` Run a full fledged test suite using mocha, chai, sinon, puppeteer, etc.
+
+## Other packages
+
+- [@commitlint/cli](https://github.com/conventional-changelog/commitlint) - Linting commits
+- [Husky](https://github.com/typicode/husky) - Git hooks made easy
+- [browserslist](https://github.com/browserslist/browserslist#readme)
+- [coveralls](https://github.com/nickmerwin/node-coveralls#readme) - upload coverage to coveralls.io
+- [mock-require](https://github.com/boblauer/mock-require) - Simple, intuitive mocking of Node.js modules.
+
