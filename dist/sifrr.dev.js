@@ -721,6 +721,14 @@ var run = async function ({
   });
 };
 
+var objectselect = (obj, keys = []) => {
+  const ret = {};
+  keys.forEach(k => {
+    if (obj[k]) ret[k] = obj[k];
+  });
+  return ret;
+};
+
 var sifrr_dev = {
   eslintrc: eslintrc,
   loadDir: loaddir,
@@ -731,7 +739,8 @@ var sifrr_dev = {
   checkTag: checktag,
   releaseTag: releasetag,
   gitAddCommitPush: gitaddcommitpush,
-  runTests: run
+  runTests: run,
+  objectSelect: objectselect
 };
 var sifrr_dev_1 = sifrr_dev.eslintrc;
 var sifrr_dev_2 = sifrr_dev.loadDir;
@@ -743,6 +752,7 @@ var sifrr_dev_7 = sifrr_dev.checkTag;
 var sifrr_dev_8 = sifrr_dev.releaseTag;
 var sifrr_dev_9 = sifrr_dev.gitAddCommitPush;
 var sifrr_dev_10 = sifrr_dev.runTests;
+var sifrr_dev_11 = sifrr_dev.objectSelect;
 
 exports.checkTag = sifrr_dev_7;
 exports.deepMerge = sifrr_dev_3;
@@ -753,6 +763,7 @@ exports.generateChangelog = sifrr_dev_5;
 exports.getRollupConfig = sifrr_dev_4;
 exports.gitAddCommitPush = sifrr_dev_9;
 exports.loadDir = sifrr_dev_2;
+exports.objectSelect = sifrr_dev_11;
 exports.releaseTag = sifrr_dev_8;
 exports.runTests = sifrr_dev_10;
 /*! (c) @aadityataparia */

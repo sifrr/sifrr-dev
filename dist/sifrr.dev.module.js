@@ -732,6 +732,14 @@ var run = async function({
   });
 };
 
+var objectselect = (obj, keys = []) => {
+  const ret = {};
+  keys.forEach(k => {
+    if (obj[k]) ret[k] = obj[k];
+  });
+  return ret;
+};
+
 var sifrr_dev = {
   eslintrc: eslintrc,
   loadDir: loaddir,
@@ -742,7 +750,8 @@ var sifrr_dev = {
   checkTag: checktag,
   releaseTag: releasetag,
   gitAddCommitPush: gitaddcommitpush,
-  runTests: run
+  runTests: run,
+  objectSelect: objectselect
 };
 var sifrr_dev_1 = sifrr_dev.eslintrc;
 var sifrr_dev_2 = sifrr_dev.loadDir;
@@ -754,8 +763,9 @@ var sifrr_dev_7 = sifrr_dev.checkTag;
 var sifrr_dev_8 = sifrr_dev.releaseTag;
 var sifrr_dev_9 = sifrr_dev.gitAddCommitPush;
 var sifrr_dev_10 = sifrr_dev.runTests;
+var sifrr_dev_11 = sifrr_dev.objectSelect;
 
 export default sifrr_dev;
-export { sifrr_dev_7 as checkTag, sifrr_dev_3 as deepMerge, sifrr_dev_1 as eslintrc, sifrr_dev_6 as exec, sifrr_dev_5 as generateChangelog, sifrr_dev_4 as getRollupConfig, sifrr_dev_9 as gitAddCommitPush, sifrr_dev_2 as loadDir, sifrr_dev_8 as releaseTag, sifrr_dev_10 as runTests };
+export { sifrr_dev_7 as checkTag, sifrr_dev_3 as deepMerge, sifrr_dev_1 as eslintrc, sifrr_dev_6 as exec, sifrr_dev_5 as generateChangelog, sifrr_dev_4 as getRollupConfig, sifrr_dev_9 as gitAddCommitPush, sifrr_dev_2 as loadDir, sifrr_dev_11 as objectSelect, sifrr_dev_8 as releaseTag, sifrr_dev_10 as runTests };
 /*! (c) @aadityataparia */
 //# sourceMappingURL=sifrr.dev.module.js.map

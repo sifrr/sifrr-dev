@@ -8,5 +8,6 @@ module.exports = {
   checkTag: require('./checktag'),
   releaseTag: require('./releasetag'),
   gitAddCommitPush: require('./gitaddcommitpush'),
-  runTests: require('./test/run')
+  runTests: require('./test/run'),
+  objectSelect: require('./objectselect')
 };
