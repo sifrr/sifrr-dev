@@ -235,12 +235,13 @@ var generatechangelog = ({
 
 const spawn = child_process.spawn;
 const execa = child_process.exec;
+const splitRegex = /((?:["'][^"]+["'])|(?:[^ ]+))/;
 function exec(command, options = {}) {
   process.stdout.write(`Running command: ${command} \n`);
-  if (command.indexOf('sh ') === 0) {
+  if (command.indexOf('sh ') === 0 || options.spawn) {
     options.stdio = options.stdio || 'inherit';
     return new Promise((res, rej) => {
-      const [c, ...args] = command.split(' ');
+      const [c, ...args] = command.split(splitRegex).filter(x => x.trim() !== '');
       const runner = spawn(c, args, options);
       runner.on('close', code => {
         if (code !== 0) {
