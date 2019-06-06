@@ -262,8 +262,8 @@ const spawn = child_process.spawn;
 const execa = child_process.exec;
 const splitRegex = /((?:["'][^"]+["'])|(?:[^ ]+))/;
 function exec(command, options = {}) {
-  process.stdout.write(`Running command: ${command} \n`);
   if (command.indexOf('sh ') === 0 || options.spawn) {
+    process.stdout.write(`Running command: ${command} with spawn \n`);
     options.stdio = options.stdio || 'inherit';
     return new Promise((res, rej) => {
       const [c, ...args] = command.split(splitRegex).filter(x => x.trim() !== '');
@@ -279,6 +279,7 @@ function exec(command, options = {}) {
       });
     });
   } else {
+    process.stdout.write(`Running command: ${command} \n`);
     return new Promise((res, rej) => {
       execa(command, options, (err, stdout, stderr) => {
         if (stdout) process.stdout.write(`out: ${stdout} \n`);
@@ -300,7 +301,7 @@ async function checkTag(version, prefix = 'v') {
   const tag = prefix + version;
   await exec_1('git pull');
   return exec_1(`git rev-parse ${tag}`).then(() => {
-    process.stdout.write(`Tag ${tag} already exists.`);
+    process.stdout.write(`Tag ${tag} already exists.\n`);
     return true;
   }).catch(() => {
     return false;

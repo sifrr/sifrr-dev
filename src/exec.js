@@ -4,8 +4,8 @@ const execa = require('child_process').exec;
 const splitRegex = /((?:["'][^"]+["'])|(?:[^ ]+))/;
 
 function exec(command, options = {}) {
-  process.stdout.write(`Running command: ${command} \n`);
   if (command.indexOf('sh ') === 0 || options.spawn) {
+    process.stdout.write(`Running command: ${command} with spawn \n`);
     options.stdio = options.stdio || 'inherit';
     return new Promise((res, rej) => {
       const [c, ...args] = command.split(splitRegex).filter(x => x.trim() !== '');
@@ -21,6 +21,7 @@ function exec(command, options = {}) {
       });
     });
   } else {
+    process.stdout.write(`Running command: ${command} \n`);
     return new Promise((res, rej) => {
       execa(command, options, (err, stdout, stderr) => {
         if (stdout) process.stdout.write(`out: ${stdout} \n`);

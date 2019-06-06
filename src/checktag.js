@@ -6,7 +6,7 @@ async function checkTag(version, prefix = 'v') {
   const tag = prefix + version;
   await exec('git pull');
   return exec(`git rev-parse ${tag}`).then(() => {
-    process.stdout.write(`Tag ${tag} already exists.`);
+    process.stdout.write(`Tag ${tag} already exists.\n`);
     return true;
   }).catch(() => {
     return false;
