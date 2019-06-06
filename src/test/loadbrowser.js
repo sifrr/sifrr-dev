@@ -3,20 +3,30 @@ const path = require('path');
 const writeCoverage = require('./writecoverage');
 const puppeteer = require('puppeteer');
 
-function setPageGoto(p, nycReport) {
+async function writePageCoverage(p, nycReport) {
+  /* istanbul ignore next */
+  const jsCoverage = await p.evaluate(() => window.__coverage__);
+  writeCoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+}
+
+function setPageForCoverage(p, nycReport) {
   p.goto = async (url, options) => {
-    /* istanbul ignore next */
-    const jsCoverage = await p.evaluate(() => window.__coverage__);
-    writeCoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+    await writePageCoverage(p, nycReport);
     const ret = p.mainFrame().goto(url, options);
     return ret;
+  };
+
+  p._close = p.close;
+  p.close = async () => {
+    await writePageCoverage(p, nycReport);
+    return p._close();
   };
 }
 
 module.exports = async function(root, coverage, nycReport = path.join(root, './.nyc_output')) {
   let browser;
   if (!global.browser) {
-    browser = global.browser =await puppeteer.launch({
+    browser = global.browser = await puppeteer.launch({
       // to make it work in circleci
       args: [
         '--no-sandbox',
@@ -31,22 +41,22 @@ module.exports = async function(root, coverage, nycReport = path.join(root, './.
       browser.__newPage = browser.newPage;
       browser.newPage = async () => {
         const p = await browser.__newPage();
-        setPageGoto(p, nycReport);
+        setPageForCoverage(p, nycReport);
         return p;
       };
 
       browser.__close = browser.close;
       browser.close = async () => {
-        /* istanbul ignore next */
-        const jsCoverage = await page.evaluate(() => window.__coverage__);
-        writeCoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+        const pages = await browser.pages();
+        for (let i = 0; i < pages.length; i++) {
+          await pages[i].close();
+        }
         return browser.__close();
       };
     }
   } else {
     browser = global.browser;
   }
-  // set browser and page global variables
   const page = await browser.newPage();
   await page.setViewport( { width: 1280, height: 800 } );
 

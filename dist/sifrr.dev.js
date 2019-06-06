@@ -530,12 +530,20 @@ var writecoverage = function writeCoverage(coverage, file) {
   }
 };
 
-function setPageGoto(p, nycReport) {
+async function writePageCoverage(p, nycReport) {
+  const jsCoverage = await p.evaluate(() => window.__coverage__);
+  writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+}
+function setPageForCoverage(p, nycReport) {
   p.goto = async (url, options) => {
-    const jsCoverage = await p.evaluate(() => window.__coverage__);
-    writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+    await writePageCoverage(p, nycReport);
     const ret = p.mainFrame().goto(url, options);
     return ret;
+  };
+  p._close = p.close;
+  p.close = async () => {
+    await writePageCoverage(p, nycReport);
+    return p._close();
   };
 }
 var loadbrowser = async function (root, coverage, nycReport = path.join(root, './.nyc_output')) {
@@ -551,12 +559,15 @@ var loadbrowser = async function (root, coverage, nycReport = path.join(root, '.
       browser.__newPage = browser.newPage;
       browser.newPage = async () => {
         const p = await browser.__newPage();
-        setPageGoto(p, nycReport);
+        setPageForCoverage(p, nycReport);
+        return p;
       };
       browser.__close = browser.close;
       browser.close = async () => {
-        const jsCoverage = await page.evaluate(() => window.__coverage__);
-        writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+        const pages = await browser.pages();
+        for (let i = 0; i < pages.length; i++) {
+          await pages[i].close();
+        }
         return browser.__close();
       };
     }
