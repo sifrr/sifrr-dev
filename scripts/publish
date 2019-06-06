@@ -5,7 +5,9 @@ const exec = require('../src/exec');
 (async function() {
   const exists = await require('../src/checktag')();
   if (exists) return;
-  await require('../src/generatechangelog')();
+  await require('../src/generatechangelog')({
+    outputUnreleased: true
+  });
   await require('../src/gitaddcommitpush')({
     files: ['CHANGELOG.md'],
     commitMsg: 'chore: update changelog'

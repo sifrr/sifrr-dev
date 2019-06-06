@@ -1,3 +1,20 @@
+## [0.0.6](https://github.com/sifrr/sifrr-dev/compare/v0.0.5...v0.0.6) (2019-06-06 08:59:31 +0000)
+
+
+### Bug Fixes
+
+* output last version if ouputunreleased ([30ab08e](https://github.com/sifrr/sifrr-dev/commit/30ab08e))
+* sifrr server using same type ([9730c60](https://github.com/sifrr/sifrr-dev/commit/9730c60))
+
+
+### Features
+
+* add object select ([ba309cb](https://github.com/sifrr/sifrr-dev/commit/ba309cb))
+* add option to exec to use spawn manually ([cc5da3a](https://github.com/sifrr/sifrr-dev/commit/cc5da3a))
+* start server and browser only if folder exists ([a186892](https://github.com/sifrr/sifrr-dev/commit/a186892))
+
+
+
 ## [0.0.5](https://github.com/sifrr/sifrr-dev/compare/v0.0.4...v0.0.5) (2019-06-04 18:11:05 +0000)
 
 
