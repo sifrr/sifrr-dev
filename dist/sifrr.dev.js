@@ -530,43 +530,45 @@ var writecoverage = function writeCoverage(coverage, file) {
   }
 };
 
+function setPageGoto(p, nycReport) {
+  p.goto = async (url, options) => {
+    const jsCoverage = await p.evaluate(() => window.__coverage__);
+    writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+    const ret = p.mainFrame().goto(url, options);
+    return ret;
+  };
+}
 var loadbrowser = async function (root, coverage, nycReport = path.join(root, './.nyc_output')) {
-  if (commonjsGlobal.browser) await commonjsGlobal.browser.close();
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    ignoreHTTPSErrors: true,
-    headless: process.env.HEADLESS !== 'false',
-    devtools: false
-  });
+  let browser;
+  if (!commonjsGlobal.browser) {
+    browser = commonjsGlobal.browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      ignoreHTTPSErrors: true,
+      headless: process.env.HEADLESS !== 'false',
+      devtools: false
+    });
+    if (coverage) {
+      browser.__newPage = browser.newPage;
+      browser.newPage = async () => {
+        const p = await browser.__newPage();
+        setPageGoto(p, nycReport);
+      };
+      browser.__close = browser.close;
+      browser.close = async () => {
+        const jsCoverage = await page.evaluate(() => window.__coverage__);
+        writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+        return browser.__close();
+      };
+    }
+  } else {
+    browser = commonjsGlobal.browser;
+  }
   const page = await browser.newPage();
   await page.setViewport({
     width: 1280,
     height: 800
   });
-  function setPageGoto(page) {
-    page.goto = async (url, options) => {
-      const jsCoverage = await page.evaluate(() => window.__coverage__);
-      writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
-      const ret = page.mainFrame().goto(url, options);
-      return ret;
-    };
-  }
-  if (coverage) {
-    browser.__newPage = browser.newPage;
-    browser.newPage = async () => {
-      const p = await browser.__newPage();
-      setPageGoto(p);
-    };
-    browser.__close = browser.close;
-    browser.close = async () => {
-      const jsCoverage = await page.evaluate(() => window.__coverage__);
-      writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
-      return browser.__close();
-    };
-    setPageGoto(page);
-  }
-  commonjsGlobal.browser = browser;
-  commonjsGlobal.page = page;
+  if (!commonjsGlobal.page) commonjsGlobal.page = page;
   return {
     browser,
     page
@@ -642,7 +644,8 @@ var run = async function ({
   useJunitReporter = false,
   junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
   inspect = false,
-  reporters = ['html']
+  reporters = ['html'],
+  mochaOptions = {}
 } = {}) {
   if (inspect) inspector.open(undefined, undefined, true);
   const allFolders = deepmerge({
@@ -687,9 +690,6 @@ var run = async function ({
     return;
   }
   if (setGlobals) testglobals();
-  const mochaOptions = {
-    timeout: 10000
-  };
   if (useJunitReporter) {
     mochaOptions.reporter = 'mocha-junit-reporter';
     mochaOptions.reporterOptions = {
