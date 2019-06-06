@@ -732,18 +732,17 @@ var run = async function({
   if ((runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest)) {
     loadTests(allFolders.unitTest, mocha$1, testFileRegex, filters);
   }
-  mocha$1.run(async (failures) => {
-    servers.close();
-    if (failures) {
-      process.stdout.write(`---------- ${failures} FAILURES. ----------\n`);
-      process.exitCode = 1;
-    }
-    if (commonjsGlobal.browser) await browser.close();
-    if (coverage) {
-      writecoverage(commonjsGlobal.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
-      transformcoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
-    }
-    process.exit(process.exitCode);
+  return new Promise((res, rej) => {
+    mocha$1.run(async (failures) => {
+      servers.close();
+      if (failures) return rej(failures);
+      if (commonjsGlobal.browser) await browser.close();
+      if (coverage) {
+        writecoverage(commonjsGlobal.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
+        transformcoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
+      }
+      res(0);
+    });
   });
 };
 

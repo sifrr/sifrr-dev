@@ -106,23 +106,22 @@ module.exports = async function({
     loadTests(allFolders.unitTest, mocha, testFileRegex, filters);
   }
 
-  mocha.run(async (failures) => {
-    servers.close();
+  return new Promise((res, rej) => {
+    mocha.run(async (failures) => {
+      servers.close();
 
-    if (failures) {
-      process.stdout.write(`---------- ${failures} FAILURES. ----------\n`);
-      process.exitCode = 1;  // exit with non-zero status if there were failures
-    }
+      if (failures) return rej(failures);
 
-    // close browser
-    if (global.browser) await browser.close();
+      // close browser
+      if (global.browser) await browser.close();
 
-    // Get and write code coverage
-    if (coverage) {
-      writeCoverage(global.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
-      transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
-    }
+      // Get and write code coverage
+      if (coverage) {
+        writeCoverage(global.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
+        transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
+      }
 
-    process.exit(process.exitCode);
+      res(0);
+    });
   });
 };
