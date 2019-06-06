@@ -1,3 +1,16 @@
+## [0.0.7](https://github.com/sifrr/sifrr-dev/compare/v0.0.6...v0.0.7) (2019-06-06)
+
+
+
+## 0.0.7 (2019-06-06 09:34:23 +0000)
+
+
+### Bug Fixes
+
+* hook require before running any commands ([4135808](https://github.com/sifrr/sifrr-dev/commit/4135808))
+
+
+
 ## [0.0.6](https://github.com/sifrr/sifrr-dev/compare/v0.0.5...v0.0.6) (2019-06-06 08:59:31 +0000)
 
 
