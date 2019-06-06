@@ -371,15 +371,13 @@ var server = async function (root, {
     extraStaticFolders.forEach(folder => {
       staticInstrument(app, folder, coverage);
     });
-    listeners.push(() => {
-      app.listen(hostingPort, socket => {
-        if (socket) {
-          commonjsGlobal.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
-        } else {
-          commonjsGlobal.console.log('Test server failed to listen to port ' + hostingPort);
-        }
-      });
-    });
+    listeners.push(app.listen.bind(app, hostingPort, socket => {
+      if (socket) {
+        commonjsGlobal.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
+      } else {
+        commonjsGlobal.console.log('Test server failed to listen to port ' + hostingPort);
+      }
+    }));
   }
   let normalApp, secureApp;
   if (setGlobals && port) {
@@ -392,8 +390,8 @@ var server = async function (root, {
       app = commonjsRequire(path.join(root, 'server.js'));
     } else {
       app = new App();
-      startServer(app, port);
     }
+    if (typeof app.file === 'function') startServer(app, port);else listeners.push(app.listen.bind(app, port));
     normalApp = app;
   }
   if (setGlobals && securePort) {
@@ -409,8 +407,8 @@ var server = async function (root, {
         key_file_name: path.join(__dirname, 'keys/server.key'),
         cert_file_name: path.join(__dirname, 'keys/server.crt')
       });
-      startServer(app, securePort);
     }
+    if (typeof app.file === 'function') startServer(app, securePort);else listeners.push(app.listen.bind(app, securePort));
     secureApp = app;
   }
   return {

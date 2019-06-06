@@ -4,6 +4,7 @@ const fs = require('fs');
 const loadDir = require('../loaddir');
 const instrumenter = require('istanbul-lib-instrument').createInstrumenter();
 const { App, SSLApp } = require('@sifrr/server');
+
 function staticInstrument(app, folder, coverage = false) {
   loadDir({
     dir: folder,
@@ -42,15 +43,13 @@ module.exports = async function(root, {
       staticInstrument(app, folder, coverage);
     });
 
-    listeners.push(() => {
-      app.listen(hostingPort, (socket) => {
-        if (socket) {
-          global.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
-        } else {
-          global.console.log('Test server failed to listen to port ' + hostingPort);
-        }
-      });
-    });
+    listeners.push(app.listen.bind(app, hostingPort, (socket) => {
+      if (socket) {
+        global.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
+      } else {
+        global.console.log('Test server failed to listen to port ' + hostingPort);
+      }
+    }));
   }
 
   let normalApp, secureApp;
@@ -66,8 +65,9 @@ module.exports = async function(root, {
       app = require(path.join(root, 'server.js'));
     } else {
       app = new App();
-      startServer(app, port);
     }
+    if (typeof app.file === 'function') startServer(app, port);
+    else listeners.push(app.listen.bind(app, port));
     normalApp = app;
   }
 
@@ -85,8 +85,9 @@ module.exports = async function(root, {
         key_file_name: path.join(__dirname, 'keys/server.key'),
         cert_file_name: path.join(__dirname, 'keys/server.crt')
       });
-      startServer(app, securePort);
     }
+    if (typeof app.file === 'function') startServer(app, securePort);
+    else listeners.push(app.listen.bind(app, securePort));
     secureApp = app;
   }
 
