@@ -1,4 +1,4 @@
-/*! sifrr.dev v0.0.6 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
+/*! sifrr.dev v0.0.7 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
 import fs from 'fs';
 import path from 'path';
 import rollupPluginBabel from 'rollup-plugin-babel';
