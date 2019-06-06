@@ -39,7 +39,8 @@ module.exports = async function({
   useJunitReporter = false,
   junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
   inspect = false,
-  reporters = ['html']
+  reporters = ['html'],
+  mochaOptions = {}
 } = {}) {
   if (inspect) require('inspector').open(undefined, undefined, true);
 
@@ -87,9 +88,6 @@ module.exports = async function({
   }
   if (setGlobals) testGlobals();
 
-  const mochaOptions = {
-    timeout: 10000
-  };
   if (useJunitReporter) {
     mochaOptions.reporter = 'mocha-junit-reporter';
     mochaOptions.reporterOptions = {
