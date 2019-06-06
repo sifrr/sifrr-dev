@@ -1,7 +1,7 @@
 {
   "name": "@sifrr/dev",
   "description": "All you need to develop sifrr packages.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "license": "MIT",
   "repository": {
     "type": "git",
