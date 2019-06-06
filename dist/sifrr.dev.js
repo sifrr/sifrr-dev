@@ -653,6 +653,21 @@ var run = async function ({
     coverage: path.join(root, './.nyc_output'),
     source: path.join(root, './src')
   }, folders, true);
+  if (coverage && !commonjsGlobal.cov) {
+    const {
+      createInstrumenter
+    } = istanbulLibInstrument;
+    const instrumenter = createInstrumenter();
+    const {
+      hookRequire
+    } = istanbulLibHook;
+    hookRequire(filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex), (code, {
+      filename
+    }) => {
+      return instrumenter.instrumentSync(code, filename);
+    });
+    commonjsGlobal.cov = true;
+  }
   if (Array.isArray(preCommand)) {
     for (let i = 0; i < preCommand.length; i++) {
       await exec_1(preCommand[i]).catch(commonjsGlobal.console.error);
@@ -672,21 +687,6 @@ var run = async function ({
     return;
   }
   if (setGlobals) testglobals();
-  if (coverage && !commonjsGlobal.cov) {
-    const {
-      createInstrumenter
-    } = istanbulLibInstrument;
-    const instrumenter = createInstrumenter();
-    const {
-      hookRequire
-    } = istanbulLibHook;
-    hookRequire(filePath => {
-      return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex);
-    }, (code, {
-      filename
-    }) => instrumenter.instrumentSync(code, filename));
-    commonjsGlobal.cov = true;
-  }
   const mochaOptions = {
     timeout: 10000
   };

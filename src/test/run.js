@@ -52,6 +52,19 @@ module.exports = async function({
     source: path.join(root, './src')
   }, folders, true);
 
+  if (coverage && !global.cov) {
+    const { createInstrumenter } = require('istanbul-lib-instrument');
+    const instrumenter = createInstrumenter();
+    const { hookRequire } = require('istanbul-lib-hook');
+    hookRequire(
+      (filePath) => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex),
+      (code, { filename }) => {
+        return instrumenter.instrumentSync(code, filename);
+      }
+    );
+    global.cov = true;
+  }
+
   if (Array.isArray(preCommand)) {
     for (let i = 0; i < preCommand.length; i++) {
       await exec(preCommand[i]).catch(global.console.error);
@@ -73,16 +86,6 @@ module.exports = async function({
     return;
   }
   if (setGlobals) testGlobals();
-
-  if (coverage && !global.cov) {
-    const { createInstrumenter } = require('istanbul-lib-instrument');
-    const instrumenter = createInstrumenter();
-    const { hookRequire } = require('istanbul-lib-hook');
-    hookRequire((filePath) => {
-      return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex);
-    }, (code, { filename }) => instrumenter.instrumentSync(code, filename));
-    global.cov = true;
-  }
 
   const mochaOptions = {
     timeout: 10000
