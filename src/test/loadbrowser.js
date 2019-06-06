@@ -32,6 +32,7 @@ module.exports = async function(root, coverage, nycReport = path.join(root, './.
       browser.newPage = async () => {
         const p = await browser.__newPage();
         setPageGoto(p, nycReport);
+        return p;
       };
 
       browser.__close = browser.close;
