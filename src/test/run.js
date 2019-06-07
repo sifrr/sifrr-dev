@@ -53,6 +53,7 @@ module.exports = async function({
     source: path.join(root, './src')
   }, folders, true);
 
+  // unit test coverage
   if (coverage && !global.cov) {
     const { createInstrumenter } = require('istanbul-lib-instrument');
     const instrumenter = createInstrumenter();
@@ -110,10 +111,12 @@ module.exports = async function({
     mocha.run(async (failures) => {
       servers.close();
 
-      if (failures) return rej(failures);
-
       // close browser
-      if (global.browser) await browser.close();
+      if (global.browser) {
+        await browser.close();
+        delete global.browser;
+        delete global.page;
+      }
 
       // Get and write code coverage
       if (coverage) {
@@ -121,6 +124,7 @@ module.exports = async function({
         transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
 
+      if (failures) return rej(failures);
       res(0);
     });
   });

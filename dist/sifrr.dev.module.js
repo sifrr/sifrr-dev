@@ -735,12 +735,16 @@ var run = async function({
   return new Promise((res, rej) => {
     mocha$1.run(async (failures) => {
       servers.close();
-      if (failures) return rej(failures);
-      if (commonjsGlobal.browser) await browser.close();
+      if (commonjsGlobal.browser) {
+        await browser.close();
+        delete commonjsGlobal.browser;
+        delete commonjsGlobal.page;
+      }
       if (coverage) {
         writecoverage(commonjsGlobal.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
         transformcoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
+      if (failures) return rej(failures);
       res(0);
     });
   });
