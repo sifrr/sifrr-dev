@@ -1,8 +1,26 @@
-## [0.0.7](https://github.com/sifrr/sifrr-dev/compare/v0.0.6...v0.0.7) (2019-06-06)
+## [0.0.8](https://github.com/sifrr/sifrr-dev/compare/v0.0.7...v0.0.8) (2019-06-07)
 
 
 
-## 0.0.7 (2019-06-06 09:34:23 +0000)
+## 0.0.8 (2019-06-07 08:15:05 +0000)
+
+
+### Bug Fixes
+
+* return page on newPage when coverage is true ([952ae5b](https://github.com/sifrr/sifrr-dev/commit/952ae5b))
+
+
+### Features
+
+* add mochaOptions to runTests ([39568b0](https://github.com/sifrr/sifrr-dev/commit/39568b0))
+* close browser, coverage even if errors ([c6ced54](https://github.com/sifrr/sifrr-dev/commit/c6ced54))
+* don't force exit on test completion ([56a0b31](https://github.com/sifrr/sifrr-dev/commit/56a0b31))
+* don't replace globals if already present on loadBrowser ([dbb58c2](https://github.com/sifrr/sifrr-dev/commit/dbb58c2))
+* write coverage on page close, browser close ([5f8e1a4](https://github.com/sifrr/sifrr-dev/commit/5f8e1a4))
+
+
+
+## [0.0.7](https://github.com/sifrr/sifrr-dev/compare/v0.0.6...v0.0.7) (2019-06-06 09:34:35 +0000)
 
 
 ### Bug Fixes
