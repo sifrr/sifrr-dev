@@ -628,6 +628,32 @@ var transformcoverage = function (nycReport, srcFolder, srcFileRegex, reporters 
   }
 };
 
+const {
+  fork
+} = child_process;
+var parallel = async function (options) {
+  const promises = [];
+  let exitCode = 0;
+  for (let i = 0; i < options.length; i++) {
+    const opts = options[i];
+    opts.before = opts.before ? opts.before.toString() : 'false';
+    const childRun = fork(path.join(__dirname, './run'), process.argv);
+    promises.push(new Promise(res => {
+      childRun.on('exit', code => {
+        if (code && code > 0) commonjsGlobal.console.log('\x1b[36m%s\x1b[0m', `Config#${i}: tests from ${opts.root} exited with code ${code}`);
+        res();
+      });
+      childRun.on('error', e => {
+        commonjsGlobal.console.error(e);
+        exitCode = 1;
+      });
+      childRun.send(opts);
+    }));
+  }
+  await Promise.all(promises);
+  process.exit(exitCode);
+};
+
 function loadTests(dir, mocha, regex, filters) {
   loaddir({
     dir: dir,
@@ -638,26 +664,28 @@ function loadTests(dir, mocha, regex, filters) {
     }
   });
 }
-var run = async function ({
-  root = path.resolve('./'),
-  serverOnly = false,
-  runUnitTests = true,
-  runBrowserTests = true,
-  coverage = false,
-  setGlobals = true,
-  testFileRegex = /\.test\.js$/,
-  sourceFileRegex = /\.js$/,
-  filters = [''],
-  folders = {},
-  preCommand = [],
-  port = 8888,
-  securePort = false,
-  useJunitReporter = false,
-  junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
-  inspect = false,
-  reporters = ['html'],
-  mochaOptions = {}
-} = {}) {
+async function runTests(options = {}) {
+  if (Array.isArray(options)) return parallel(options);
+  const {
+    root = path.resolve('./'),
+    serverOnly = false,
+    runUnitTests = true,
+    runBrowserTests = true,
+    coverage = false,
+    setGlobals = true,
+    testFileRegex = /\.test\.js$/,
+    sourceFileRegex = /\.js$/,
+    filters = [''],
+    folders = {},
+    preCommand = [],
+    port = 8888,
+    securePort = false,
+    useJunitReporter = false,
+    junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
+    inspect = false,
+    reporters = ['html'],
+    mochaOptions = {}
+  } = options;
   if (inspect) inspector.open(undefined, undefined, true);
   const allFolders = deepmerge({
     unitTest: path.join(root, './test/unit'),
@@ -732,7 +760,15 @@ var run = async function ({
       res(0);
     });
   });
-};
+}
+process.on('message', async options => {
+  const beforeFxn = new Function('require', 'return ' + options.before)(commonjsRequire);
+  const before = typeof beforeFxn === 'function' ? beforeFxn() : false;
+  if (before instanceof Promise) await before;
+  await runTests(options);
+  process.exit();
+});
+var run = runTests;
 
 var objectselect = (obj, keys = []) => {
   const ret = {};

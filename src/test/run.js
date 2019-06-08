@@ -22,26 +22,30 @@ function loadTests(dir, mocha, regex, filters) {
   });
 }
 
-module.exports = async function({
-  root = path.resolve('./'),
-  serverOnly = false,
-  runUnitTests = true,
-  runBrowserTests = true,
-  coverage = false,
-  setGlobals = true,
-  testFileRegex = /\.test\.js$/,
-  sourceFileRegex = /\.js$/,
-  filters = [''],
-  folders = {},
-  preCommand = [],
-  port = 8888,
-  securePort = false,
-  useJunitReporter = false,
-  junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
-  inspect = false,
-  reporters = ['html'],
-  mochaOptions = {}
-} = {}) {
+async function runTests(options = {}) {
+  if (Array.isArray(options)) return require('./parallel')(options);
+
+  const {
+    root = path.resolve('./'),
+    serverOnly = false,
+    runUnitTests = true,
+    runBrowserTests = true,
+    coverage = false,
+    setGlobals = true,
+    testFileRegex = /\.test\.js$/,
+    sourceFileRegex = /\.js$/,
+    filters = [''],
+    folders = {},
+    preCommand = [],
+    port = 8888,
+    securePort = false,
+    useJunitReporter = false,
+    junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
+    inspect = false,
+    reporters = ['html'],
+    mochaOptions = {}
+  } = options;
+
   if (inspect) require('inspector').open(undefined, undefined, true);
 
   const allFolders = deepMerge({
@@ -128,4 +132,16 @@ module.exports = async function({
       res(0);
     });
   });
-};
+}
+
+
+process.on('message', async (options) => {
+  const beforeFxn = new Function('require', 'return ' + options.before)(require);
+  const before = typeof beforeFxn === 'function' ? beforeFxn() : false;
+  if (before instanceof Promise) await before;
+
+  await runTests(options);
+  process.exit();
+});
+
+module.exports = runTests;
