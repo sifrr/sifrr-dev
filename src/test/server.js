@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 const loadDir = require('../loaddir');
+const getPorts = require('./getports');
 const instrumenter = require('istanbul-lib-instrument').createInstrumenter();
 const { App, SSLApp } = require('@sifrr/server');
 
@@ -54,12 +55,9 @@ module.exports = async function(root, {
 
   let normalApp, secureApp;
 
-  if (setGlobals && port) {
-    global.PATH = `http://localhost:${port}`;
-    global.port = port;
-  }
-
+  const freePorts = await getPorts();
   if (port) {
+    if (port === 'random') port = freePorts[0];
     let app;
     if (fs.existsSync(path.join(root, 'server.js'))) {
       app = require(path.join(root, 'server.js'));
@@ -71,12 +69,13 @@ module.exports = async function(root, {
     normalApp = app;
   }
 
-  if (setGlobals && securePort) {
-    global.SPATH = `https://localhost:${securePort}`;
-    global.securePort = securePort;
+  if (setGlobals && port) {
+    global.PATH = `http://localhost:${port}`;
+    global.port = port;
   }
 
   if (securePort) {
+    if (securePort === 'random') securePort = freePorts[1];
     let app;
     if (fs.existsSync(path.join(root, 'secureserver.js'))) {
       app = require(path.join(root, 'secureserver.js'));
@@ -89,6 +88,11 @@ module.exports = async function(root, {
     if (typeof app.file === 'function') startServer(app, securePort);
     else listeners.push(app.listen.bind(app, securePort));
     secureApp = app;
+  }
+
+  if (setGlobals && securePort) {
+    global.SPATH = `https://localhost:${securePort}`;
+    global.securePort = securePort;
   }
 
   return {

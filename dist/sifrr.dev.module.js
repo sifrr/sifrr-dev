@@ -13,6 +13,7 @@ import autoprefixer from 'autoprefixer';
 import conventionalChangelog from 'conventional-changelog';
 import child_process from 'child_process';
 import mocha from 'mocha';
+import portfinder from 'portfinder';
 import istanbulLibInstrument from 'istanbul-lib-instrument';
 import server$1 from '@sifrr/server';
 import chai$1 from 'chai';
@@ -353,6 +354,16 @@ var gitaddcommitpush = async function({
   });
 };
 
+var getports = async function() {
+  const first = await portfinder.getPortPromise({
+    port: 10000
+  });
+  const second = await portfinder.getPortPromise({
+    port: first + 1,
+  });
+  return [first, second];
+};
+
 const instrumenter = istanbulLibInstrument.createInstrumenter();
 const { App, SSLApp } = server$1;
 function staticInstrument(app, folder, coverage = false) {
@@ -400,11 +411,9 @@ var server = async function(root, {
     }));
   }
   let normalApp, secureApp;
-  if (setGlobals && port) {
-    commonjsGlobal.PATH = `http://localhost:${port}`;
-    commonjsGlobal.port = port;
-  }
+  const freePorts = await getports();
   if (port) {
+    if (port === 'random') port = freePorts[0];
     let app;
     if (fs.existsSync(path.join(root, 'server.js'))) {
       app = commonjsRequire(path.join(root, 'server.js'));
@@ -415,11 +424,12 @@ var server = async function(root, {
     else listeners.push(app.listen.bind(app, port));
     normalApp = app;
   }
-  if (setGlobals && securePort) {
-    commonjsGlobal.SPATH = `https://localhost:${securePort}`;
-    commonjsGlobal.securePort = securePort;
+  if (setGlobals && port) {
+    commonjsGlobal.PATH = `http://localhost:${port}`;
+    commonjsGlobal.port = port;
   }
   if (securePort) {
+    if (securePort === 'random') securePort = freePorts[1];
     let app;
     if (fs.existsSync(path.join(root, 'secureserver.js'))) {
       app = commonjsRequire(path.join(root, 'secureserver.js'));
@@ -432,6 +442,10 @@ var server = async function(root, {
     if (typeof app.file === 'function') startServer(app, securePort);
     else listeners.push(app.listen.bind(app, securePort));
     secureApp = app;
+  }
+  if (setGlobals && securePort) {
+    commonjsGlobal.SPATH = `https://localhost:${securePort}`;
+    commonjsGlobal.securePort = securePort;
   }
   return {
     secureApp: secureApp,
@@ -695,7 +709,7 @@ async function runTests(options = {}) {
     filters = [''],
     folders = {},
     preCommand = [],
-    port = 8888,
+    port = 'random',
     securePort = false,
     useJunitReporter = false,
     junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
