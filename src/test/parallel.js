@@ -3,7 +3,7 @@ const { fork } = require('child_process');
 
 module.exports = async function(options) {
   const promises = [];
-  let exitCode = 0;
+  let failures = 0;
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
     opts.before = opts.before ? opts.before.toString() : 'false';
@@ -15,9 +15,12 @@ module.exports = async function(options) {
         res();
       });
 
+      childRun.on('message', (e) => {
+        failures += Number(e);
+      });
+
       childRun.on('error', (e) => {
         global.console.error(e);
-        exitCode = 1;
       });
 
       childRun.send(opts);
@@ -25,5 +28,10 @@ module.exports = async function(options) {
   }
 
   await Promise.all(promises);
-  process.exit(exitCode);
+
+  if (failures > 0) {
+    throw Error(`${failures} Failures`);
+  } else {
+    return true;
+  }
 };
