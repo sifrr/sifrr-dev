@@ -63,10 +63,8 @@ async function runTests(options = {}) {
     const instrumenter = createInstrumenter();
     const { hookRequire } = require('istanbul-lib-hook');
     hookRequire(
-      (filePath) => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex),
-      (code, { filename }) => {
-        return instrumenter.instrumentSync(code, filename);
-      }
+      (filePath) => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex),
+      (code, { filename }) => instrumenter.instrumentSync(code, filename)
     );
     global.cov = true;
   }
@@ -89,9 +87,9 @@ async function runTests(options = {}) {
 
   if (serverOnly) {
     servers.listen();
-    return;
+    return 'server';
   }
-  if (setGlobals) testGlobals();
+  if (setGlobals) testGlobals(options);
 
   if (useJunitReporter) {
     mochaOptions.reporter = 'mocha-junit-reporter';
@@ -140,8 +138,11 @@ process.on('message', async (options) => {
   const before = typeof beforeFxn === 'function' ? beforeFxn() : false;
   if (before instanceof Promise) await before;
 
-  await runTests(options);
-  process.exit();
+  await runTests(options).catch(f => {
+    process.send(`${f}`);
+  }).then(r => {
+    if (r !== 'server') process.exit();
+  });
 });
 
 module.exports = runTests;

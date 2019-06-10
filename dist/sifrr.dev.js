@@ -439,7 +439,57 @@ var server = async function (root, {
   };
 };
 
-var testglobals = () => {
+const {
+  fork
+} = child_process;
+var parallel = async function (options) {
+  const promises = [];
+  let failures = 0;
+  for (let i = 0; i < options.length; i++) {
+    const opts = options[i];
+    opts.before = opts.before ? opts.before.toString() : 'false';
+    const childRun = fork(path.join(__dirname, './run'), process.argv);
+    promises.push(new Promise(res => {
+      childRun.on('exit', code => {
+        if (code && code > 0) commonjsGlobal.console.log('\x1b[36m%s\x1b[0m', `Config#${i}: tests from ${opts.root} exited with code ${code}`);
+        res();
+      });
+      childRun.on('message', e => {
+        failures += Number(e);
+      });
+      childRun.on('error', e => {
+        commonjsGlobal.console.error(e);
+      });
+      childRun.send(opts);
+    }));
+  }
+  await Promise.all(promises);
+  if (failures > 0) {
+    throw Error(`${failures} Failures`);
+  } else {
+    return true;
+  }
+};
+
+function getCaller() {
+  try {
+    let err = new Error();
+    let callerfile;
+    let currentfile;
+    Error.prepareStackTrace = function (err, stack) {
+      return stack;
+    };
+    currentfile = err.stack.shift().getFileName();
+    while (err.stack.length) {
+      callerfile = err.stack.shift().getFileName();
+      if (currentfile !== callerfile) return callerfile;
+    }
+  } catch (err) {
+  }
+  return undefined;
+}
+var testglobals = mochaOptions => {
+  commonjsGlobal.__tps = [Promise.resolve(0)];
   commonjsGlobal.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
   commonjsGlobal.Mocha = mocha;
   commonjsGlobal.chai = chai$1;
@@ -451,8 +501,22 @@ var testglobals = () => {
     return new Promise(res => {
       setTimeout(function () {
         res();
-      }, time * 1000);
+      }, time);
     });
+  };
+  commonjsGlobal.pdescribe = function (name, fxn) {
+    const testFile = getCaller();
+    if (testFile && mochaOptions && !mochaOptions.parallel) {
+      const newOpts = deepmerge({}, mochaOptions);
+      deepmerge(newOpts, {
+        filters: [testFile],
+        parallel: true,
+        port: 'random'
+      });
+      commonjsGlobal.__tps.push(parallel([newOpts]));
+    } else {
+      describe(name, fxn);
+    }
   };
   chai.use(chaiAsPromised);
 };
@@ -642,32 +706,6 @@ var transformcoverage = function (nycReport, srcFolder, srcFileRegex, reporters 
   }
 };
 
-const {
-  fork
-} = child_process;
-var parallel = async function (options) {
-  const promises = [];
-  let exitCode = 0;
-  for (let i = 0; i < options.length; i++) {
-    const opts = options[i];
-    opts.before = opts.before ? opts.before.toString() : 'false';
-    const childRun = fork(path.join(__dirname, './run'), process.argv);
-    promises.push(new Promise(res => {
-      childRun.on('exit', code => {
-        if (code && code > 0) commonjsGlobal.console.log('\x1b[36m%s\x1b[0m', `Config#${i}: tests from ${opts.root} exited with code ${code}`);
-        res();
-      });
-      childRun.on('error', e => {
-        commonjsGlobal.console.error(e);
-        exitCode = 1;
-      });
-      childRun.send(opts);
-    }));
-  }
-  await Promise.all(promises);
-  process.exit(exitCode);
-};
-
 function loadTests(dir, mocha, regex, filters) {
   loaddir({
     dir: dir,
@@ -717,11 +755,9 @@ async function runTests(options = {}) {
     const {
       hookRequire
     } = istanbulLibHook;
-    hookRequire(filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex), (code, {
+    hookRequire(filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex), (code, {
       filename
-    }) => {
-      return instrumenter.instrumentSync(code, filename);
-    });
+    }) => instrumenter.instrumentSync(code, filename));
     commonjsGlobal.cov = true;
   }
   if (Array.isArray(preCommand)) {
@@ -740,9 +776,9 @@ async function runTests(options = {}) {
   });
   if (serverOnly) {
     servers.listen();
-    return;
+    return 'server';
   }
-  if (setGlobals) testglobals();
+  if (setGlobals) testglobals(options);
   if (useJunitReporter) {
     mochaOptions.reporter = 'mocha-junit-reporter';
     mochaOptions.reporterOptions = {
@@ -779,8 +815,11 @@ process.on('message', async options => {
   const beforeFxn = new Function('require', 'return ' + options.before)(commonjsRequire);
   const before = typeof beforeFxn === 'function' ? beforeFxn() : false;
   if (before instanceof Promise) await before;
-  await runTests(options);
-  process.exit();
+  await runTests(options).catch(f => {
+    process.send(`${f}`);
+  }).then(r => {
+    if (r !== 'server') process.exit();
+  });
 });
 var run = runTests;
 
