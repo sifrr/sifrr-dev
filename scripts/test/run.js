@@ -65,4 +65,8 @@ runTest({
     static: [path.resolve('./src/test')]
   },
   reporters
+}).then(() => {
+  global.console.log('All tests passed!');
+}).catch(e => {
+  global.console.log(`${e} tests failed!`);
 });
