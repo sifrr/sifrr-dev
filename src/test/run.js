@@ -23,8 +23,25 @@ function loadTests(dir, mocha, regex, filters) {
   });
 }
 
+async function runCommands(commands) {
+  if (!commands) return;
+  if (Array.isArray(commands)) {
+    for (let j = 0; j < commands.length; j++) {
+      await exec(commands[j]).catch(global.console.error);
+    }
+  } else {
+    await exec(commands).catch(global.console.error);
+  }
+}
+
 async function runTests(options = {}) {
-  if (Array.isArray(options)) return require('./parallel')(options);
+  if (Array.isArray(options)) {
+    for (let i = 0; i < options.length; i++) {
+      await runCommands(options.preCommand);
+      delete options.preCommand;
+    }
+    return require('./parallel')(options);
+  }
 
   const {
     root = path.resolve('./'),
@@ -37,7 +54,7 @@ async function runTests(options = {}) {
     sourceFileRegex = /\.js$/,
     filters = [''],
     folders = {},
-    preCommand = [],
+    preCommand = false,
     port = 'random',
     securePort = false,
     useJunitReporter = false,
@@ -72,13 +89,7 @@ async function runTests(options = {}) {
     global.cov = true;
   }
 
-  if (Array.isArray(preCommand)) {
-    for (let i = 0; i < preCommand.length; i++) {
-      await exec(preCommand[i]).catch(global.console.error);
-    }
-  } else {
-    await exec(preCommand).catch(global.console.error);
-  }
+  await runCommands(preCommand);
 
   const servers = await server(allFolders.public, {
     extraStaticFolders: allFolders.static,
