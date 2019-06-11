@@ -1,8 +1,27 @@
-## [0.0.8](https://github.com/sifrr/sifrr-dev/compare/v0.0.7...v0.0.8) (2019-06-07)
+## [0.0.9](https://github.com/sifrr/sifrr-dev/compare/v0.0.8...v0.0.9) (2019-06-11)
 
 
 
-## 0.0.8 (2019-06-07 08:15:05 +0000)
+## 0.0.9 (2019-06-12 01:59:40 +0900)
+
+
+### Bug Fixes
+
+* don't instrument test code ([1aefff2](https://github.com/sifrr/sifrr-dev/commit/1aefff2))
+
+
+### Features
+
+* add pdescribe that runs single test suite in parallel ([88327d9](https://github.com/sifrr/sifrr-dev/commit/88327d9))
+* run precommands before running parallel tests ([27320e6](https://github.com/sifrr/sifrr-dev/commit/27320e6))
+* select random port for testing if port == 'random' ([a09fdaa](https://github.com/sifrr/sifrr-dev/commit/a09fdaa))
+* test will run parallelly if array of options is given ([4a68637](https://github.com/sifrr/sifrr-dev/commit/4a68637))
+* unique converage filenames with hex sha1 suffix ([2c0a18a](https://github.com/sifrr/sifrr-dev/commit/2c0a18a))
+* use json-fn for serializing data ([9c7ebcd](https://github.com/sifrr/sifrr-dev/commit/9c7ebcd))
+
+
+
+## [0.0.8](https://github.com/sifrr/sifrr-dev/compare/v0.0.7...v0.0.8) (2019-06-07 08:15:24 +0000)
 
 
 ### Bug Fixes
