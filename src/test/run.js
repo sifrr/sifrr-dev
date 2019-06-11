@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Mocha = require('mocha');
+const JsonFn = require('json-fn');
 
 const exec = require('../exec');
 const server = require('./server');
@@ -63,7 +64,9 @@ async function runTests(options = {}) {
     const instrumenter = createInstrumenter();
     const { hookRequire } = require('istanbul-lib-hook');
     hookRequire(
-      (filePath) => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex),
+      (filePath) => {
+        return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex);
+      },
       (code, { filename }) => instrumenter.instrumentSync(code, filename)
     );
     global.cov = true;
@@ -134,12 +137,13 @@ async function runTests(options = {}) {
 
 
 process.on('message', async (options) => {
-  const beforeFxn = new Function('require', 'return ' + options.before)(require);
-  const before = typeof beforeFxn === 'function' ? beforeFxn() : false;
+  options = JsonFn.parse(options);
+  const before = typeof options.before === 'function' ? options.before() : false;
   if (before instanceof Promise) await before;
 
   await runTests(options).catch(f => {
-    process.send(`${f}`);
+    if (Number(f)) process.send(`${f}`);
+    else throw f;
   }).then(r => {
     if (r !== 'server') process.exit();
   });

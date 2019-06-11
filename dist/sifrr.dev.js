@@ -19,6 +19,7 @@ const autoprefixer = _interopDefault(require('autoprefixer'));
 const conventionalChangelog = _interopDefault(require('conventional-changelog'));
 const child_process = _interopDefault(require('child_process'));
 const mocha = _interopDefault(require('mocha'));
+const jsonFn = _interopDefault(require('json-fn'));
 const portfinder = _interopDefault(require('portfinder'));
 const istanbulLibInstrument = _interopDefault(require('istanbul-lib-instrument'));
 const server$1 = _interopDefault(require('@sifrr/server'));
@@ -460,14 +461,14 @@ var parallel = async function (options) {
       childRun.on('error', e => {
         commonjsGlobal.console.error(e);
       });
-      childRun.send(opts);
+      childRun.send(jsonFn.stringify(opts));
     }));
   }
   await Promise.all(promises);
   if (failures > 0) {
-    throw Error(`${failures} Failures`);
+    throw failures;
   } else {
-    return true;
+    return 0;
   }
 };
 
@@ -755,7 +756,9 @@ async function runTests(options = {}) {
     const {
       hookRequire
     } = istanbulLibHook;
-    hookRequire(filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex), (code, {
+    hookRequire(filePath => {
+      return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex);
+    }, (code, {
       filename
     }) => instrumenter.instrumentSync(code, filename));
     commonjsGlobal.cov = true;
@@ -812,11 +815,11 @@ async function runTests(options = {}) {
   });
 }
 process.on('message', async options => {
-  const beforeFxn = new Function('require', 'return ' + options.before)(commonjsRequire);
-  const before = typeof beforeFxn === 'function' ? beforeFxn() : false;
+  options = jsonFn.parse(options);
+  const before = typeof options.before === 'function' ? options.before() : false;
   if (before instanceof Promise) await before;
   await runTests(options).catch(f => {
-    process.send(`${f}`);
+    if (Number(f)) process.send(`${f}`);else throw f;
   }).then(r => {
     if (r !== 'server') process.exit();
   });

@@ -13,6 +13,7 @@ import autoprefixer from 'autoprefixer';
 import conventionalChangelog from 'conventional-changelog';
 import child_process from 'child_process';
 import mocha from 'mocha';
+import jsonFn from 'json-fn';
 import portfinder from 'portfinder';
 import istanbulLibInstrument from 'istanbul-lib-instrument';
 import server$1 from '@sifrr/server';
@@ -479,14 +480,14 @@ var parallel = async function(options) {
       childRun.on('error', (e) => {
         commonjsGlobal.console.error(e);
       });
-      childRun.send(opts);
+      childRun.send(jsonFn.stringify(opts));
     }));
   }
   await Promise.all(promises);
   if (failures > 0) {
-    throw Error(`${failures} Failures`);
+    throw failures;
   } else {
-    return true;
+    return 0;
   }
 };
 
@@ -763,7 +764,9 @@ async function runTests(options = {}) {
     const instrumenter = createInstrumenter();
     const { hookRequire } = istanbulLibHook;
     hookRequire(
-      (filePath) => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex),
+      (filePath) => {
+        return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex);
+      },
       (code, { filename }) => instrumenter.instrumentSync(code, filename)
     );
     commonjsGlobal.cov = true;
@@ -820,11 +823,12 @@ async function runTests(options = {}) {
   });
 }
 process.on('message', async (options) => {
-  const beforeFxn = new Function('require', 'return ' + options.before)(commonjsRequire);
-  const before = typeof beforeFxn === 'function' ? beforeFxn() : false;
+  options = jsonFn.parse(options);
+  const before = typeof options.before === 'function' ? options.before() : false;
   if (before instanceof Promise) await before;
   await runTests(options).catch(f => {
-    process.send(`${f}`);
+    if (Number(f)) process.send(`${f}`);
+    else throw f;
   }).then(r => {
     if (r !== 'server') process.exit();
   });

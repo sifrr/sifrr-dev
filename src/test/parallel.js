@@ -1,5 +1,6 @@
 const path = require('path');
 const { fork } = require('child_process');
+const JsonFn = require('json-fn');
 
 module.exports = async function(options) {
   const promises = [];
@@ -23,15 +24,15 @@ module.exports = async function(options) {
         global.console.error(e);
       });
 
-      childRun.send(opts);
+      childRun.send(JsonFn.stringify(opts));
     }));
   }
 
   await Promise.all(promises);
 
   if (failures > 0) {
-    throw Error(`${failures} Failures`);
+    throw failures;
   } else {
-    return true;
+    return 0;
   }
 };
