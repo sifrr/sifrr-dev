@@ -33,7 +33,8 @@ function moduleConfig(name, root, minify = false, isModule = false) {
         'autoprefixer',
         'cssnano',
         'portfinder',
-        'json-fn'
+        'json-fn',
+        'crypto'
       ];
       if (packages.indexOf(id) > -1) return true;
       if (id.indexOf('rollup-plugin') === 0) return true;
