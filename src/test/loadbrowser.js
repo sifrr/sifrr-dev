@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer');
 async function writePageCoverage(p, nycReport) {
   /* istanbul ignore next */
   const jsCoverage = await p.evaluate(() => window.__coverage__);
-  writeCoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+  writeCoverage(jsCoverage, nycReport, 'browser-coverage');
 }
 
 function setPageForCoverage(p, nycReport) {

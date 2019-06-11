@@ -37,8 +37,8 @@ async function runCommands(commands) {
 async function runTests(options = {}) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
-      await runCommands(options.preCommand);
-      delete options.preCommand;
+      await runCommands(options[i].preCommand);
+      delete options[i].preCommand;
     }
     return require('./parallel')(options);
   }
@@ -136,7 +136,7 @@ async function runTests(options = {}) {
 
       // Get and write code coverage
       if (coverage) {
-        writeCoverage(global.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
+        writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');
         transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
 
@@ -154,7 +154,7 @@ process.on('message', async (options) => {
 
   await runTests(options).catch(f => {
     if (Number(f)) process.send(`${f}`);
-    else throw f;
+    else process.stderr.write(f + '\n');
   }).then(r => {
     if (r !== 'server') process.exit();
   });

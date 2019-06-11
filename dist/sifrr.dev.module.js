@@ -20,6 +20,7 @@ import server$1 from '@sifrr/server';
 import chai$1 from 'chai';
 import sinon from 'sinon';
 import chaiAsPromised from 'chai-as-promised';
+import crypto from 'crypto';
 import puppeteer from 'puppeteer';
 import istanbulLibCoverage from 'istanbul-lib-coverage';
 import istanbulLibSourceMaps from 'istanbul-lib-source-maps';
@@ -610,7 +611,11 @@ mkdirP.sync = function sync (p, opts, made) {
     return made;
 };
 
-var writecoverage = function writeCoverage(coverage, file) {
+function hash() {
+  return crypto.randomBytes(10).toString('hex');
+}
+var writecoverage = function writeCoverage(coverage, folder, prefix = '') {
+  const file = path.join(folder, `${Date.now()}-${prefix}-${hash()}.json`);
   mkdirp.sync(path.dirname(file), (err) => {
     if (err) throw err;
   });
@@ -624,7 +629,7 @@ var writecoverage = function writeCoverage(coverage, file) {
 
 async function writePageCoverage(p, nycReport) {
   const jsCoverage = await p.evaluate(() => window.__coverage__);
-  writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+  writecoverage(jsCoverage, nycReport, 'browser-coverage');
 }
 function setPageForCoverage(p, nycReport) {
   p.goto = async (url, options) => {
@@ -741,8 +746,8 @@ async function runCommands(commands) {
 async function runTests(options = {}) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
-      await runCommands(options.preCommand);
-      delete options.preCommand;
+      await runCommands(options[i].preCommand);
+      delete options[i].preCommand;
     }
     return parallel(options);
   }
@@ -824,7 +829,7 @@ async function runTests(options = {}) {
         delete commonjsGlobal.page;
       }
       if (coverage) {
-        writecoverage(commonjsGlobal.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
+        writecoverage(commonjsGlobal.__coverage__, allFolders.coverage, 'unit-coverage');
         transformcoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
       if (failures) return rej(failures);
@@ -838,7 +843,7 @@ process.on('message', async (options) => {
   if (before instanceof Promise) await before;
   await runTests(options).catch(f => {
     if (Number(f)) process.send(`${f}`);
-    else throw f;
+    else process.stderr.write(f + '\n');
   }).then(r => {
     if (r !== 'server') process.exit();
   });

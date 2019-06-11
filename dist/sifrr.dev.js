@@ -26,6 +26,7 @@ const server$1 = _interopDefault(require('@sifrr/server'));
 const chai$1 = _interopDefault(require('chai'));
 const sinon = _interopDefault(require('sinon'));
 const chaiAsPromised = _interopDefault(require('chai-as-promised'));
+const crypto = _interopDefault(require('crypto'));
 const puppeteer = _interopDefault(require('puppeteer'));
 const istanbulLibCoverage = _interopDefault(require('istanbul-lib-coverage'));
 const istanbulLibSourceMaps = _interopDefault(require('istanbul-lib-source-maps'));
@@ -597,7 +598,11 @@ mkdirP.sync = function sync (p, opts, made) {
     return made;
 };
 
-var writecoverage = function writeCoverage(coverage, file) {
+function hash() {
+  return crypto.randomBytes(10).toString('hex');
+}
+var writecoverage = function writeCoverage(coverage, folder, prefix = '') {
+  const file = path.join(folder, `${Date.now()}-${prefix}-${hash()}.json`);
   mkdirp.sync(path.dirname(file), err => {
     if (err) throw err;
   });
@@ -611,7 +616,7 @@ var writecoverage = function writeCoverage(coverage, file) {
 
 async function writePageCoverage(p, nycReport) {
   const jsCoverage = await p.evaluate(() => window.__coverage__);
-  writecoverage(jsCoverage, path.join(nycReport, `./${Date.now()}-browser-coverage.json`));
+  writecoverage(jsCoverage, nycReport, 'browser-coverage');
 }
 function setPageForCoverage(p, nycReport) {
   p.goto = async (url, options) => {
@@ -730,8 +735,8 @@ async function runCommands(commands) {
 async function runTests(options = {}) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
-      await runCommands(options.preCommand);
-      delete options.preCommand;
+      await runCommands(options[i].preCommand);
+      delete options[i].preCommand;
     }
     return parallel(options);
   }
@@ -816,7 +821,7 @@ async function runTests(options = {}) {
         delete commonjsGlobal.page;
       }
       if (coverage) {
-        writecoverage(commonjsGlobal.__coverage__, path.join(allFolders.coverage, `./${Date.now()}-unit-coverage.json`));
+        writecoverage(commonjsGlobal.__coverage__, allFolders.coverage, 'unit-coverage');
         transformcoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
       if (failures) return rej(failures);
@@ -829,7 +834,7 @@ process.on('message', async options => {
   const before = typeof options.before === 'function' ? options.before() : false;
   if (before instanceof Promise) await before;
   await runTests(options).catch(f => {
-    if (Number(f)) process.send(`${f}`);else throw f;
+    if (Number(f)) process.send(`${f}`);else process.stderr.write(f + '\n');
   }).then(r => {
     if (r !== 'server') process.exit();
   });
