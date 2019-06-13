@@ -131,6 +131,11 @@ async function runTests(options = {}) {
         delete global.page;
       }
 
+      if (global.__pdescribes) {
+        const fs = await Promise.all(global.__pdescribes);
+        failures += fs.reduce((a, b) => a + b);
+      }
+
       // Get and write code coverage
       if (coverage) {
         writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');

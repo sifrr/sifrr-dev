@@ -402,7 +402,7 @@ function getCaller() {
   return undefined;
 }
 var testglobals = (mochaOptions) => {
-  commonjsGlobal.__tps = [Promise.resolve(0)];
+  commonjsGlobal.__pdescribes = [Promise.resolve(0)];
   commonjsGlobal.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
   commonjsGlobal.Mocha = mocha;
   commonjsGlobal.chai = chai$1;
@@ -422,7 +422,7 @@ var testglobals = (mochaOptions) => {
     if (testFile && mochaOptions && !mochaOptions.parallel) {
       const newOpts = deepmerge({}, mochaOptions);
       deepmerge(newOpts, { filters: [testFile], parallel: true, port: 'random' });
-      commonjsGlobal.__tps.push(parallel([newOpts]));
+      commonjsGlobal.__pdescribes.push(parallel([newOpts]).catch(e => e));
     } else {
       describe(name, fxn);
     }
@@ -821,6 +821,10 @@ async function runTests(options = {}) {
         await browser.close();
         delete commonjsGlobal.browser;
         delete commonjsGlobal.page;
+      }
+      if (commonjsGlobal.__pdescribes) {
+        const fs = await Promise.all(commonjsGlobal.__pdescribes);
+        failures += fs.reduce((a, b) => a + b);
       }
       if (coverage) {
         writecoverage(commonjsGlobal.__coverage__, allFolders.coverage, 'unit-coverage');
