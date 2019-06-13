@@ -422,7 +422,7 @@ var testglobals = (mochaOptions) => {
     if (testFile && mochaOptions && !mochaOptions.parallel) {
       const newOpts = deepmerge({}, mochaOptions);
       deepmerge(newOpts, { filters: [testFile], parallel: true, port: 'random' });
-      commonjsGlobal.__tps.push(parallel([newOpts], true));
+      commonjsGlobal.__tps.push(parallel([newOpts]));
     } else {
       describe(name, fxn);
     }

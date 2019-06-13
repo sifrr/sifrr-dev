@@ -408,7 +408,7 @@ var testglobals = mochaOptions => {
         parallel: true,
         port: 'random'
       });
-      commonjsGlobal.__tps.push(parallel([newOpts], true));
+      commonjsGlobal.__tps.push(parallel([newOpts]));
     } else {
       describe(name, fxn);
     }
