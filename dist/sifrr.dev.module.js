@@ -466,6 +466,7 @@ var loadbrowser = async function(coverage, nycReport, browserWSEndpoint) {
       browser = commonjsGlobal.browser = await puppeteer.connect({
         browserWSEndpoint: browserWSEndpoint
       });
+      commonjsGlobal.__parallelBrowser = true;
     } else {
       browser = commonjsGlobal.browser = await puppeteer.launch({
         args: [
@@ -477,7 +478,7 @@ var loadbrowser = async function(coverage, nycReport, browserWSEndpoint) {
         devtools: false
       });
     }
-    if (coverage && nycReport && typeof browserWSEndpoint !== 'string') {
+    if (coverage && nycReport && !commonjsGlobal.__parallelBrowser) {
       browser.__newPage = browser.newPage;
       browser.newPage = async () => {
         const p = await browser.__newPage();
@@ -530,6 +531,7 @@ var parallel = async function(options) {
     }));
   }
   await Promise.all(promises);
+  await commonjsGlobal.browser.close();
   if (failures > 0) {
     throw failures;
   } else {
@@ -842,7 +844,7 @@ async function runTests(options = {}, parallel$1 = false) {
   return new Promise((res, rej) => {
     mocha$1.run(async (failures) => {
       servers.close();
-      if (commonjsGlobal.browser) {
+      if (commonjsGlobal.browser && !commonjsGlobal.__parallelBrowser) {
         await browser.close();
         delete commonjsGlobal.browser;
         delete commonjsGlobal.page;

@@ -28,6 +28,7 @@ module.exports = async function(coverage, nycReport, browserWSEndpoint) {
       browser = global.browser = await puppeteer.connect({
         browserWSEndpoint: browserWSEndpoint
       });
+      global.__parallelBrowser = true;
     } else {
       browser = global.browser = await puppeteer.launch({
         // to make it work in circleci
@@ -41,7 +42,7 @@ module.exports = async function(coverage, nycReport, browserWSEndpoint) {
       });
     }
 
-    if (coverage && nycReport && typeof browserWSEndpoint !== 'string') {
+    if (coverage && nycReport && !global.__parallelBrowser) {
       browser.__newPage = browser.newPage;
       browser.newPage = async () => {
         const p = await browser.__newPage();

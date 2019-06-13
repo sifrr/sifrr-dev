@@ -141,7 +141,7 @@ async function runTests(options = {}, parallel = false) {
       servers.close();
 
       // close browser
-      if (global.browser) {
+      if (global.browser && !global.__parallelBrowser) {
         await browser.close();
         delete global.browser;
         delete global.page;

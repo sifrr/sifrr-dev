@@ -33,6 +33,7 @@ module.exports = async function(options) {
   }
 
   await Promise.all(promises);
+  await global.browser.close();
 
   if (failures > 0) {
     throw failures;
