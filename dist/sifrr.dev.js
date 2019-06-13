@@ -383,7 +383,7 @@ function getCaller() {
   return undefined;
 }
 var testglobals = mochaOptions => {
-  commonjsGlobal.__pdescribes = [Promise.resolve(0)];
+  commonjsGlobal.__pdescribes = [];
   commonjsGlobal.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
   commonjsGlobal.Mocha = mocha;
   commonjsGlobal.chai = chai$1;
@@ -753,9 +753,12 @@ async function runTests(options = {}) {
     junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
     inspect = false,
     reporters = ['html'],
-    mochaOptions = {}
+    mochaOptions = {},
+    before
   } = options;
   if (inspect) inspector.open(undefined, undefined, true);
+  const beforeRet = typeof before === 'function' ? before() : false;
+  if (beforeRet instanceof Promise) await beforeRet;
   const allFolders = deepmerge({
     unitTest: path.join(root, './test/unit'),
     browserTest: path.join(root, './test/browser'),
@@ -815,7 +818,7 @@ async function runTests(options = {}) {
       }
       if (commonjsGlobal.__pdescribes) {
         const fs = await Promise.all(commonjsGlobal.__pdescribes);
-        failures += fs.reduce((a, b) => a + b);
+        failures += fs.reduce((a, b) => a + b, 0);
       }
       if (coverage) {
         writecoverage(commonjsGlobal.__coverage__, allFolders.coverage, 'unit-coverage');
@@ -828,8 +831,6 @@ async function runTests(options = {}) {
 }
 process.on('message', async options => {
   options = jsonFn.parse(options);
-  const before = typeof options.before === 'function' ? options.before() : false;
-  if (before instanceof Promise) await before;
   await runTests(options).catch(f => {
     if (Number(f)) process.send(`${f}`);else process.stderr.write(f + '\n');
   }).then(r => {

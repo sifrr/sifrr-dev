@@ -60,10 +60,14 @@ async function runTests(options = {}) {
     junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
     inspect = false,
     reporters = ['html'],
-    mochaOptions = {}
+    mochaOptions = {},
+    before
   } = options;
 
   if (inspect) require('inspector').open(undefined, undefined, true);
+
+  const beforeRet = typeof before === 'function' ? before() : false;
+  if (beforeRet instanceof Promise) await beforeRet;
 
   const allFolders = deepMerge({
     unitTest: path.join(root, './test/unit'),
@@ -133,7 +137,7 @@ async function runTests(options = {}) {
 
       if (global.__pdescribes) {
         const fs = await Promise.all(global.__pdescribes);
-        failures += fs.reduce((a, b) => a + b);
+        failures += fs.reduce((a, b) => a + b, 0);
       }
 
       // Get and write code coverage
@@ -151,8 +155,6 @@ async function runTests(options = {}) {
 
 process.on('message', async (options) => {
   options = JsonFn.parse(options);
-  const before = typeof options.before === 'function' ? options.before() : false;
-  if (before instanceof Promise) await before;
 
   await runTests(options).catch(f => {
     if (Number(f)) process.send(`${f}`);

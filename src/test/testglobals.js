@@ -22,7 +22,7 @@ function getCaller() {
 }
 
 module.exports = (mochaOptions) => {
-  global.__pdescribes = [Promise.resolve(0)];
+  global.__pdescribes = [];
   global.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
   global.Mocha = require('mocha');
   global.chai = require('chai');
