@@ -4,7 +4,6 @@ const Mocha = require('mocha');
 const JsonFn = require('json-fn');
 
 const exec = require('../exec');
-const server = require('./server');
 const deepMerge = require('../deepmerge');
 const testGlobals = require('./testglobals');
 const loadDir = require('../loaddir');
@@ -76,22 +75,20 @@ async function runTests(options = {}) {
   }, folders, true);
 
   // unit test coverage
-  if (coverage && !global.cov) {
+  if (coverage && !global.__s_dev_cov) {
     const { createInstrumenter } = require('istanbul-lib-instrument');
     const instrumenter = createInstrumenter();
     const { hookRequire } = require('istanbul-lib-hook');
     hookRequire(
-      (filePath) => {
-        return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex);
-      },
+      (filePath) => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex),
       (code, { filename }) => instrumenter.instrumentSync(code, filename)
     );
-    global.cov = true;
+    global.__s_dev_cov = true;
   }
 
   await runCommands(preCommand);
 
-  const servers = await server(allFolders.public, {
+  const servers = await require('./server')(allFolders.public, {
     extraStaticFolders: allFolders.static,
     setGlobals,
     coverage,

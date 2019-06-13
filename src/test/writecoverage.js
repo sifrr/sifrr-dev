@@ -14,9 +14,5 @@ module.exports = function writeCoverage(coverage, folder, prefix = '') {
   });
 
   const contents = JSON.stringify(coverage || {});
-  if (contents !== '{}') {
-    fs.writeFileSync(file, contents, err => {
-      if(err) throw err;
-    });
-  }
+  if (contents !== '{}') fs.writeFileSync(file, contents);
 };

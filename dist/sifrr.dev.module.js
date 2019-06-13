@@ -14,9 +14,6 @@ import conventionalChangelog from 'conventional-changelog';
 import child_process from 'child_process';
 import mocha from 'mocha';
 import jsonFn from 'json-fn';
-import portfinder from 'portfinder';
-import istanbulLibInstrument from 'istanbul-lib-instrument';
-import server$1 from '@sifrr/server';
 import chai$1 from 'chai';
 import sinon from 'sinon';
 import chaiAsPromised from 'chai-as-promised';
@@ -24,9 +21,12 @@ import crypto from 'crypto';
 import puppeteer from 'puppeteer';
 import istanbulLibCoverage from 'istanbul-lib-coverage';
 import istanbulLibSourceMaps from 'istanbul-lib-source-maps';
+import istanbulLibInstrument from 'istanbul-lib-instrument';
 import istanbulApi from 'istanbul-api';
 import inspector from 'inspector';
 import istanbulLibHook from 'istanbul-lib-hook';
+import portfinder from 'portfinder';
+import server$1 from '@sifrr/server';
 
 var eslintrc = {
   env: {
@@ -356,112 +356,6 @@ var gitaddcommitpush = async function({
   });
 };
 
-var getports = async function() {
-  const first = await portfinder.getPortPromise({
-    port: 10000
-  });
-  const second = await portfinder.getPortPromise({
-    port: first + 1,
-  });
-  return [first, second];
-};
-
-const instrumenter = istanbulLibInstrument.createInstrumenter();
-const { App, SSLApp } = server$1;
-function staticInstrument(app, folder, coverage = false) {
-  loaddir({
-    dir: folder,
-    onFile: (filePath) => {
-      if (coverage && filePath.slice(-3) === '.js') {
-        app.get('/' + path.relative(folder, filePath), (res) => {
-          res.onAborted(commonjsGlobal.console.log);
-          const text = fs.readFileSync(filePath, 'utf-8');
-          if (fs.existsSync(filePath + '.map')) {
-            res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-            res.end(instrumenter.instrumentSync(text, filePath, JSON.parse(fs.readFileSync(filePath + '.map'))));
-          } else {
-            res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-            res.end(text);
-          }
-        });
-      } else {
-        app.file('/' + path.relative(folder, filePath), filePath);
-      }
-    }
-  });
-}
-var server = async function(root, {
-  extraStaticFolders = [],
-  setGlobals = true,
-  coverage = true,
-  port = false,
-  securePort = false
-} = {}) {
-  const listeners = [];
-  function startServer(app, hostingPort) {
-    staticInstrument(app, root, coverage);
-    staticInstrument(app, path.join(root, '../../dist'), coverage);
-    extraStaticFolders.forEach(folder => {
-      staticInstrument(app, folder, coverage);
-    });
-    listeners.push(app.listen.bind(app, hostingPort, (socket) => {
-      if (socket) {
-        commonjsGlobal.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
-      } else {
-        commonjsGlobal.console.log('Test server failed to listen to port ' + hostingPort);
-      }
-    }));
-  }
-  let normalApp, secureApp;
-  const freePorts = await getports();
-  if (port) {
-    if (port === 'random') port = freePorts[0];
-    let app;
-    if (fs.existsSync(path.join(root, 'server.js'))) {
-      app = commonjsRequire(path.join(root, 'server.js'));
-    } else {
-      app = new App();
-    }
-    if (typeof app.file === 'function') startServer(app, port);
-    else listeners.push(app.listen.bind(app, port));
-    normalApp = app;
-  }
-  if (setGlobals && port) {
-    commonjsGlobal.PATH = `http://localhost:${port}`;
-    commonjsGlobal.port = port;
-  }
-  if (securePort) {
-    if (securePort === 'random') securePort = freePorts[1];
-    let app;
-    if (fs.existsSync(path.join(root, 'secureserver.js'))) {
-      app = commonjsRequire(path.join(root, 'secureserver.js'));
-    } else {
-      app = new SSLApp({
-        key_file_name: path.join(__dirname, 'keys/server.key'),
-        cert_file_name: path.join(__dirname, 'keys/server.crt')
-      });
-    }
-    if (typeof app.file === 'function') startServer(app, securePort);
-    else listeners.push(app.listen.bind(app, securePort));
-    secureApp = app;
-  }
-  if (setGlobals && securePort) {
-    commonjsGlobal.SPATH = `https://localhost:${securePort}`;
-    commonjsGlobal.securePort = securePort;
-  }
-  return {
-    secureApp: secureApp,
-    app: normalApp,
-    listen: () => {
-      listeners.forEach(l => l());
-    },
-    close: () => {
-      secureApp && secureApp.close && secureApp.close();
-      normalApp && normalApp.close && normalApp.close();
-    }
-  };
-};
-
 const { fork } = child_process;
 var parallel = async function(options) {
   const promises = [];
@@ -528,7 +422,7 @@ var testglobals = (mochaOptions) => {
     if (testFile && mochaOptions && !mochaOptions.parallel) {
       const newOpts = deepmerge({}, mochaOptions);
       deepmerge(newOpts, { filters: [testFile], parallel: true, port: 'random' });
-      commonjsGlobal.__tps.push(parallel([newOpts]));
+      commonjsGlobal.__tps.push(parallel([newOpts], true));
     } else {
       describe(name, fxn);
     }
@@ -620,11 +514,7 @@ var writecoverage = function writeCoverage(coverage, folder, prefix = '') {
     if (err) throw err;
   });
   const contents = JSON.stringify(coverage || {});
-  if (contents !== '{}') {
-    fs.writeFileSync(file, contents, err => {
-      if(err) throw err;
-    });
-  }
+  if (contents !== '{}') fs.writeFileSync(file, contents);
 };
 
 async function writePageCoverage(p, nycReport) {
@@ -685,7 +575,7 @@ var loadbrowser = async function(root, coverage, nycReport = path.join(root, './
 
 const { createInstrumenter } = istanbulLibInstrument,
   reporter = istanbulApi.createReporter();
-const instrumenter$1 = createInstrumenter({
+const instrumenter = createInstrumenter({
   esModules: true
 });
 var transformcoverage = function(nycReport, srcFolder, srcFileRegex, reporters = ['html']) {
@@ -710,9 +600,9 @@ var transformcoverage = function(nycReport, srcFolder, srcFileRegex, reporters =
       onFile: (file) => {
         if (file.slice(-3) === '.js' && file.match(srcFileRegex) && !map.data[file]) {
           const content = fs.readFileSync(file).toString();
-          instrumenter$1.instrumentSync(content, file);
+          instrumenter.instrumentSync(content, file);
           const emptyCov = {};
-          emptyCov[file] = instrumenter$1.fileCoverage;
+          emptyCov[file] = instrumenter.fileCoverage;
           map.merge(emptyCov);
         }
       }
@@ -721,6 +611,112 @@ var transformcoverage = function(nycReport, srcFolder, srcFileRegex, reporters =
     reporters.forEach(r => reporter.add(r));
     reporter.write(map);
   }
+};
+
+var getports = async function() {
+  const first = await portfinder.getPortPromise({
+    port: 10000
+  });
+  const second = await portfinder.getPortPromise({
+    port: first + 1,
+  });
+  return [first, second];
+};
+
+const instrumenter$1 = istanbulLibInstrument.createInstrumenter();
+const { App, SSLApp } = server$1;
+function staticInstrument(app, folder, coverage = false) {
+  loaddir({
+    dir: folder,
+    onFile: (filePath) => {
+      if (coverage && filePath.slice(-3) === '.js') {
+        app.get('/' + path.relative(folder, filePath), (res) => {
+          res.onAborted(commonjsGlobal.console.log);
+          const text = fs.readFileSync(filePath, 'utf-8');
+          if (fs.existsSync(filePath + '.map')) {
+            res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
+            res.end(instrumenter$1.instrumentSync(text, filePath, JSON.parse(fs.readFileSync(filePath + '.map'))));
+          } else {
+            res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
+            res.end(text);
+          }
+        });
+      } else {
+        app.file('/' + path.relative(folder, filePath), filePath);
+      }
+    }
+  });
+}
+var server = async function(root, {
+  extraStaticFolders = [],
+  setGlobals = true,
+  coverage = true,
+  port = false,
+  securePort = false
+} = {}) {
+  const listeners = [];
+  function startServer(app, hostingPort) {
+    staticInstrument(app, root, coverage);
+    staticInstrument(app, path.join(root, '../../dist'), coverage);
+    extraStaticFolders.forEach(folder => {
+      staticInstrument(app, folder, coverage);
+    });
+    listeners.push(app.listen.bind(app, hostingPort, (socket) => {
+      if (socket) {
+        commonjsGlobal.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
+      } else {
+        commonjsGlobal.console.log('Test server failed to listen to port ' + hostingPort);
+      }
+    }));
+  }
+  let normalApp, secureApp;
+  const freePorts = await getports();
+  if (port) {
+    if (port === 'random') port = freePorts[0];
+    let app;
+    if (fs.existsSync(path.join(root, 'server.js'))) {
+      app = commonjsRequire(path.join(root, 'server.js'));
+    } else {
+      app = new App();
+    }
+    if (typeof app.file === 'function') startServer(app, port);
+    else listeners.push(app.listen.bind(app, port));
+    normalApp = app;
+  }
+  if (setGlobals && port) {
+    commonjsGlobal.PATH = `http://localhost:${port}`;
+    commonjsGlobal.port = port;
+  }
+  if (securePort) {
+    if (securePort === 'random') securePort = freePorts[1];
+    let app;
+    if (fs.existsSync(path.join(root, 'secureserver.js'))) {
+      app = commonjsRequire(path.join(root, 'secureserver.js'));
+    } else {
+      app = new SSLApp({
+        key_file_name: path.join(__dirname, 'keys/server.key'),
+        cert_file_name: path.join(__dirname, 'keys/server.crt')
+      });
+    }
+    if (typeof app.file === 'function') startServer(app, securePort);
+    else listeners.push(app.listen.bind(app, securePort));
+    secureApp = app;
+  }
+  if (setGlobals && securePort) {
+    commonjsGlobal.SPATH = `https://localhost:${securePort}`;
+    commonjsGlobal.securePort = securePort;
+  }
+  return {
+    secureApp: secureApp,
+    app: normalApp,
+    listen: () => {
+      listeners.forEach(l => l());
+    },
+    close: () => {
+      secureApp && secureApp.close && secureApp.close();
+      normalApp && normalApp.close && normalApp.close();
+    }
+  };
 };
 
 function loadTests(dir, mocha, regex, filters) {
@@ -780,17 +776,15 @@ async function runTests(options = {}) {
     coverage: path.join(root, './.nyc_output'),
     source: path.join(root, './src')
   }, folders, true);
-  if (coverage && !commonjsGlobal.cov) {
+  if (coverage && !commonjsGlobal.__s_dev_cov) {
     const { createInstrumenter } = istanbulLibInstrument;
     const instrumenter = createInstrumenter();
     const { hookRequire } = istanbulLibHook;
     hookRequire(
-      (filePath) => {
-        return filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex) && !filePath.match(testFileRegex);
-      },
+      (filePath) => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex),
       (code, { filename }) => instrumenter.instrumentSync(code, filename)
     );
-    commonjsGlobal.cov = true;
+    commonjsGlobal.__s_dev_cov = true;
   }
   await runCommands(preCommand);
   const servers = await server(allFolders.public, {
