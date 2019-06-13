@@ -22,9 +22,9 @@ const mocha = _interopDefault(require('mocha'));
 const jsonFn = _interopDefault(require('json-fn'));
 const chai$1 = _interopDefault(require('chai'));
 const sinon = _interopDefault(require('sinon'));
-const chaiAsPromised = _interopDefault(require('chai-as-promised'));
 const crypto = _interopDefault(require('crypto'));
 const puppeteer = _interopDefault(require('puppeteer'));
+const chaiAsPromised = _interopDefault(require('chai-as-promised'));
 const istanbulLibCoverage = _interopDefault(require('istanbul-lib-coverage'));
 const istanbulLibSourceMaps = _interopDefault(require('istanbul-lib-source-maps'));
 const istanbulLibInstrument = _interopDefault(require('istanbul-lib-instrument'));
@@ -334,87 +334,6 @@ var gitaddcommitpush = async function ({
   });
 };
 
-const {
-  fork
-} = child_process;
-var parallel = async function (options) {
-  const promises = [];
-  let failures = 0;
-  for (let i = 0; i < options.length; i++) {
-    const opts = options[i];
-    const childRun = fork(path.join(__dirname, './run'), process.argv);
-    promises.push(new Promise(res => {
-      childRun.on('exit', code => {
-        if (code && code > 0) commonjsGlobal.console.log('\x1b[36m%s\x1b[0m', `Config#${i}: tests from ${opts.root} exited with code ${code}`);
-        res();
-      });
-      childRun.on('message', e => {
-        failures += Number(e);
-      });
-      childRun.on('error', e => {
-        commonjsGlobal.console.error(e);
-      });
-      childRun.send(jsonFn.stringify(opts));
-    }));
-  }
-  await Promise.all(promises);
-  if (failures > 0) {
-    throw failures;
-  } else {
-    return 0;
-  }
-};
-
-function getCaller() {
-  try {
-    let err = new Error();
-    let callerfile;
-    let currentfile;
-    Error.prepareStackTrace = function (err, stack) {
-      return stack;
-    };
-    currentfile = err.stack.shift().getFileName();
-    while (err.stack.length) {
-      callerfile = err.stack.shift().getFileName();
-      if (currentfile !== callerfile) return callerfile;
-    }
-  } catch (err) {
-  }
-  return undefined;
-}
-var testglobals = mochaOptions => {
-  commonjsGlobal.__pdescribes = [];
-  commonjsGlobal.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
-  commonjsGlobal.Mocha = mocha;
-  commonjsGlobal.chai = chai$1;
-  commonjsGlobal.sinon = commonjsGlobal.sinon || sinon.createSandbox();
-  commonjsGlobal.assert = chai.assert;
-  commonjsGlobal.expect = chai.expect;
-  commonjsGlobal.should = chai.should();
-  commonjsGlobal.delay = time => {
-    return new Promise(res => {
-      setTimeout(function () {
-        res();
-      }, time);
-    });
-  };
-  commonjsGlobal.pdescribe = function (name, fxn) {
-    const testFile = getCaller();
-    if (testFile && mochaOptions && !mochaOptions.parallel) {
-      const newOpts = deepmerge({}, mochaOptions);
-      deepmerge(newOpts, {
-        filters: [testFile],
-        parallel: true,
-        port: 'random'
-      });
-      commonjsGlobal.__pdescribes.push(parallel([newOpts]).catch(e => e));
-    } else {
-      describe(name, fxn);
-    }
-  };
-  chai.use(chaiAsPromised);
-};
-
 var _0777 = parseInt('0777', 8);
 var mkdirp = mkdirP.mkdirp = mkdirP.mkdirP = mkdirP;
 function mkdirP (p, opts, f, made) {
@@ -518,16 +437,22 @@ function setPageForCoverage(p, nycReport) {
     return p._close();
   };
 }
-var loadbrowser = async function (root, coverage, nycReport = path.join(root, './.nyc_output')) {
+var loadbrowser = async function (coverage, nycReport, browserWSEndpoint) {
   let browser;
   if (!commonjsGlobal.browser) {
-    browser = commonjsGlobal.browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      ignoreHTTPSErrors: true,
-      headless: process.env.HEADLESS !== 'false',
-      devtools: false
-    });
-    if (coverage) {
+    if (typeof browserWSEndpoint === 'string') {
+      browser = commonjsGlobal.browser = await puppeteer.connect({
+        browserWSEndpoint: browserWSEndpoint
+      });
+    } else {
+      browser = commonjsGlobal.browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        ignoreHTTPSErrors: true,
+        headless: process.env.HEADLESS !== 'false',
+        devtools: false
+      });
+    }
+    if (coverage && nycReport && typeof browserWSEndpoint !== 'string') {
       browser.__newPage = browser.newPage;
       browser.newPage = async () => {
         const p = await browser.__newPage();
@@ -556,6 +481,92 @@ var loadbrowser = async function (root, coverage, nycReport = path.join(root, '.
     browser,
     page
   };
+};
+
+const {
+  fork
+} = child_process;
+var parallel = async function (options) {
+  const promises = [];
+  await loadbrowser(true, path.resolve('./.nyc_output'));
+  const browserWSEndpoint = commonjsGlobal.browser.wsEndpoint();
+  let failures = 0;
+  for (let i = 0; i < options.length; i++) {
+    const opts = options[i];
+    opts.browserWSEndpoint = browserWSEndpoint;
+    const childRun = fork(path.join(__dirname, './run'), process.argv);
+    promises.push(new Promise(res => {
+      childRun.on('exit', code => {
+        if (code && code > 0) commonjsGlobal.console.log('\x1b[36m%s\x1b[0m', `Config#${i}: tests from ${opts.root} exited with code ${code}`);
+        res();
+      });
+      childRun.on('message', e => {
+        failures += Number(e);
+      });
+      childRun.on('error', e => {
+        commonjsGlobal.console.error(e);
+      });
+      childRun.send(jsonFn.stringify(opts));
+    }));
+  }
+  await Promise.all(promises);
+  if (failures > 0) {
+    throw failures;
+  } else {
+    return 0;
+  }
+};
+
+function getCaller() {
+  try {
+    let err = new Error();
+    let callerfile;
+    let currentfile;
+    Error.prepareStackTrace = function (err, stack) {
+      return stack;
+    };
+    currentfile = err.stack.shift().getFileName();
+    while (err.stack.length) {
+      callerfile = err.stack.shift().getFileName();
+      if (currentfile !== callerfile) return callerfile;
+    }
+  } catch (err) {
+  }
+  return undefined;
+}
+var testglobals = (mochaOptions, parallel$1) => {
+  commonjsGlobal.__pdescribes = [];
+  commonjsGlobal.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
+  commonjsGlobal.Mocha = mocha;
+  commonjsGlobal.chai = chai$1;
+  commonjsGlobal.sinon = commonjsGlobal.sinon || sinon.createSandbox();
+  commonjsGlobal.assert = chai.assert;
+  commonjsGlobal.expect = chai.expect;
+  commonjsGlobal.should = chai.should();
+  commonjsGlobal.delay = time => {
+    return new Promise(res => {
+      setTimeout(function () {
+        res();
+      }, time);
+    });
+  };
+  commonjsGlobal.pdescribe = function (name, fxn) {
+    const testFile = getCaller();
+    if (testFile && mochaOptions && !mochaOptions.parallel && parallel$1) {
+      const newOpts = deepmerge({}, mochaOptions, {
+        browserWSEndpoint: commonjsGlobal.browser ? commonjsGlobal.browser.wsEndpoint() : undefined
+      });
+      deepmerge(newOpts, {
+        filters: [testFile],
+        parallel: true,
+        port: 'random'
+      });
+      commonjsGlobal.__pdescribes.push(parallel([newOpts]).catch(e => e));
+    } else {
+      describe(name, fxn);
+    }
+  };
+  chai.use(chaiAsPromised);
 };
 
 const {
@@ -727,13 +738,21 @@ async function runCommands(commands) {
     await exec_1(commands).catch(commonjsGlobal.console.error);
   }
 }
-async function runTests(options = {}) {
+async function runTests(options = {}, parallel$1 = false) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
       await runCommands(options[i].preCommand);
       delete options[i].preCommand;
     }
-    return parallel(options);
+    if (parallel$1) return parallel(options);else {
+      let failures = 0;
+      for (let i = 0; i < options.length; i++) {
+        failures += await runTests(options[i]).catch(f => {
+          if (Number(f)) return Number(f);else process.stderr.write(f + '\n');
+        });
+      }
+      if (failures > 0) throw failures;else return 0;
+    }
   }
   const {
     root = path.resolve('./'),
@@ -754,7 +773,8 @@ async function runTests(options = {}) {
     inspect = false,
     reporters = ['html'],
     mochaOptions = {},
-    before
+    before,
+    browserWSEndpoint
   } = options;
   if (inspect) inspector.open(undefined, undefined, true);
   const beforeRet = typeof before === 'function' ? before() : false;
@@ -792,7 +812,7 @@ async function runTests(options = {}) {
     servers.listen();
     return 'server';
   }
-  if (setGlobals) testglobals(options);
+  if (setGlobals) testglobals(options, parallel$1);
   if (useJunitReporter) {
     mochaOptions.reporter = 'mocha-junit-reporter';
     mochaOptions.reporterOptions = {
@@ -802,7 +822,7 @@ async function runTests(options = {}) {
   const mocha$1 = new mocha(mochaOptions);
   if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
     servers.listen();
-    await loadbrowser(root, coverage, allFolders.coverage);
+    await loadbrowser(coverage, allFolders.coverage, browserWSEndpoint);
     loadTests(allFolders.browserTest, mocha$1, testFileRegex, filters);
   }
   if ((runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest)) {
@@ -824,14 +844,13 @@ async function runTests(options = {}) {
         writecoverage(commonjsGlobal.__coverage__, allFolders.coverage, 'unit-coverage');
         transformcoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
-      if (failures) return rej(failures);
-      res(0);
+      if (failures) rej(failures);else res(0);
     });
   });
 }
 process.on('message', async options => {
   options = jsonFn.parse(options);
-  await runTests(options).catch(f => {
+  await runTests(options, true).catch(f => {
     if (Number(f)) process.send(`${f}`);else process.stderr.write(f + '\n');
   }).then(r => {
     if (r !== 'server') process.exit();

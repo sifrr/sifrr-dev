@@ -33,13 +33,24 @@ async function runCommands(commands) {
   }
 }
 
-async function runTests(options = {}) {
+async function runTests(options = {}, parallel = false) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
       await runCommands(options[i].preCommand);
       delete options[i].preCommand;
     }
-    return require('./parallel')(options);
+    if (parallel) return require('./parallel')(options);
+    else {
+      let failures = 0;
+      for (let i = 0; i < options.length; i++) {
+        failures += await runTests(options[i]).catch(f => {
+          if (Number(f)) return Number(f);
+          else process.stderr.write(f + '\n');
+        });
+      }
+      if (failures > 0) throw failures;
+      else return 0;
+    }
   }
 
   const {
@@ -61,7 +72,8 @@ async function runTests(options = {}) {
     inspect = false,
     reporters = ['html'],
     mochaOptions = {},
-    before
+    before,
+    browserWSEndpoint
   } = options;
 
   if (inspect) require('inspector').open(undefined, undefined, true);
@@ -104,7 +116,7 @@ async function runTests(options = {}) {
     servers.listen();
     return 'server';
   }
-  if (setGlobals) testGlobals(options);
+  if (setGlobals) testGlobals(options, parallel);
 
   if (useJunitReporter) {
     mochaOptions.reporter = 'mocha-junit-reporter';
@@ -116,7 +128,7 @@ async function runTests(options = {}) {
 
   if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
     servers.listen();
-    await loadBrowser(root, coverage, allFolders.coverage);
+    await loadBrowser(coverage, allFolders.coverage, browserWSEndpoint);
     loadTests(allFolders.browserTest, mocha, testFileRegex, filters);
   }
 
@@ -146,8 +158,8 @@ async function runTests(options = {}) {
         transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
 
-      if (failures) return rej(failures);
-      res(0);
+      if (failures) rej(failures);
+      else res(0);
     });
   });
 }
@@ -156,7 +168,7 @@ async function runTests(options = {}) {
 process.on('message', async (options) => {
   options = JsonFn.parse(options);
 
-  await runTests(options).catch(f => {
+  await runTests(options, true).catch(f => {
     if (Number(f)) process.send(`${f}`);
     else process.stderr.write(f + '\n');
   }).then(r => {

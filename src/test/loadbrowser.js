@@ -1,5 +1,3 @@
-const path = require('path');
-
 const writeCoverage = require('./writecoverage');
 const puppeteer = require('puppeteer');
 
@@ -23,21 +21,27 @@ function setPageForCoverage(p, nycReport) {
   };
 }
 
-module.exports = async function(root, coverage, nycReport = path.join(root, './.nyc_output')) {
+module.exports = async function(coverage, nycReport, browserWSEndpoint) {
   let browser;
   if (!global.browser) {
-    browser = global.browser = await puppeteer.launch({
-      // to make it work in circleci
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox'
-      ],
-      ignoreHTTPSErrors: true,
-      headless: process.env.HEADLESS !== 'false',
-      devtools: false
-    });
+    if (typeof browserWSEndpoint === 'string') {
+      browser = global.browser = await puppeteer.connect({
+        browserWSEndpoint: browserWSEndpoint
+      });
+    } else {
+      browser = global.browser = await puppeteer.launch({
+        // to make it work in circleci
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox'
+        ],
+        ignoreHTTPSErrors: true,
+        headless: process.env.HEADLESS !== 'false',
+        devtools: false
+      });
+    }
 
-    if (coverage) {
+    if (coverage && nycReport && typeof browserWSEndpoint !== 'string') {
       browser.__newPage = browser.newPage;
       browser.newPage = async () => {
         const p = await browser.__newPage();

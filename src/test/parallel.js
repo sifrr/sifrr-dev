@@ -1,12 +1,17 @@
 const path = require('path');
 const { fork } = require('child_process');
 const JsonFn = require('json-fn');
+const loadBrowser = require('./loadbrowser');
 
 module.exports = async function(options) {
   const promises = [];
+  await loadBrowser(true, path.resolve('./.nyc_output'));
+  const browserWSEndpoint = global.browser.wsEndpoint();
+
   let failures = 0;
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
+    opts.browserWSEndpoint = browserWSEndpoint;
 
     const childRun = fork(path.join(__dirname, './run'), process.argv);
     promises.push(new Promise(res => {

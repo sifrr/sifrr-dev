@@ -21,7 +21,7 @@ function getCaller() {
   return undefined;
 }
 
-module.exports = (mochaOptions) => {
+module.exports = (mochaOptions, parallel) => {
   global.__pdescribes = [];
   global.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
   global.Mocha = require('mocha');
@@ -39,8 +39,10 @@ module.exports = (mochaOptions) => {
   };
   global.pdescribe = function(name, fxn) {
     const testFile = getCaller();
-    if (testFile && mochaOptions && !mochaOptions.parallel) {
-      const newOpts = deepMerge({}, mochaOptions);
+    if (testFile && mochaOptions && !mochaOptions.parallel && parallel) {
+      const newOpts = deepMerge({}, mochaOptions, {
+        browserWSEndpoint: global.browser ? global.browser.wsEndpoint() : undefined
+      });
       deepMerge(newOpts, { filters: [testFile], parallel: true, port: 'random' });
       global.__pdescribes.push(require('./parallel')([newOpts]).catch(e => e));
     } else {
