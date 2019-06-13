@@ -7,7 +7,6 @@ module.exports = async function(options) {
   let failures = 0;
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
-    opts.before = opts.before ? opts.before.toString() : 'false';
 
     const childRun = fork(path.join(__dirname, './run'), process.argv);
     promises.push(new Promise(res => {
