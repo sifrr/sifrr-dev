@@ -1,8 +1,17 @@
-## [0.0.9](https://github.com/sifrr/sifrr-dev/compare/v0.0.8...v0.0.9) (2019-06-11)
+## [0.0.10](https://github.com/sifrr/sifrr-dev/compare/v0.0.9...v0.0.10) (2019-06-13)
 
 
 
-## 0.0.9 (2019-06-12 01:59:40 +0900)
+## 0.0.10 (2019-06-13 06:07:52 +0000)
+
+
+### Features
+
+* count pdescribe's failures in main failures ([e428592](https://github.com/sifrr/sifrr-dev/commit/e428592))
+
+
+
+## [0.0.9](https://github.com/sifrr/sifrr-dev/compare/v0.0.8...v0.0.9) (2019-06-11 17:00:25 +0000)
 
 
 ### Bug Fixes
