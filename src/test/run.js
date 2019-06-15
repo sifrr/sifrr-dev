@@ -46,6 +46,7 @@ async function runTests(options = {}, parallel = false) {
         failures += await runTests(options[i]).catch(f => {
           if (Number(f)) return Number(f);
           else process.stderr.write(f + '\n');
+          return 0;
         });
       }
       if (failures > 0) throw failures;

@@ -5,7 +5,7 @@ const loadBrowser = require('./loadbrowser');
 
 module.exports = async function(options) {
   const promises = [];
-  await loadBrowser(true, path.resolve('./.nyc_output'));
+  await loadBrowser();
   const browserWSEndpoint = global.browser.wsEndpoint();
 
   let failures = 0;

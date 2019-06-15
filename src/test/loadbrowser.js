@@ -10,8 +10,7 @@ async function writePageCoverage(p, nycReport) {
 function setPageForCoverage(p, nycReport) {
   p.goto = async (url, options) => {
     await writePageCoverage(p, nycReport);
-    const ret = p.mainFrame().goto(url, options);
-    return ret;
+    return p.mainFrame().goto(url, options);
   };
 
   p._close = p.close;
@@ -26,12 +25,13 @@ module.exports = async function(coverage, nycReport, browserWSEndpoint) {
   if (!global.browser) {
     if (typeof browserWSEndpoint === 'string') {
       browser = global.browser = await puppeteer.connect({
-        browserWSEndpoint: browserWSEndpoint
+        browserWSEndpoint,
+        ignoreHTTPSErrors: true
       });
       global.__parallelBrowser = true;
     } else {
       browser = global.browser = await puppeteer.launch({
-        // to make it work in circleci
+        // to make it work in ci
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox'
@@ -42,7 +42,7 @@ module.exports = async function(coverage, nycReport, browserWSEndpoint) {
       });
     }
 
-    if (coverage && nycReport && !global.__parallelBrowser) {
+    if (coverage && nycReport) {
       browser.__newPage = browser.newPage;
       browser.newPage = async () => {
         const p = await browser.__newPage();

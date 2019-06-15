@@ -428,8 +428,7 @@ async function writePageCoverage(p, nycReport) {
 function setPageForCoverage(p, nycReport) {
   p.goto = async (url, options) => {
     await writePageCoverage(p, nycReport);
-    const ret = p.mainFrame().goto(url, options);
-    return ret;
+    return p.mainFrame().goto(url, options);
   };
   p._close = p.close;
   p.close = async () => {
@@ -442,7 +441,8 @@ var loadbrowser = async function (coverage, nycReport, browserWSEndpoint) {
   if (!commonjsGlobal.browser) {
     if (typeof browserWSEndpoint === 'string') {
       browser = commonjsGlobal.browser = await puppeteer.connect({
-        browserWSEndpoint: browserWSEndpoint
+        browserWSEndpoint,
+        ignoreHTTPSErrors: true
       });
       commonjsGlobal.__parallelBrowser = true;
     } else {
@@ -453,7 +453,7 @@ var loadbrowser = async function (coverage, nycReport, browserWSEndpoint) {
         devtools: false
       });
     }
-    if (coverage && nycReport && !commonjsGlobal.__parallelBrowser) {
+    if (coverage && nycReport) {
       browser.__newPage = browser.newPage;
       browser.newPage = async () => {
         const p = await browser.__newPage();
@@ -489,7 +489,7 @@ const {
 } = child_process;
 var parallel = async function (options) {
   const promises = [];
-  await loadbrowser(true, path.resolve('./.nyc_output'));
+  await loadbrowser();
   const browserWSEndpoint = commonjsGlobal.browser.wsEndpoint();
   let failures = 0;
   for (let i = 0; i < options.length; i++) {
@@ -751,6 +751,7 @@ async function runTests(options = {}, parallel$1 = false) {
       for (let i = 0; i < options.length; i++) {
         failures += await runTests(options[i]).catch(f => {
           if (Number(f)) return Number(f);else process.stderr.write(f + '\n');
+          return 0;
         });
       }
       if (failures > 0) throw failures;else return 0;
