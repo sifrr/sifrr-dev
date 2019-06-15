@@ -3,15 +3,14 @@ const { fork } = require('child_process');
 const JsonFn = require('json-fn');
 const loadBrowser = require('./loadbrowser');
 
-module.exports = async function(options) {
+module.exports = async function(options, shareBrowser = true) {
   const promises = [];
-  await loadBrowser();
-  const browserWSEndpoint = global.browser.wsEndpoint();
-
   let failures = 0;
+  if (shareBrowser) await loadBrowser();
+
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
-    opts.browserWSEndpoint = browserWSEndpoint;
+    opts.browserWSEndpoint = shareBrowser ? global.browser.wsEndpoint() : opts.browserWSEndpoint;
 
     const childRun = fork(path.join(__dirname, './run'), process.argv);
     promises.push(new Promise(res => {
@@ -33,7 +32,7 @@ module.exports = async function(options) {
   }
 
   await Promise.all(promises);
-  await global.browser.close();
+  if (shareBrowser) await global.browser.close();
 
   if (failures > 0) {
     throw failures;

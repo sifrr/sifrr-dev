@@ -28,7 +28,6 @@ module.exports = async function(coverage, nycReport, browserWSEndpoint) {
         browserWSEndpoint,
         ignoreHTTPSErrors: true
       });
-      global.__parallelBrowser = true;
     } else {
       browser = global.browser = await puppeteer.launch({
         // to make it work in ci

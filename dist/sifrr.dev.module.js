@@ -466,7 +466,6 @@ var loadbrowser = async function(coverage, nycReport, browserWSEndpoint) {
         browserWSEndpoint,
         ignoreHTTPSErrors: true
       });
-      commonjsGlobal.__parallelBrowser = true;
     } else {
       browser = commonjsGlobal.browser = await puppeteer.launch({
         args: [
@@ -507,14 +506,13 @@ var loadbrowser = async function(coverage, nycReport, browserWSEndpoint) {
 };
 
 const { fork } = child_process;
-var parallel = async function(options) {
+var parallel = async function(options, shareBrowser = true) {
   const promises = [];
-  await loadbrowser();
-  const browserWSEndpoint = commonjsGlobal.browser.wsEndpoint();
   let failures = 0;
+  if (shareBrowser) await loadbrowser();
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
-    opts.browserWSEndpoint = browserWSEndpoint;
+    opts.browserWSEndpoint = shareBrowser ? commonjsGlobal.browser.wsEndpoint() : opts.browserWSEndpoint;
     const childRun = fork(path.join(__dirname, './run'), process.argv);
     promises.push(new Promise(res => {
       childRun.on('exit', code => {
@@ -531,7 +529,7 @@ var parallel = async function(options) {
     }));
   }
   await Promise.all(promises);
-  await commonjsGlobal.browser.close();
+  if (shareBrowser) await commonjsGlobal.browser.close();
   if (failures > 0) {
     throw failures;
   } else {
@@ -554,7 +552,7 @@ function getCaller() {
   }
   return undefined;
 }
-var testglobals = (mochaOptions, parallel$1) => {
+var testglobals = (testOptions, parallel$1) => {
   commonjsGlobal.__pdescribes = [];
   commonjsGlobal.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
   commonjsGlobal.Mocha = mocha;
@@ -572,12 +570,16 @@ var testglobals = (mochaOptions, parallel$1) => {
   };
   commonjsGlobal.pdescribe = function(name, fxn) {
     const testFile = getCaller();
-    if (testFile && mochaOptions && !mochaOptions.parallel && parallel$1) {
-      const newOpts = deepmerge({}, mochaOptions, {
-        browserWSEndpoint: commonjsGlobal.browser ? commonjsGlobal.browser.wsEndpoint() : undefined
+    if (testFile && testOptions && !testOptions.parallel && parallel$1) {
+      const newOpts = deepmerge({}, testOptions);
+      deepmerge(newOpts, {
+        browserWSEndpoint: commonjsGlobal.browser ? commonjsGlobal.browser.wsEndpoint() : undefined,
+        filters: [testFile],
+        parallel: true,
+        junitXmlFile: path.join(testOptions.junitXmlFile, `../../${path.basename(getCaller()).replace('.test.js', '')}/results.xml`),
+        port: 'random'
       });
-      deepmerge(newOpts, { filters: [testFile], parallel: true, port: 'random' });
-      commonjsGlobal.__pdescribes.push(parallel([newOpts]).catch(e => e));
+      commonjsGlobal.__pdescribes.push(parallel([newOpts], true).catch(e => e));
     } else {
       describe(name, fxn);
     }
@@ -845,7 +847,7 @@ async function runTests(options = {}, parallel$1 = false) {
   return new Promise((res, rej) => {
     mocha$1.run(async (failures) => {
       servers.close();
-      if (commonjsGlobal.browser && !commonjsGlobal.__parallelBrowser) {
+      if (commonjsGlobal.browser && !browserWSEndpoint) {
         await browser.close();
         delete commonjsGlobal.browser;
         delete commonjsGlobal.page;

@@ -1,3 +1,4 @@
+const path = require('path');
 const deepMerge = require('../deepmerge');
 
 function getCaller() {
@@ -21,7 +22,7 @@ function getCaller() {
   return undefined;
 }
 
-module.exports = (mochaOptions, parallel) => {
+module.exports = (testOptions, parallel) => {
   global.__pdescribes = [];
   global.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
   global.Mocha = require('mocha');
@@ -39,12 +40,16 @@ module.exports = (mochaOptions, parallel) => {
   };
   global.pdescribe = function(name, fxn) {
     const testFile = getCaller();
-    if (testFile && mochaOptions && !mochaOptions.parallel && parallel) {
-      const newOpts = deepMerge({}, mochaOptions, {
-        browserWSEndpoint: global.browser ? global.browser.wsEndpoint() : undefined
+    if (testFile && testOptions && !testOptions.parallel && parallel) {
+      const newOpts = deepMerge({}, testOptions);
+      deepMerge(newOpts, {
+        browserWSEndpoint: global.browser ? global.browser.wsEndpoint() : undefined,
+        filters: [testFile],
+        parallel: true,
+        junitXmlFile: path.join(testOptions.junitXmlFile, `../../${path.basename(getCaller()).replace('.test.js', '')}/results.xml`),
+        port: 'random'
       });
-      deepMerge(newOpts, { filters: [testFile], parallel: true, port: 'random' });
-      global.__pdescribes.push(require('./parallel')([newOpts]).catch(e => e));
+      global.__pdescribes.push(require('./parallel')([newOpts], true).catch(e => e));
     } else {
       describe(name, fxn);
     }
