@@ -1,8 +1,24 @@
-## [0.0.10](https://github.com/sifrr/sifrr-dev/compare/v0.0.9...v0.0.10) (2019-06-13)
+## [0.0.11](https://github.com/sifrr/sifrr-dev/compare/v0.0.10...v0.0.11) (2019-06-15)
 
 
 
-## 0.0.10 (2019-06-13 06:07:52 +0000)
+## 0.0.11 (2019-06-15 14:32:00 +0000)
+
+
+### Bug Fixes
+
+* ignore https certificate in puppeteer connection ([a264b3b](https://github.com/sifrr/sifrr-dev/commit/a264b3b))
+
+
+### Features
+
+* add explicit option to run tests parallely ([c53b59d](https://github.com/sifrr/sifrr-dev/commit/c53b59d))
+* add option to share browser instance between parallel tests ([e2bd85f](https://github.com/sifrr/sifrr-dev/commit/e2bd85f))
+* share browser instance between parallel tests ([06103b5](https://github.com/sifrr/sifrr-dev/commit/06103b5))
+
+
+
+## [0.0.10](https://github.com/sifrr/sifrr-dev/compare/v0.0.9...v0.0.10) (2019-06-13 06:08:06 +0000)
 
 
 ### Features
