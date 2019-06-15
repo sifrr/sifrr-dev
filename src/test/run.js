@@ -33,13 +33,13 @@ async function runCommands(commands) {
   }
 }
 
-async function runTests(options = {}, parallel = false) {
+async function runTests(options = {}, parallel = false, shareBrowser) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
       await runCommands(options[i].preCommand);
       delete options[i].preCommand;
     }
-    if (parallel) return require('./parallel')(options);
+    if (parallel) return require('./parallel')(options, shareBrowser);
     else {
       let failures = 0;
       for (let i = 0; i < options.length; i++) {

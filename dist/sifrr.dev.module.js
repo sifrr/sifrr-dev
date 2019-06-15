@@ -750,13 +750,13 @@ async function runCommands(commands) {
     await exec_1(commands).catch(commonjsGlobal.console.error);
   }
 }
-async function runTests(options = {}, parallel$1 = false) {
+async function runTests(options = {}, parallel$1 = false, shareBrowser) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
       await runCommands(options[i].preCommand);
       delete options[i].preCommand;
     }
-    if (parallel$1) return parallel(options);
+    if (parallel$1) return parallel(options, shareBrowser);
     else {
       let failures = 0;
       for (let i = 0; i < options.length; i++) {
