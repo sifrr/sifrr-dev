@@ -114,7 +114,7 @@ async function runTests(options = {}, parallel = false) {
   });
 
   if (serverOnly) {
-    servers.listen();
+    await servers.listen();
     return 'server';
   }
   if (setGlobals) testGlobals(options, parallel);
@@ -128,7 +128,7 @@ async function runTests(options = {}, parallel = false) {
   const mocha = new Mocha(mochaOptions);
 
   if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
-    servers.listen();
+    await servers.listen();
     await loadBrowser(coverage, allFolders.coverage, browserWSEndpoint);
     loadTests(allFolders.browserTest, mocha, testFileRegex, filters);
   }

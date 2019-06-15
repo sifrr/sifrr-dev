@@ -668,41 +668,28 @@ var server = async function(root, {
   port = false,
   securePort = false
 } = {}) {
-  const listeners = [];
-  function startServer(app, hostingPort) {
+  const apps = [];
+  function startServer(app, hostingPort, secure) {
     staticInstrument(app, root, coverage);
     staticInstrument(app, path.join(root, '../../dist'), coverage);
     extraStaticFolders.forEach(folder => {
       staticInstrument(app, folder, coverage);
     });
-    listeners.push(app.listen.bind(app, hostingPort, (socket) => {
-      if (socket) {
-        commonjsGlobal.console.log(`Test server listening on port ${hostingPort}, serving ${root}`);
-      } else {
-        commonjsGlobal.console.log('Test server failed to listen to port ' + hostingPort);
-      }
-    }));
+    apps.push([app, hostingPort, secure]);
   }
   let normalApp, secureApp;
-  const freePorts = await getports();
   if (port) {
-    if (port === 'random') port = freePorts[0];
     let app;
     if (fs.existsSync(path.join(root, 'server.js'))) {
       app = commonjsRequire(path.join(root, 'server.js'));
     } else {
       app = new App();
     }
-    if (typeof app.file === 'function') startServer(app, port);
-    else listeners.push(app.listen.bind(app, port));
+    if (typeof app.file === 'function') startServer(app, port, false);
+    else apps.push([app, port, false]);
     normalApp = app;
   }
-  if (setGlobals && port) {
-    commonjsGlobal.PATH = `http://localhost:${port}`;
-    commonjsGlobal.port = port;
-  }
   if (securePort) {
-    if (securePort === 'random') securePort = freePorts[1];
     let app;
     if (fs.existsSync(path.join(root, 'secureserver.js'))) {
       app = commonjsRequire(path.join(root, 'secureserver.js'));
@@ -712,19 +699,29 @@ var server = async function(root, {
         cert_file_name: path.join(__dirname, 'keys/server.crt')
       });
     }
-    if (typeof app.file === 'function') startServer(app, securePort);
-    else listeners.push(app.listen.bind(app, securePort));
+    if (typeof app.file === 'function') startServer(app, securePort, true);
+    else apps.push([app, securePort, true]);
     secureApp = app;
-  }
-  if (setGlobals && securePort) {
-    commonjsGlobal.SPATH = `https://localhost:${securePort}`;
-    commonjsGlobal.securePort = securePort;
   }
   return {
     secureApp: secureApp,
     app: normalApp,
-    listen: () => {
-      listeners.forEach(l => l());
+    listen: async () => {
+      for (let i = 0; i < apps.length; i++) {
+        let [app, port, secure] = apps[i];
+        if (port === 'random') port = (await getports())[0];
+        if (setGlobals && port) {
+          commonjsGlobal[secure ? 'SPATH' : 'PATH'] = `http${secure ? 's' : ''}://localhost:${port}`;
+          commonjsGlobal[secure ? 'securePort' : 'port'] = port;
+        }
+        app.listen(port, (socket) => {
+          if (socket) {
+            commonjsGlobal.console.log(`Test server listening on port ${port}, serving ${root}`);
+          } else {
+            commonjsGlobal.console.log('Test server failed to listen to port ' + port);
+          }
+        });
+      }
     },
     close: () => {
       secureApp && secureApp.close && secureApp.close();
@@ -825,7 +822,7 @@ async function runTests(options = {}, parallel$1 = false) {
     securePort
   });
   if (serverOnly) {
-    servers.listen();
+    await servers.listen();
     return 'server';
   }
   if (setGlobals) testglobals(options, parallel$1);
@@ -837,7 +834,7 @@ async function runTests(options = {}, parallel$1 = false) {
   }
   const mocha$1 = new mocha(mochaOptions);
   if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
-    servers.listen();
+    await servers.listen();
     await loadbrowser(coverage, allFolders.coverage, browserWSEndpoint);
     loadTests(allFolders.browserTest, mocha$1, testFileRegex, filters);
   }

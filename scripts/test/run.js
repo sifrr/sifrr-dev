@@ -48,8 +48,7 @@ if (process.env.LCOV === 'true') reporters.push('lcov');
 const root = path.resolve(process.argv[2]) || path.resolve('./');
 
 const runTest = require('../../src/test/run');
-
-runTest({
+const opts = {
   root,
   serverOnly,
   runUnitTests,
@@ -57,16 +56,27 @@ runTest({
   coverage,
   filters,
   preCommand: 'cd ./test/public && yarn build',
-  port,
-  securePort: 8889,
+  port: 'random',
+  securePort: 'random',
   useJunitReporter,
   inspect,
   folders: {
     static: [path.resolve('./src/test')]
   },
   reporters
-}).then(() => {
+};
+
+(async () => {
+  let failures = 0;
+  await runTest(opts).catch(e => {
+    global.console.log(`${e} tests failed!`);
+    failures += Number(e);
+  });
+  await runTest([opts], true).catch(e => {
+    global.console.log(`${e} tests failed!`);
+    failures += Number(e);
+  });
+
+  if (failures > 0) process.exit(1);
   global.console.log('All tests passed!');
-}).catch(e => {
-  global.console.log(`${e} tests failed!`);
-});
+})();
