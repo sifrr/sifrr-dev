@@ -71,6 +71,7 @@
     "rollup-plugin-node-resolve": "^5.0.1",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-terser": "^5.0.0",
-    "sinon": "^7.3.2"
+    "sinon": "^7.3.2",
+    "eslint-config-sifrr": "file:./src/eslint"
   }
 }

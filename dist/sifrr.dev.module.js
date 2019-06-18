@@ -1,4 +1,4 @@
-/*! sifrr.dev v0.0.11 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
+/*! sifrr.dev v0.0.10 - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */
 import fs from 'fs';
 import path from 'path';
 import rollupPluginBabel from 'rollup-plugin-babel';
@@ -27,76 +27,6 @@ import inspector from 'inspector';
 import istanbulLibHook from 'istanbul-lib-hook';
 import portfinder from 'portfinder';
 import server$1 from '@sifrr/server';
-
-var eslintrc = {
-  env: {
-    browser: true,
-    node: true,
-    es6: true,
-    mocha: true
-  },
-  globals: {
-    ENV: true,
-    chai: false,
-    sinon: false,
-    assert: false,
-    expect: false,
-    should: false,
-    delay: false,
-    port: false,
-    PATH: false,
-    SPATH: false,
-    page: false,
-    browser: false
-  },
-  extends: 'eslint:recommended',
-  parserOptions: {
-    sourceType: 'module',
-    ecmaVersion: 2017,
-    esversion: 2017
-  },
-  rules: {
-    indent: [
-      'error',
-      2
-    ],
-    'linebreak-style': [
-      'error',
-      'unix'
-    ],
-    quotes: [
-      'error',
-      'single',
-      {
-        avoidEscape: true,
-        allowTemplateLiterals: true
-      }
-    ],
-    semi: [
-      'warn',
-      'always'
-    ],
-    'quote-props': [
-      'error',
-      'as-needed'
-    ],
-    'no-var': [
-      'error'
-    ],
-    'max-lines': [
-      'error',
-      220
-    ],
-    'mocha/no-exclusive-tests': 'error'
-  },
-  plugins: [
-    'html',
-    'mocha'
-  ],
-  settings: {
-    'html/indent': '+2'
-  }
-};
 
 function loadDir({
   dir,
@@ -882,7 +812,6 @@ var objectselect = (obj, keys = []) => {
 };
 
 var sifrr_dev = {
-  eslintrc: eslintrc,
   loadDir: loaddir,
   deepMerge: deepmerge,
   getRollupConfig: getrollupconfig,
@@ -894,19 +823,18 @@ var sifrr_dev = {
   runTests: run,
   objectSelect: objectselect
 };
-var sifrr_dev_1 = sifrr_dev.eslintrc;
-var sifrr_dev_2 = sifrr_dev.loadDir;
-var sifrr_dev_3 = sifrr_dev.deepMerge;
-var sifrr_dev_4 = sifrr_dev.getRollupConfig;
-var sifrr_dev_5 = sifrr_dev.generateChangelog;
-var sifrr_dev_6 = sifrr_dev.exec;
-var sifrr_dev_7 = sifrr_dev.checkTag;
-var sifrr_dev_8 = sifrr_dev.releaseTag;
-var sifrr_dev_9 = sifrr_dev.gitAddCommitPush;
-var sifrr_dev_10 = sifrr_dev.runTests;
-var sifrr_dev_11 = sifrr_dev.objectSelect;
+var sifrr_dev_1 = sifrr_dev.loadDir;
+var sifrr_dev_2 = sifrr_dev.deepMerge;
+var sifrr_dev_3 = sifrr_dev.getRollupConfig;
+var sifrr_dev_4 = sifrr_dev.generateChangelog;
+var sifrr_dev_5 = sifrr_dev.exec;
+var sifrr_dev_6 = sifrr_dev.checkTag;
+var sifrr_dev_7 = sifrr_dev.releaseTag;
+var sifrr_dev_8 = sifrr_dev.gitAddCommitPush;
+var sifrr_dev_9 = sifrr_dev.runTests;
+var sifrr_dev_10 = sifrr_dev.objectSelect;
 
 export default sifrr_dev;
-export { sifrr_dev_7 as checkTag, sifrr_dev_3 as deepMerge, sifrr_dev_1 as eslintrc, sifrr_dev_6 as exec, sifrr_dev_5 as generateChangelog, sifrr_dev_4 as getRollupConfig, sifrr_dev_9 as gitAddCommitPush, sifrr_dev_2 as loadDir, sifrr_dev_11 as objectSelect, sifrr_dev_8 as releaseTag, sifrr_dev_10 as runTests };
+export { sifrr_dev_6 as checkTag, sifrr_dev_2 as deepMerge, sifrr_dev_5 as exec, sifrr_dev_4 as generateChangelog, sifrr_dev_3 as getRollupConfig, sifrr_dev_8 as gitAddCommitPush, sifrr_dev_1 as loadDir, sifrr_dev_10 as objectSelect, sifrr_dev_7 as releaseTag, sifrr_dev_9 as runTests };
 /*! (c) @aadityataparia */
 //# sourceMappingURL=sifrr.dev.module.js.map
