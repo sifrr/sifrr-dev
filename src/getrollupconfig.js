@@ -9,24 +9,35 @@ const html = require('rollup-plugin-html');
 
 const deepMerge = require('./deepmerge');
 
-function moduleConfig({
-  name,
-  inputFile,
-  outputFolder,
-  minify = false,
-  type = 'cjs',
-  outputFileName
-}, extraConfig) {
-  const filename = path.basename(inputFile).slice(0, path.basename(inputFile).lastIndexOf('.')).toLowerCase();
-  const format = type === 'cjs' ? 'cjs' : (type === 'browser' ? 'umd' : 'es');
+function moduleConfig(
+  {
+    name,
+    inputFile,
+    outputFolder,
+    minify = false,
+    type = 'cjs',
+    outputFileName
+  },
+  extraConfig
+) {
+  const filename = path
+    .basename(inputFile)
+    .slice(0, path.basename(inputFile).lastIndexOf('.'))
+    .toLowerCase();
+  const format = type === 'cjs' ? 'cjs' : type === 'browser' ? 'umd' : 'es';
   const ret = {
     input: inputFile,
     output: {
-      file: path.join(outputFolder, `./${(outputFileName || filename) + (type === 'module' ? '.module' : '') + (minify ? '.min' : '')}.js`),
+      file: path.join(
+        outputFolder,
+        `./${(outputFileName || filename) +
+          (type === 'module' ? '.module' : '') +
+          (minify ? '.min' : '')}.js`
+      ),
       format,
       name,
       sourcemap: !minify,
-      preferConst: true,
+      preferConst: true
     },
     plugins: [
       resolve({
@@ -38,38 +49,46 @@ function moduleConfig({
         extensions: ['.css', '.scss', '.sass', '.less'],
         inject: false,
         plugins: [
-          minify ? require('cssnano')({
-            preset: [ 'default' ],
-          }) : false,
+          minify
+            ? require('cssnano')({
+                preset: ['default']
+              })
+            : false,
           require('autoprefixer')
         ].filter(k => k)
       }),
       html({
-        htmlMinifierOptions: minify ? {
-          collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-          conservativeCollapse: true,
-          minifyJS: true
-        } : {}
+        htmlMinifierOptions: minify
+          ? {
+              collapseWhitespace: true,
+              collapseBooleanAttributes: true,
+              conservativeCollapse: true,
+              minifyJS: true
+            }
+          : {}
       })
     ]
   };
 
   if (type !== 'module') {
-    ret.plugins.push(babel({
-      exclude: 'node_modules/**',
-      rootMode: 'upward'
-    }));
+    ret.plugins.push(
+      babel({
+        exclude: 'node_modules/**',
+        rootMode: 'upward'
+      })
+    );
   }
 
   ret.plugins.push(cleanup());
 
   if (minify) {
-    ret.plugins.push(terser({
-      output: {
-        comments: 'all'
-      }
-    }));
+    ret.plugins.push(
+      terser({
+        output: {
+          comments: 'all'
+        }
+      })
+    );
   }
 
   return deepMerge(ret, extraConfig, true);

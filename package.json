@@ -46,8 +46,10 @@
     "coveralls": "^3.0.2",
     "cssnano": "^4.1.10",
     "eslint": "^5.15.3",
-    "eslint-plugin-html": "^5.0.0",
+    "eslint-config-prettier": "^5.0.0",
+    "eslint-config-sifrr": "file:./src/eslint",
     "eslint-plugin-mocha": "^5.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "husky": "^2.0.0",
     "istanbul-api": "^3.0.0",
     "istanbul-lib-coverage": "^2.0.1",
@@ -61,6 +63,7 @@
     "mock-require": "^3.0.3",
     "node-sass": "^4.12.0",
     "portfinder": "^1.0.20",
+    "prettier": "^1.18.2",
     "puppeteer": "^1.16.0",
     "repl": "^0.1.3",
     "rollup": "^1.13.1",
@@ -71,7 +74,6 @@
     "rollup-plugin-node-resolve": "^5.0.1",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-terser": "^5.0.0",
-    "sinon": "^7.3.2",
-    "eslint-config-sifrr": "file:./src/eslint"
+    "sinon": "^7.3.2"
   }
 }

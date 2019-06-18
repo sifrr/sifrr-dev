@@ -11,7 +11,7 @@ function loadDir({
   fs.readdirSync(dir).forEach(file => {
     const filePath = path.join(dir, file);
     fs.statSync(filePath).isDirectory() ? onDir(filePath) : onFile(filePath);
-    if (deep > 0) loadDir({ dir: filePath, onFile, onDir, deep: deep - 1});
+    if (deep > 0) loadDir({ dir: filePath, onFile, onDir, deep: deep - 1 });
   });
   return true;
 }

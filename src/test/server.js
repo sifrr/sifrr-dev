@@ -9,16 +9,28 @@ const { App, SSLApp } = require('@sifrr/server');
 function staticInstrument(app, folder, coverage = false) {
   loadDir({
     dir: folder,
-    onFile: (filePath) => {
+    onFile: filePath => {
       if (coverage && filePath.slice(-3) === '.js') {
-        app.get('/' + path.relative(folder, filePath), (res) => {
+        app.get('/' + path.relative(folder, filePath), res => {
           res.onAborted(global.console.log);
           const text = fs.readFileSync(filePath, 'utf-8');
           if (fs.existsSync(filePath + '.map')) {
-            res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-            res.end(instrumenter.instrumentSync(text, filePath, JSON.parse(fs.readFileSync(filePath + '.map'))));
+            res.writeHeader(
+              'content-type',
+              'application/javascript; charset=UTF-8'
+            );
+            res.end(
+              instrumenter.instrumentSync(
+                text,
+                filePath,
+                JSON.parse(fs.readFileSync(filePath + '.map'))
+              )
+            );
           } else {
-            res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
+            res.writeHeader(
+              'content-type',
+              'application/javascript; charset=UTF-8'
+            );
             res.end(text);
           }
         });
@@ -29,13 +41,16 @@ function staticInstrument(app, folder, coverage = false) {
   });
 }
 
-module.exports = async function(root, {
-  extraStaticFolders = [],
-  setGlobals = true,
-  coverage = true,
-  port = false,
-  securePort = false
-} = {}) {
+module.exports = async function(
+  root,
+  {
+    extraStaticFolders = [],
+    setGlobals = true,
+    coverage = true,
+    port = false,
+    securePort = false
+  } = {}
+) {
   const apps = [];
   function startServer(app, hostingPort, secure) {
     staticInstrument(app, root, coverage);
@@ -85,13 +100,17 @@ module.exports = async function(root, {
         if (port === 'random') port = (await getPorts())[0];
 
         if (setGlobals && port) {
-          global[secure ? 'SPATH' : 'PATH'] = `http${secure ? 's' : ''}://localhost:${port}`;
+          global[secure ? 'SPATH' : 'PATH'] = `http${
+            secure ? 's' : ''
+          }://localhost:${port}`;
           global[secure ? 'securePort' : 'port'] = port;
         }
 
-        app.listen(port, (socket) => {
+        app.listen(port, socket => {
           if (socket) {
-            global.console.log(`Test server listening on port ${port}, serving ${root}`);
+            global.console.log(
+              `Test server listening on port ${port}, serving ${root}`
+            );
           } else {
             global.console.log('Test server failed to listen to port ' + port);
           }

@@ -5,7 +5,7 @@ module.exports = async function() {
     port: 10000
   });
   const second = await portfinder.getPortPromise({
-    port: first + 1,
+    port: first + 1
   });
 
   return [first, second];

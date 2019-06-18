@@ -9,7 +9,7 @@ function hash() {
 
 module.exports = function writeCoverage(coverage, folder, prefix = '') {
   const file = path.join(folder, `${Date.now()}-${prefix}-${hash()}.json`);
-  mkdirp.sync(path.dirname(file), (err) => {
+  mkdirp.sync(path.dirname(file), err => {
     if (err) throw err;
   });
 

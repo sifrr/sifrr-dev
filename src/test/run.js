@@ -14,7 +14,7 @@ const transformCoverage = require('./transformcoverage');
 function loadTests(dir, mocha, regex, filters) {
   loadDir({
     dir: dir,
-    onFile: (filePath) => {
+    onFile: filePath => {
       if (filters.map(bf => filePath.indexOf(bf) >= 0).indexOf(true) >= 0) {
         if (filePath.match(regex)) mocha.addFile(filePath);
       }
@@ -69,7 +69,10 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     port = 'random',
     securePort = false,
     useJunitReporter = false,
-    junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
+    junitXmlFile = path.join(
+      root,
+      `./test-results/${path.basename(root)}/results.xml`
+    ),
     inspect = false,
     reporters = ['html'],
     mochaOptions = {},
@@ -82,14 +85,18 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
   const beforeRet = typeof before === 'function' ? before() : false;
   if (beforeRet instanceof Promise) await beforeRet;
 
-  const allFolders = deepMerge({
-    unitTest: path.join(root, './test/unit'),
-    browserTest: path.join(root, './test/browser'),
-    public: path.join(root, './test/public'),
-    static: [],
-    coverage: path.join(root, './.nyc_output'),
-    source: path.join(root, './src')
-  }, folders, true);
+  const allFolders = deepMerge(
+    {
+      unitTest: path.join(root, './test/unit'),
+      browserTest: path.join(root, './test/browser'),
+      public: path.join(root, './test/public'),
+      static: [],
+      coverage: path.join(root, './.nyc_output'),
+      source: path.join(root, './src')
+    },
+    folders,
+    true
+  );
 
   // unit test coverage
   if (coverage && !global.__s_dev_cov) {
@@ -97,7 +104,9 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     const instrumenter = createInstrumenter();
     const { hookRequire } = require('istanbul-lib-hook');
     hookRequire(
-      (filePath) => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex),
+      filePath =>
+        filePath.indexOf(allFolders.source) > -1 &&
+        filePath.match(sourceFileRegex),
       (code, { filename }) => instrumenter.instrumentSync(code, filename)
     );
     global.__s_dev_cov = true;
@@ -127,18 +136,24 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
   }
   const mocha = new Mocha(mochaOptions);
 
-  if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
+  if (
+    (runBrowserTests || !runUnitTests) &&
+    fs.existsSync(allFolders.browserTest)
+  ) {
     await servers.listen();
     await loadBrowser(coverage, allFolders.coverage, browserWSEndpoint);
     loadTests(allFolders.browserTest, mocha, testFileRegex, filters);
   }
 
-  if ((runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest)) {
+  if (
+    (runUnitTests || !runBrowserTests) &&
+    fs.existsSync(allFolders.unitTest)
+  ) {
     loadTests(allFolders.unitTest, mocha, testFileRegex, filters);
   }
 
   return new Promise((res, rej) => {
-    mocha.run(async (failures) => {
+    mocha.run(async failures => {
       servers.close();
 
       // close browser
@@ -155,8 +170,17 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
 
       // Get and write code coverage
       if (coverage) {
-        writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');
-        transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
+        writeCoverage(
+          global.__coverage__,
+          allFolders.coverage,
+          'unit-coverage'
+        );
+        transformCoverage(
+          allFolders.coverage,
+          allFolders.source,
+          sourceFileRegex,
+          reporters
+        );
       }
 
       if (failures) rej(failures);
@@ -165,16 +189,17 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
   });
 }
 
-
-process.on('message', async (options) => {
+process.on('message', async options => {
   options = JsonFn.parse(options);
 
-  await runTests(options, true).catch(f => {
-    if (Number(f)) process.send(`${f}`);
-    else process.stderr.write(f + '\n');
-  }).then(r => {
-    if (r !== 'server') process.exit();
-  });
+  await runTests(options, true)
+    .catch(f => {
+      if (Number(f)) process.send(`${f}`);
+      else process.stderr.write(f + '\n');
+    })
+    .then(r => {
+      if (r !== 'server') process.exit();
+    });
 });
 
 module.exports = runTests;

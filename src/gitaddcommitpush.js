@@ -22,9 +22,11 @@ module.exports = async function({
   } else {
     await exec(`git ls-files '${files}' | xargs git add`);
   }
-  await exec(`git commit -m "${commitMsg}"`).then(() => {
-    if (push) exec(`git push`);
-  }).catch(() => {
-    process.stdout.write('Nothing to commit, not running git push. \n');
-  });
+  await exec(`git commit -m "${commitMsg}"`)
+    .then(() => {
+      if (push) exec(`git push`);
+    })
+    .catch(() => {
+      process.stdout.write('Nothing to commit, not running git push. \n');
+    });
 };

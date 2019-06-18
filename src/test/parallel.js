@@ -10,25 +10,33 @@ module.exports = async function(options, shareBrowser = true) {
 
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
-    opts.browserWSEndpoint = shareBrowser ? global.browser.wsEndpoint() : opts.browserWSEndpoint;
+    opts.browserWSEndpoint = shareBrowser
+      ? global.browser.wsEndpoint()
+      : opts.browserWSEndpoint;
 
     const childRun = fork(path.join(__dirname, './run'), process.argv);
-    promises.push(new Promise(res => {
-      childRun.on('exit', code => {
-        if (code && code > 0) global.console.log('\x1b[36m%s\x1b[0m', `Config#${i}: tests from ${opts.root} exited with code ${code}`);
-        res();
-      });
+    promises.push(
+      new Promise(res => {
+        childRun.on('exit', code => {
+          if (code && code > 0)
+            global.console.log(
+              '\x1b[36m%s\x1b[0m',
+              `Config#${i}: tests from ${opts.root} exited with code ${code}`
+            );
+          res();
+        });
 
-      childRun.on('message', (e) => {
-        failures += Number(e);
-      });
+        childRun.on('message', e => {
+          failures += Number(e);
+        });
 
-      childRun.on('error', (e) => {
-        global.console.error(e);
-      });
+        childRun.on('error', e => {
+          global.console.error(e);
+        });
 
-      childRun.send(JsonFn.stringify(opts));
-    }));
+        childRun.send(JsonFn.stringify(opts));
+      })
+    );
   }
 
   await Promise.all(promises);

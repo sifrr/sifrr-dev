@@ -13,35 +13,61 @@
 
 | Type                                         |                                                                                               Size                                                                                               |
 | :------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| Normal (`dist/sifrr.dev.js`)                 |                    [![Normal](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.js)                   |
-| Minified (`dist/sifrr.dev.min.js`)           |               [![Minified](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.min.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.min.js)              |
+| Normal (`dist/sifrr.dev.js`)                 |                   [![Normal](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.js)                    |
+| Minified (`dist/sifrr.dev.min.js`)           |              [![Minified](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.min.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.min.js)               |
 | Minified + Gzipped (`dist/sifrr.dev.min.js`) | [![Minified + Gzipped](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.min.js?compression=gzip&maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.min.js) |
 
 ## Tools
 
--   `getRollupConfig` Rollup configs to bundle JavaScripts for node packages, es modules and browser packs.
--   `generateChangelog` Generate Changelog during release
--   `loadDir` Load directory recursively
--   `eslintrc` ESLint config
--   `deepMerge` Deep Merge Objects
--   `checkTag` check if a tag exists on github
--   `exec` async execute a shell command with stdout and stderr
--   `gitAddCommitPush` run command > git add files > git commit > git push
--   `runTests` Run a full fledged test suite using mocha, chai, sinon, puppeteer, etc.
+- `getRollupConfig` Rollup configs to bundle JavaScripts for node packages, es modules and browser packs.
+- `generateChangelog` Generate Changelog during release
+- `loadDir` Load directory recursively
+- `eslintrc` ESLint config
+- `deepMerge` Deep Merge Objects
+- `checkTag` check if a tag exists on github
+- `exec` async execute a shell command with stdout and stderr
+- `gitAddCommitPush` run command > git add files > git commit > git push
+- `runTests` Run a full fledged test suite using mocha, chai, sinon, puppeteer, etc.
 
 ## Other packages
 
--   [@commitlint/cli](https://github.com/conventional-changelog/commitlint) - Linting commits
--   [Husky](https://github.com/typicode/husky) - Git hooks made easy
--   [browserslist](https://github.com/browserslist/browserslist#readme) - browserlist used by babel, eslint, postcss, etc.
--   [coveralls](https://github.com/nickmerwin/node-coveralls#readme) - upload coverage to coveralls.io
--   [mock-require](https://github.com/boblauer/mock-require) - Simple, intuitive mocking of Node.js modules.
+- [@commitlint/cli](https://github.com/conventional-changelog/commitlint) - Linting commits
+- [Husky](https://github.com/typicode/husky) - Git hooks made easy
+- [browserslist](https://github.com/browserslist/browserslist#readme) - browserlist used by babel, eslint, postcss, etc.
+- [coveralls](https://github.com/nickmerwin/node-coveralls#readme) - upload coverage to coveralls.io
+- [mock-require](https://github.com/boblauer/mock-require) - Simple, intuitive mocking of Node.js modules.
 
 ## Usage
 
-### Husky and commitlint
+### Husky
 
-add `.huskyrc` to your root folder
+Just add `.huskyrc` and you are good to go.
+
+### ESlint
+
+Add this to your `eslintrc` config
+
+```js
+{
+  extends: ['sifrr']
+}
+```
+
+and add pre-commit hook in your `.huskyrc`
+
+```json
+{
+  "hooks": {
+    "pre-commit": "yarn eslint --fix \"src/**/*.js\" && git add -A"
+  }
+}
+```
+
+sifrr eslint config extends prettier config and plugin, you can add `prettier.config.js` if you want to change default options for prettier.
+
+### commitlint
+
+add commit-msg hook in your `.huskyrc`
 
 ```rc
 {

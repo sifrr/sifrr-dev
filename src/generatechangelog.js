@@ -25,7 +25,7 @@ module.exports = ({
   };
   const options = {
     pkg: {
-      path: path.join(folder, './package.json'),
+      path: path.join(folder, './package.json')
     },
     preset: 'angular',
     releaseCount,

@@ -1,5 +1,6 @@
 {
   "hooks": {
+    "pre-commit": "yarn eslint --fix \"src/**/*.js\" && git add -A",
     "commit-msg": "yarn commitlint -e $HUSKY_GIT_PARAMS"
   }
 }

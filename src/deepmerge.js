@@ -8,15 +8,15 @@ function type(value) {
 
 function deepMerge(target, merger, mergeArray = false) {
   switch (type(target)) {
-  case 'array':
-    return mergeArray ? [...target, ...merger] : [...merger];
-  case 'object':
-    Object.keys(merger).forEach(k => {
-      target[k] = deepMerge(target[k], merger[k], mergeArray);
-    });
-    return target;
-  default:
-    return typeof merger === 'undefined' ? target : merger;
+    case 'array':
+      return mergeArray ? [...target, ...merger] : [...merger];
+    case 'object':
+      Object.keys(merger).forEach(k => {
+        target[k] = deepMerge(target[k], merger[k], mergeArray);
+      });
+      return target;
+    default:
+      return typeof merger === 'undefined' ? target : merger;
   }
 }
 

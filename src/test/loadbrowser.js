@@ -31,10 +31,7 @@ module.exports = async function(coverage, nycReport, browserWSEndpoint) {
     } else {
       browser = global.browser = await puppeteer.launch({
         // to make it work in ci
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox'
-        ],
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
         ignoreHTTPSErrors: true,
         headless: process.env.HEADLESS !== 'false',
         devtools: false
@@ -62,7 +59,7 @@ module.exports = async function(coverage, nycReport, browserWSEndpoint) {
     browser = global.browser;
   }
   const page = await browser.newPage();
-  await page.setViewport( { width: 1280, height: 800 } );
+  await page.setViewport({ width: 1280, height: 800 });
 
   if (!global.page) global.page = page;
 

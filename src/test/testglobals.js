@@ -7,14 +7,16 @@ function getCaller() {
     let callerfile;
     let currentfile;
 
-    Error.prepareStackTrace = function (err, stack) { return stack; };
+    Error.prepareStackTrace = function(err, stack) {
+      return stack;
+    };
 
     currentfile = err.stack.shift().getFileName();
 
     while (err.stack.length) {
       callerfile = err.stack.shift().getFileName();
 
-      if(currentfile !== callerfile) return callerfile;
+      if (currentfile !== callerfile) return callerfile;
     }
   } catch (err) {
     // do nothing
@@ -31,9 +33,9 @@ module.exports = (testOptions, parallel) => {
   global.assert = chai.assert;
   global.expect = chai.expect;
   global.should = chai.should();
-  global.delay = (time) => {
+  global.delay = time => {
     return new Promise(res => {
-      setTimeout(function(){
+      setTimeout(function() {
         res();
       }, time);
     });
@@ -43,13 +45,22 @@ module.exports = (testOptions, parallel) => {
     if (testFile && testOptions && !testOptions.parallel && parallel) {
       const newOpts = deepMerge({}, testOptions);
       deepMerge(newOpts, {
-        browserWSEndpoint: global.browser ? global.browser.wsEndpoint() : undefined,
+        browserWSEndpoint: global.browser
+          ? global.browser.wsEndpoint()
+          : undefined,
         filters: [testFile],
         parallel: true,
-        junitXmlFile: path.join(testOptions.junitXmlFile, `../../${path.basename(getCaller()).replace('.test.js', '')}/results.xml`),
+        junitXmlFile: path.join(
+          testOptions.junitXmlFile,
+          `../../${path
+            .basename(getCaller())
+            .replace('.test.js', '')}/results.xml`
+        ),
         port: 'random'
       });
-      global.__pdescribes.push(require('./parallel')([newOpts], true).catch(e => e));
+      global.__pdescribes.push(
+        require('./parallel')([newOpts], true).catch(e => e)
+      );
     } else {
       describe(name, fxn);
     }

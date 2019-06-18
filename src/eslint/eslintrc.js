@@ -20,51 +20,14 @@ module.exports = {
     page: false,
     browser: false
   },
-  extends: 'eslint:recommended',
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2017,
     esversion: 2017
   },
+  extends: ['plugin:prettier/recommended', 'eslint:recommended'],
+  plugins: ['mocha'],
   rules: {
-    indent: [
-      'error',
-      2
-    ],
-    'linebreak-style': [
-      'error',
-      'unix'
-    ],
-    quotes: [
-      'error',
-      'single',
-      {
-        avoidEscape: true,
-        allowTemplateLiterals: true
-      }
-    ],
-    semi: [
-      'warn',
-      'always'
-    ],
-    'quote-props': [
-      'error',
-      'as-needed'
-    ],
-    'no-var': [
-      'error'
-    ],
-    'max-lines': [
-      'error',
-      220
-    ],
     'mocha/no-exclusive-tests': 'error'
-  },
-  plugins: [
-    'html',
-    'mocha'
-  ],
-  settings: {
-    'html/indent': '+2'
   }
 };
