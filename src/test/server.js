@@ -10,29 +10,25 @@ function staticInstrument(app, folder, coverage = false) {
   loadDir({
     dir: folder,
     onFile: filePath => {
-      if (coverage && filePath.slice(-3) === '.js') {
+      if (
+        coverage &&
+        filePath.slice(-3) === '.js' &&
+        fs.existsSync(filePath + '.map')
+      ) {
         app.get('/' + path.relative(folder, filePath), res => {
           res.onAborted(global.console.log);
           const text = fs.readFileSync(filePath, 'utf-8');
-          if (fs.existsSync(filePath + '.map')) {
-            res.writeHeader(
-              'content-type',
-              'application/javascript; charset=UTF-8'
-            );
-            res.end(
-              instrumenter.instrumentSync(
-                text,
-                filePath,
-                JSON.parse(fs.readFileSync(filePath + '.map'))
-              )
-            );
-          } else {
-            res.writeHeader(
-              'content-type',
-              'application/javascript; charset=UTF-8'
-            );
-            res.end(text);
-          }
+          res.writeHeader(
+            'content-type',
+            'application/javascript; charset=UTF-8'
+          );
+          res.end(
+            instrumenter.instrumentSync(
+              text,
+              filePath,
+              JSON.parse(fs.readFileSync(filePath + '.map'))
+            )
+          );
         });
       } else {
         app.file('/' + path.relative(folder, filePath), filePath);
