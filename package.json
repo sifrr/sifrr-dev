@@ -45,7 +45,7 @@
     "conventional-changelog": "^3.1.8",
     "coveralls": "^3.0.2",
     "cssnano": "^4.1.10",
-    "eslint": "^5.15.3",
+    "eslint": "^6.0.0",
     "eslint-config-prettier": "^5.0.0",
     "eslint-config-sifrr": "file:./src/eslint",
     "eslint-plugin-mocha": "^5.3.0",
