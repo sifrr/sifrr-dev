@@ -22,7 +22,7 @@
 - `getRollupConfig` Rollup configs to bundle JavaScripts for node packages, es modules and browser packs.
 - `generateChangelog` Generate Changelog during release
 - `loadDir` Load directory recursively
-- `eslintrc` ESLint config
+- `eslintrc` ESLint config and prettier
 - `deepMerge` Deep Merge Objects
 - `checkTag` check if a tag exists on github
 - `exec` async execute a shell command with stdout and stderr
@@ -92,3 +92,17 @@ set `COVERALLS_REPO_TOKEN` environment variable, run tests with `lcov` reporter,
 ```sh
 cat ./coverage/lcov.info | yarn coveralls
 ```
+
+### Eslint
+
+Add tihs to your `.eslintrc.js`
+
+```js
+module.exports = {
+  extends: ['sifrr']
+};
+```
+
+### Prettier
+
+Add `prettier.config.js`, and it will be picked by eslint. Add prettier extension in code editor you use for best use.
