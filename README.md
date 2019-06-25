@@ -99,7 +99,7 @@ Add tihs to your `.eslintrc.js`
 
 ```js
 module.exports = {
-  extends: ['sifrr']
+  extends: ['@sifrr']
 };
 ```
 

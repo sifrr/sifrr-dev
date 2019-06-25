@@ -764,6 +764,11 @@
     mkdirp "^0.5.1"
     rimraf "^2.5.2"
 
+"@sifrr/eslint-config@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@sifrr/eslint-config/-/eslint-config-0.0.1.tgz#6a3a2e610a2dd1f30ebb7c1d6f6a95c5135bce0b"
+  integrity sha512-C14rJtqSXdWcf3/ReKNEO7XNM7vNwc8yI4Q4j1MpSeOO45Wu8oxCfPeEpPjuwcBixvsbjb6dShIfew7lZi6qLA==
+
 "@sifrr/server@^0.0.5":
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@sifrr/server/-/server-0.0.5.tgz#7afef7bad7389449511f09cdd43823fcc3ec6e4c"
@@ -2088,11 +2093,6 @@ eslint-config-prettier@^5.0.0:
   integrity sha512-c17Aqiz5e8LEqoc/QPmYnaxQFAHTx2KlCZBPxXXjEMmNchOLnV/7j0HoPZuC+rL/tDC9bazUYOKJW9bOhftI/w==
   dependencies:
     get-stdin "^6.0.0"
-
-eslint-config-sifrr@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-sifrr/-/eslint-config-sifrr-0.0.1.tgz#4262be72d0683839db7276e0da43764b4c6480c4"
-  integrity sha512-Y6GivcEsZDVE6VcbVshtg9c5atN4dl9xzQQW7vU15oj6Sa4N1+gPUImo2rl6R8fIQIpYUebZpikMOL/clmRYNg==
 
 eslint-plugin-mocha@^5.3.0:
   version "5.3.0"
@@ -5578,7 +5578,7 @@ typedarray@^0.0.6:
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
 uWebSockets.js@uNetworking/uWebSockets.js#v15.10.0:
-  version "15.10.0"
+  version "15.11.0"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/db6a5f22ebb348ef328ff1fcbdc639f7bff49e11"
 
 uglify-js@3.4.x:
