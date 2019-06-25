@@ -1,3 +1,1 @@
-module.exports = {
-  extends: ['sifrr']
-};
+module.exports = require('./src/eslint/eslintrc');
