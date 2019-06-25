@@ -48,6 +48,7 @@
     "eslint": "^6.0.0",
     "eslint-config-prettier": "^5.0.0",
     "eslint-config-sifrr": "file:./src/eslint",
+    "eslint-plugin-compat": "^3.1.2",
     "eslint-plugin-mocha": "^5.3.0",
     "eslint-plugin-prettier": "^3.1.0",
     "husky": "^2.0.0",

@@ -1,3 +1,4 @@
+/* eslint-disable require-atomic-updates */
 const writeCoverage = require('./writecoverage');
 const puppeteer = require('puppeteer');
 

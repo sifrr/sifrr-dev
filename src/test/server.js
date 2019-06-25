@@ -93,6 +93,7 @@ module.exports = async function(
     listen: async () => {
       for (let i = 0; i < apps.length; i++) {
         let [app, port, secure] = apps[i];
+        // eslint-disable-next-line require-atomic-updates
         if (port === 'random') port = (await getPorts())[0];
 
         if (setGlobals && port) {

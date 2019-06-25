@@ -25,7 +25,11 @@ module.exports = {
     ecmaVersion: 2017,
     esversion: 2017
   },
-  extends: ['plugin:prettier/recommended', 'eslint:recommended'],
+  extends: [
+    'plugin:prettier/recommended',
+    'eslint:recommended',
+    'plugin:compat/recommended'
+  ],
   plugins: ['mocha'],
   rules: {
     'mocha/no-exclusive-tests': 'error'
