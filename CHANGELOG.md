@@ -1,8 +1,17 @@
-## [0.0.12](https://github.com/sifrr/sifrr-dev/compare/v0.0.11...v0.0.12) (2019-06-25)
+## [0.0.13](https://github.com/sifrr/sifrr-dev/compare/v0.0.12...v0.0.13) (2019-06-25)
 
 
 
-## 0.0.12 (2019-06-25 15:11:00 +0900)
+## 0.0.13 (2019-06-25 18:05:29 +0900)
+
+
+### Features
+
+* separate eslint-config-sifrr package ([6a671fb](https://github.com/sifrr/sifrr-dev/commit/6a671fb))
+
+
+
+## [0.0.12](https://github.com/sifrr/sifrr-dev/compare/v0.0.11...v0.0.12) (2019-06-25 06:12:22 +0000)
 
 
 ### Features
