@@ -1,8 +1,21 @@
-## [0.0.11](https://github.com/sifrr/sifrr-dev/compare/v0.0.10...v0.0.11) (2019-06-15)
+## [0.0.12](https://github.com/sifrr/sifrr-dev/compare/v0.0.11...v0.0.12) (2019-06-25)
 
 
 
-## 0.0.11 (2019-06-15 14:32:00 +0000)
+## 0.0.12 (2019-06-25 15:11:00 +0900)
+
+
+### Features
+
+* add eslint compat plugin ([a72dc0a](https://github.com/sifrr/sifrr-dev/commit/a72dc0a))
+* add prettier to eslint ([b062619](https://github.com/sifrr/sifrr-dev/commit/b062619))
+* add shareable eslint config ([56bf370](https://github.com/sifrr/sifrr-dev/commit/56bf370))
+* remove compat as it doesn't work with node ([6da99a8](https://github.com/sifrr/sifrr-dev/commit/6da99a8))
+* use babel-eslint parser ([b419064](https://github.com/sifrr/sifrr-dev/commit/b419064))
+
+
+
+## [0.0.11](https://github.com/sifrr/sifrr-dev/compare/v0.0.10...v0.0.11) (2019-06-15 14:32:16 +0000)
 
 
 ### Bug Fixes
