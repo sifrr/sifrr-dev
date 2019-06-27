@@ -97,21 +97,10 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
 
   require('@babel/register')({
     presets: ['@babel/env'],
-    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1]
+    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1],
+    plugins: ['istanbul']
   });
   if (fs.existsSync(path.join(root, 'tsconfig.json'))) require('ts-node').register({});
-
-  // unit test coverage
-  if (coverage && !global.__s_dev_cov) {
-    const { createInstrumenter } = require('istanbul-lib-instrument');
-    const instrumenter = createInstrumenter();
-    const { hookRequire } = require('istanbul-lib-hook');
-    hookRequire(
-      filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex),
-      (code, { filename }) => instrumenter.instrumentSync(code, filename)
-    );
-    global.__s_dev_cov = true;
-  }
 
   await runCommands(preCommand);
 

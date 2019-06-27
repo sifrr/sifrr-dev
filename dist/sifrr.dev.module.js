@@ -28,7 +28,6 @@ import istanbulApi from 'istanbul-api';
 import inspector from 'inspector';
 import register from '@babel/register';
 import tsNode from 'ts-node';
-import istanbulLibHook from 'istanbul-lib-hook';
 import portfinder from 'portfinder';
 import server$1 from '@sifrr/server';
 
@@ -811,24 +810,10 @@ async function runTests(options = {}, parallel$1 = false, shareBrowser) {
   }, folders, true);
   register({
     presets: ['@babel/env'],
-    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1]
+    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1],
+    plugins: ['istanbul']
   });
   if (fs.existsSync(path.join(root, 'tsconfig.json'))) tsNode.register({});
-
-  if (coverage && !commonjsGlobal.__s_dev_cov) {
-    const {
-      createInstrumenter
-    } = istanbulLibInstrument;
-    const instrumenter = createInstrumenter();
-    const {
-      hookRequire
-    } = istanbulLibHook;
-    hookRequire(filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex), (code, {
-      filename
-    }) => instrumenter.instrumentSync(code, filename));
-    commonjsGlobal.__s_dev_cov = true;
-  }
-
   await runCommands(preCommand);
   const servers = await server(allFolders.public, {
     extraStaticFolders: allFolders.static,

@@ -34,7 +34,6 @@ const istanbulApi = _interopDefault(require('istanbul-api'));
 const inspector = _interopDefault(require('inspector'));
 const register = _interopDefault(require('@babel/register'));
 const tsNode = _interopDefault(require('ts-node'));
-const istanbulLibHook = _interopDefault(require('istanbul-lib-hook'));
 const portfinder = _interopDefault(require('portfinder'));
 const server$1 = _interopDefault(require('@sifrr/server'));
 
@@ -817,24 +816,10 @@ async function runTests(options = {}, parallel$1 = false, shareBrowser) {
   }, folders, true);
   register({
     presets: ['@babel/env'],
-    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1]
+    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1],
+    plugins: ['istanbul']
   });
   if (fs.existsSync(path.join(root, 'tsconfig.json'))) tsNode.register({});
-
-  if (coverage && !commonjsGlobal.__s_dev_cov) {
-    const {
-      createInstrumenter
-    } = istanbulLibInstrument;
-    const instrumenter = createInstrumenter();
-    const {
-      hookRequire
-    } = istanbulLibHook;
-    hookRequire(filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex), (code, {
-      filename
-    }) => instrumenter.instrumentSync(code, filename));
-    commonjsGlobal.__s_dev_cov = true;
-  }
-
   await runCommands(preCommand);
   const servers = await server(allFolders.public, {
     extraStaticFolders: allFolders.static,
