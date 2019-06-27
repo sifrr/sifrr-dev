@@ -3,7 +3,7 @@ const path = require('path');
 const getRollupConfig = require('./src/getrollupconfig');
 const footer = '/*! (c) @aadityataparia */';
 
-function moduleConfig(name, root, minify = false, isModule = false) {
+function moduleConfig(name, root, minify = false, type) {
   const banner = `/*! ${name} v${
     require('./package.json').version
   } - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */`;
@@ -13,7 +13,7 @@ function moduleConfig(name, root, minify = false, isModule = false) {
       inputFile: path.join(root, `./src/sifrr.dev.js`),
       outputFolder: path.join(root, './dist'),
       minify,
-      type: isModule ? 'module' : 'cjs'
+      type
     },
     {
       output: {
@@ -26,7 +26,6 @@ function moduleConfig(name, root, minify = false, isModule = false) {
 }
 
 module.exports = [
-  moduleConfig('sifrr.dev', __dirname),
-  moduleConfig('sifrr.dev', __dirname, true),
-  moduleConfig('sifrr.dev', __dirname, false, true)
+  moduleConfig('sifrr.dev', __dirname, false, ['cjs', 'module']),
+  moduleConfig('sifrr.dev', __dirname, true, 'cjs')
 ];

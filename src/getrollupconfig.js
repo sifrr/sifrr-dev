@@ -11,16 +11,16 @@ const deepMerge = require('./deepmerge');
 
 function moduleConfig(
   { name, inputFile, outputFolder, minify = false, type = 'cjs', outputFileName },
-  extraConfig
+  extraConfig = {}
 ) {
   const filename = path
     .basename(inputFile)
     .slice(0, path.basename(inputFile).lastIndexOf('.'))
     .toLowerCase();
-  const format = type === 'cjs' ? 'cjs' : type === 'browser' ? 'umd' : 'es';
-  const ret = {
-    input: inputFile,
-    output: {
+  type = Array.isArray(type) ? type : [type];
+  const output = type.map(t => {
+    const format = t === 'cjs' ? 'cjs' : t === 'browser' ? 'umd' : 'es';
+    return {
       file: path.join(
         outputFolder,
         `./${outputFileName || filename}${
@@ -31,8 +31,13 @@ function moduleConfig(
       name,
       sourcemap: !minify,
       preferConst: true,
-      exports: 'named'
-    },
+      exports: 'named',
+      ...extraConfig.output
+    };
+  });
+  const ret = {
+    input: inputFile,
+    output: output.length === 0 ? output[0] : output,
     external: Object.keys(require(path.resolve('./package.json')).dependencies),
     plugins: [
       resolve({
@@ -80,6 +85,7 @@ function moduleConfig(
     );
   }
 
+  delete extraConfig.output;
   return deepMerge(ret, extraConfig, true);
 }
 
