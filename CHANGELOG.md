@@ -1,8 +1,17 @@
-## [0.0.15](https://github.com/sifrr/sifrr-dev/compare/v0.0.14...v0.0.15) (2019-06-27)
+## [0.0.16](https://github.com/sifrr/sifrr-dev/compare/v0.0.15...v0.0.16) (2019-06-27)
 
 
 
-## 0.0.15 (2019-06-27 15:36:50 +0900)
+## 0.0.16 (2019-06-27 16:26:56 +0900)
+
+
+### Features
+
+* use babel istanbul plugin to instrument source code ([33b68a3](https://github.com/sifrr/sifrr-dev/commit/33b68a3))
+
+
+
+## [0.0.15](https://github.com/sifrr/sifrr-dev/compare/v0.0.14...v0.0.15) (2019-06-27 06:40:10 +0000)
 
 
 ### Bug Fixes
