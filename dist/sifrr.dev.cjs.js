@@ -817,7 +817,7 @@ async function runTests(options = {}, parallel$1 = false, shareBrowser) {
   }, folders, true);
   register({
     presets: ['@babel/env'],
-    ignore: [f => f.indexOf(allFolders.browserTest) > -1, f => f.indexOf('node_modules') > -1]
+    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1]
   });
   if (fs.existsSync(path.join(root, 'tsconfig.json'))) tsNode.register({});
 
