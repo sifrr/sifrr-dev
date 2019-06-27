@@ -1,8 +1,17 @@
-## [0.0.14](https://github.com/sifrr/sifrr-dev/compare/v0.0.13...v0.0.14) (2019-06-27)
+## [0.0.15](https://github.com/sifrr/sifrr-dev/compare/v0.0.14...v0.0.15) (2019-06-27)
 
 
 
-## 0.0.14 (2019-06-27 15:17:51 +0900)
+## 0.0.15 (2019-06-27 15:36:50 +0900)
+
+
+### Bug Fixes
+
+* only transpile source files and test files using babel ([b7c4a43](https://github.com/sifrr/sifrr-dev/commit/b7c4a43))
+
+
+
+## [0.0.14](https://github.com/sifrr/sifrr-dev/compare/v0.0.13...v0.0.14) (2019-06-27 06:18:48 +0000)
 
 
 ### Features
