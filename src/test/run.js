@@ -95,6 +95,12 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     true
   );
 
+  require('@babel/register')({
+    presets: ['@babel/env'],
+    ignore: [f => f.indexOf(allFolders.browserTest) > -1, f => f.indexOf('node_modules') > -1]
+  });
+  if (fs.existsSync(path.join(root, 'tsconfig.json'))) require('ts-node').register({});
+
   // unit test coverage
   if (coverage && !global.__s_dev_cov) {
     const { createInstrumenter } = require('istanbul-lib-instrument');

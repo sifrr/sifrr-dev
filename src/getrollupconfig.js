@@ -21,7 +21,7 @@ function moduleConfig(
     .toLowerCase();
   type = Array.isArray(type) ? type : [type];
   const output = type.map(t => {
-    const format = t === 'cjs' ? 'cjs' : t === 'browser' ? 'umd' : 'es';
+    const format = t === 'cjs' ? 'cjs' : t === 'browser' ? 'iife' : 'es';
     return {
       file: path.join(
         outputFolder,
@@ -33,14 +33,13 @@ function moduleConfig(
       name,
       sourcemap: !minify,
       preferConst: true,
-      exports: 'named',
       ...extraConfig.output
     };
   });
   const ret = {
     input: inputFile,
     output: output.length === 0 ? output[0] : output,
-    external: Object.keys(require(path.resolve('./package.json')).dependencies),
+    external: Object.keys(require(path.resolve('./package.json')).dependencies || {}),
     plugins: [
       resolve({
         browser: type === 'browser',
@@ -48,7 +47,9 @@ function moduleConfig(
       }),
       fs.existsSync(path.resolve('tsconfig.json'))
         ? typescript({
-            typescript: require('typescript')
+            typescript: require('typescript'),
+            declarationDir: 'dist/type',
+            cacheRoot: './.ts_cache'
           })
         : false,
       commonjs(),

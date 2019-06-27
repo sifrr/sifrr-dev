@@ -18,7 +18,8 @@ function moduleConfig(name, root, minify = false, type) {
     {
       output: {
         banner,
-        footer
+        footer,
+        exports: 'named'
       },
       external: ['fs', 'path', 'inspector', 'child_process', 'crypto']
     }
@@ -27,5 +28,5 @@ function moduleConfig(name, root, minify = false, type) {
 
 module.exports = [
   moduleConfig('sifrr.dev', __dirname, false, ['cjs', 'module']),
-  moduleConfig('sifrr.dev', __dirname, true, 'cjs')
+  moduleConfig('sifrr.dev', __dirname, true, 'module')
 ];

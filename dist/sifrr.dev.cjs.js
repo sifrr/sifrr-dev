@@ -32,6 +32,8 @@ const istanbulLibSourceMaps = _interopDefault(require('istanbul-lib-source-maps'
 const istanbulLibInstrument = _interopDefault(require('istanbul-lib-instrument'));
 const istanbulApi = _interopDefault(require('istanbul-api'));
 const inspector = _interopDefault(require('inspector'));
+const register = _interopDefault(require('@babel/register'));
+const tsNode = _interopDefault(require('ts-node'));
 const istanbulLibHook = _interopDefault(require('istanbul-lib-hook'));
 const portfinder = _interopDefault(require('portfinder'));
 const server$1 = _interopDefault(require('@sifrr/server'));
@@ -105,26 +107,27 @@ function moduleConfig({
   const filename = path.basename(inputFile).slice(0, path.basename(inputFile).lastIndexOf('.')).toLowerCase();
   type = Array.isArray(type) ? type : [type];
   const output = type.map(t => {
-    const format = t === 'cjs' ? 'cjs' : t === 'browser' ? 'umd' : 'es';
+    const format = t === 'cjs' ? 'cjs' : t === 'browser' ? 'iife' : 'es';
     return {
       file: path.join(outputFolder, `./${outputFileName || filename}${format === 'es' ? '.module' : format === 'cjs' ? '.cjs' : ''}${minify ? '.min' : ''}.js`),
       format,
       name,
       sourcemap: !minify,
       preferConst: true,
-      exports: 'named',
       ...extraConfig.output
     };
   });
   const ret = {
     input: inputFile,
     output: output.length === 0 ? output[0] : output,
-    external: Object.keys(commonjsRequire(path.resolve('./package.json')).dependencies),
+    external: Object.keys(commonjsRequire(path.resolve('./package.json')).dependencies || {}),
     plugins: [rollupPluginNodeResolve({
       browser: type === 'browser',
       mainFields: ['module', 'main']
     }), fs.existsSync(path.resolve('tsconfig.json')) ? rollupPluginTypescript2({
-      typescript: typescript
+      typescript: typescript,
+      declarationDir: 'dist/type',
+      cacheRoot: './.ts_cache'
     }) : false, rollupPluginCommonjs(), rollupPluginPostcss({
       extensions: ['.css', '.scss', '.sass', '.less'],
       inject: false,
@@ -812,6 +815,11 @@ async function runTests(options = {}, parallel$1 = false, shareBrowser) {
     coverage: path.join(root, './.nyc_output'),
     source: path.join(root, './src')
   }, folders, true);
+  register({
+    presets: ['@babel/env'],
+    ignore: [f => f.indexOf(allFolders.browserTest) > -1, f => f.indexOf('node_modules') > -1]
+  });
+  if (fs.existsSync(path.join(root, 'tsconfig.json'))) tsNode.register({});
 
   if (coverage && !commonjsGlobal.__s_dev_cov) {
     const {
