@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const babel = require('rollup-plugin-babel');
 const terser = require('rollup-plugin-terser').terser;
 const resolve = require('rollup-plugin-node-resolve');
@@ -6,6 +7,7 @@ const commonjs = require('rollup-plugin-commonjs');
 const cleanup = require('rollup-plugin-cleanup');
 const postcss = require('rollup-plugin-postcss');
 const html = require('rollup-plugin-html');
+const typescript = require('rollup-plugin-typescript2');
 
 const deepMerge = require('./deepmerge');
 
@@ -44,6 +46,11 @@ function moduleConfig(
         browser: type === 'browser',
         mainFields: ['module', 'main']
       }),
+      fs.existsSync(path.resolve('tsconfig.json'))
+        ? typescript({
+            typescript: require('typescript')
+          })
+        : false,
       commonjs(),
       postcss({
         extensions: ['.css', '.scss', '.sass', '.less'],
@@ -71,19 +78,16 @@ function moduleConfig(
       babel({
         exclude: 'node_modules/**',
         rootMode: 'upward'
-      })
-    ]
+      }),
+      minify
+        ? terser({
+            output: {
+              comments: 'all'
+            }
+          })
+        : false
+    ].filter(p => p)
   };
-
-  if (minify) {
-    ret.plugins.push(
-      terser({
-        output: {
-          comments: 'all'
-        }
-      })
-    );
-  }
 
   delete extraConfig.output;
   return deepMerge(ret, extraConfig, true);

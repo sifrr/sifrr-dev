@@ -14,6 +14,8 @@ const rollupPluginCommonjs = _interopDefault(require('rollup-plugin-commonjs'));
 const rollupPluginCleanup = _interopDefault(require('rollup-plugin-cleanup'));
 const rollupPluginPostcss = _interopDefault(require('rollup-plugin-postcss'));
 const rollupPluginHtml = _interopDefault(require('rollup-plugin-html'));
+const rollupPluginTypescript2 = _interopDefault(require('rollup-plugin-typescript2'));
+const typescript = _interopDefault(require('typescript'));
 const cssnano = _interopDefault(require('cssnano'));
 const autoprefixer = _interopDefault(require('autoprefixer'));
 const conventionalChangelog = _interopDefault(require('conventional-changelog'));
@@ -121,7 +123,9 @@ function moduleConfig({
     plugins: [rollupPluginNodeResolve({
       browser: type === 'browser',
       mainFields: ['module', 'main']
-    }), rollupPluginCommonjs(), rollupPluginPostcss({
+    }), fs.existsSync(path.resolve('tsconfig.json')) ? rollupPluginTypescript2({
+      typescript: typescript
+    }) : false, rollupPluginCommonjs(), rollupPluginPostcss({
       extensions: ['.css', '.scss', '.sass', '.less'],
       inject: false,
       plugins: [minify ? cssnano({
@@ -137,17 +141,12 @@ function moduleConfig({
     }), rollupPluginCleanup(), rollupPluginBabel({
       exclude: 'node_modules/**',
       rootMode: 'upward'
-    })]
-  };
-
-  if (minify) {
-    ret.plugins.push(terser({
+    }), minify ? terser({
       output: {
         comments: 'all'
       }
-    }));
-  }
-
+    }) : false].filter(p => p)
+  };
   delete extraConfig.output;
   return deepmerge(ret, extraConfig, true);
 }

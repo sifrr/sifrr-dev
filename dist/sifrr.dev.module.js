@@ -8,6 +8,8 @@ import rollupPluginCommonjs from 'rollup-plugin-commonjs';
 import rollupPluginCleanup from 'rollup-plugin-cleanup';
 import rollupPluginPostcss from 'rollup-plugin-postcss';
 import rollupPluginHtml from 'rollup-plugin-html';
+import rollupPluginTypescript2 from 'rollup-plugin-typescript2';
+import typescript from 'typescript';
 import cssnano from 'cssnano';
 import autoprefixer from 'autoprefixer';
 import conventionalChangelog from 'conventional-changelog';
@@ -115,7 +117,9 @@ function moduleConfig({
     plugins: [rollupPluginNodeResolve({
       browser: type === 'browser',
       mainFields: ['module', 'main']
-    }), rollupPluginCommonjs(), rollupPluginPostcss({
+    }), fs.existsSync(path.resolve('tsconfig.json')) ? rollupPluginTypescript2({
+      typescript: typescript
+    }) : false, rollupPluginCommonjs(), rollupPluginPostcss({
       extensions: ['.css', '.scss', '.sass', '.less'],
       inject: false,
       plugins: [minify ? cssnano({
@@ -131,17 +135,12 @@ function moduleConfig({
     }), rollupPluginCleanup(), rollupPluginBabel({
       exclude: 'node_modules/**',
       rootMode: 'upward'
-    })]
-  };
-
-  if (minify) {
-    ret.plugins.push(terser({
+    }), minify ? terser({
       output: {
         comments: 'all'
       }
-    }));
-  }
-
+    }) : false].filter(p => p)
+  };
   delete extraConfig.output;
   return deepmerge(ret, extraConfig, true);
 }
