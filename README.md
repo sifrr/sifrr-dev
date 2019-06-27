@@ -11,11 +11,9 @@
 
 ## Size
 
-| Type                                         |                                                                                               Size                                                                                               |
-| :------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| Normal (`dist/sifrr.dev.js`)                 |                   [![Normal](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.js)                    |
-| Minified (`dist/sifrr.dev.min.js`)           |              [![Minified](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.min.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.min.js)               |
-| Minified + Gzipped (`dist/sifrr.dev.min.js`) | [![Minified + Gzipped](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.min.js?compression=gzip&maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.min.js) |
+| Type                             |                                                                                Size                                                                                 |
+| :------------------------------- | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| Normal (`dist/sifrr.dev.cjs.js`) | [![Normal](https://img.badgesize.io/sifrr/sifrr-dev/master/dist/sifrr.dev.cjs.js?maxAge=600)](https://github.com/sifrr/sifrr-dev/blob/master/dist/sifrr.dev.cjs.js) |
 
 ## Tools
 
