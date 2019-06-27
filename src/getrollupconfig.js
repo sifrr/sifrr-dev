@@ -10,14 +10,7 @@ const html = require('rollup-plugin-html');
 const deepMerge = require('./deepmerge');
 
 function moduleConfig(
-  {
-    name,
-    inputFile,
-    outputFolder,
-    minify = false,
-    type = 'cjs',
-    outputFileName
-  },
+  { name, inputFile, outputFolder, minify = false, type = 'cjs', outputFileName },
   extraConfig
 ) {
   const filename = path
@@ -30,15 +23,17 @@ function moduleConfig(
     output: {
       file: path.join(
         outputFolder,
-        `./${(outputFileName || filename) +
-          (type === 'module' ? '.module' : '') +
-          (minify ? '.min' : '')}.js`
+        `./${outputFileName || filename}${
+          format === 'es' ? '.module' : format === 'cjs' ? '.cjs' : ''
+        }${minify ? '.min' : ''}.js`
       ),
       format,
       name,
       sourcemap: !minify,
-      preferConst: true
+      preferConst: true,
+      exports: 'named'
     },
+    external: Object.keys(require(path.resolve('./package.json')).dependencies),
     plugins: [
       resolve({
         browser: type === 'browser',
@@ -66,20 +61,14 @@ function moduleConfig(
               minifyJS: true
             }
           : {}
-      })
-    ]
-  };
-
-  if (type !== 'module') {
-    ret.plugins.push(
+      }),
+      cleanup(),
       babel({
         exclude: 'node_modules/**',
         rootMode: 'upward'
       })
-    );
-  }
-
-  ret.plugins.push(cleanup());
+    ]
+  };
 
   if (minify) {
     ret.plugins.push(

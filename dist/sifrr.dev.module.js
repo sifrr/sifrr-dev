@@ -38,116 +38,45 @@ function loadDir({
   fs.readdirSync(dir).forEach(file => {
     const filePath = path.join(dir, file);
     fs.statSync(filePath).isDirectory() ? onDir(filePath) : onFile(filePath);
-    if (deep > 0) loadDir({ dir: filePath, onFile, onDir, deep: deep - 1 });
+    if (deep > 0) loadDir({
+      dir: filePath,
+      onFile,
+      onDir,
+      deep: deep - 1
+    });
   });
   return true;
 }
+
 var loaddir = loadDir;
 
 function type(value) {
   if (value === null) return 'null';
+
   if (typeof value === 'object') {
     if (Array.isArray(value)) return 'array';
   }
+
   return typeof value;
 }
+
 function deepMerge(target, merger, mergeArray = false) {
   switch (type(target)) {
     case 'array':
       return mergeArray ? [...target, ...merger] : [...merger];
+
     case 'object':
       Object.keys(merger).forEach(k => {
         target[k] = deepMerge(target[k], merger[k], mergeArray);
       });
       return target;
+
     default:
       return typeof merger === 'undefined' ? target : merger;
   }
 }
-var deepmerge = deepMerge;
 
-const terser = rollupPluginTerser.terser;
-function moduleConfig(
-  {
-    name,
-    inputFile,
-    outputFolder,
-    minify = false,
-    type = 'cjs',
-    outputFileName
-  },
-  extraConfig
-) {
-  const filename = path
-    .basename(inputFile)
-    .slice(0, path.basename(inputFile).lastIndexOf('.'))
-    .toLowerCase();
-  const format = type === 'cjs' ? 'cjs' : type === 'browser' ? 'umd' : 'es';
-  const ret = {
-    input: inputFile,
-    output: {
-      file: path.join(
-        outputFolder,
-        `./${(outputFileName || filename) +
-          (type === 'module' ? '.module' : '') +
-          (minify ? '.min' : '')}.js`
-      ),
-      format,
-      name,
-      sourcemap: !minify,
-      preferConst: true
-    },
-    plugins: [
-      rollupPluginNodeResolve({
-        browser: type === 'browser',
-        mainFields: ['module', 'main']
-      }),
-      rollupPluginCommonjs(),
-      rollupPluginPostcss({
-        extensions: ['.css', '.scss', '.sass', '.less'],
-        inject: false,
-        plugins: [
-          minify
-            ? cssnano({
-                preset: ['default']
-              })
-            : false,
-          autoprefixer
-        ].filter(k => k)
-      }),
-      rollupPluginHtml({
-        htmlMinifierOptions: minify
-          ? {
-              collapseWhitespace: true,
-              collapseBooleanAttributes: true,
-              conservativeCollapse: true,
-              minifyJS: true
-            }
-          : {}
-      })
-    ]
-  };
-  if (type !== 'module') {
-    ret.plugins.push(
-      rollupPluginBabel({
-        exclude: 'node_modules/**',
-        rootMode: 'upward'
-      })
-    );
-  }
-  ret.plugins.push(rollupPluginCleanup());
-  if (minify) {
-    ret.plugins.push(
-      terser({
-        output: {
-          comments: 'all'
-        }
-      })
-    );
-  }
-  return deepmerge(ret, extraConfig, true);
-}
-var getrollupconfig = moduleConfig;
+var deepmerge = deepMerge;
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -155,7 +84,66 @@ function commonjsRequire () {
 	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
 }
 
+const terser = rollupPluginTerser.terser;
+
+function moduleConfig({
+  name,
+  inputFile,
+  outputFolder,
+  minify = false,
+  type = 'cjs',
+  outputFileName
+}, extraConfig) {
+  const filename = path.basename(inputFile).slice(0, path.basename(inputFile).lastIndexOf('.')).toLowerCase();
+  const format = type === 'cjs' ? 'cjs' : type === 'browser' ? 'umd' : 'es';
+  const ret = {
+    input: inputFile,
+    output: {
+      file: path.join(outputFolder, `./${outputFileName || filename}${format === 'es' ? '.module' : format === 'cjs' ? '.cjs' : ''}${minify ? '.min' : ''}.js`),
+      format,
+      name,
+      sourcemap: !minify,
+      preferConst: true,
+      exports: 'named'
+    },
+    external: Object.keys(commonjsRequire(path.resolve('./package.json')).dependencies),
+    plugins: [rollupPluginNodeResolve({
+      browser: type === 'browser',
+      mainFields: ['module', 'main']
+    }), rollupPluginCommonjs(), rollupPluginPostcss({
+      extensions: ['.css', '.scss', '.sass', '.less'],
+      inject: false,
+      plugins: [minify ? cssnano({
+        preset: ['default']
+      }) : false, autoprefixer].filter(k => k)
+    }), rollupPluginHtml({
+      htmlMinifierOptions: minify ? {
+        collapseWhitespace: true,
+        collapseBooleanAttributes: true,
+        conservativeCollapse: true,
+        minifyJS: true
+      } : {}
+    }), rollupPluginCleanup(), rollupPluginBabel({
+      exclude: 'node_modules/**',
+      rootMode: 'upward'
+    })]
+  };
+
+  if (minify) {
+    ret.plugins.push(terser({
+      output: {
+        comments: 'all'
+      }
+    }));
+  }
+
+  return deepmerge(ret, extraConfig, true);
+}
+
+var getrollupconfig = moduleConfig;
+
 const rtag = /tag:\s*[v=]?(.+?)[,)]/gi;
+
 var generatechangelog = ({
   folder = path.resolve('./'),
   releaseCount = 0,
@@ -166,16 +154,19 @@ var generatechangelog = ({
   let oldChangelog = '';
   let first = false;
   let packageVersion = commonjsRequire(path.join(folder, './package.json')).version;
-  const transform = function(cm, cb) {
+
+  const transform = function (cm, cb) {
     if (outputUnreleased && !first) {
       cm.version = packageVersion;
       first = true;
     }
+
     let match = rtag.exec(cm.gitTags);
     rtag.lastIndex = 0;
     if (match) cm.version = match[1];
     cb(null, cm);
   };
+
   const options = {
     pkg: {
       path: path.join(folder, './package.json')
@@ -188,45 +179,41 @@ var generatechangelog = ({
     },
     transform
   };
+
   if (fs.existsSync(changelogFile)) {
     if (releaseCount === 0) fs.writeFileSync(changelogFile, '');
     oldChangelog = fs.readFileSync(changelogFile, 'utf-8');
   }
+
   if (multiRepo) {
     options.transform = (cm, cb) => {
-      if (cm.scope && cm.scope === multiRepo) cm.scope = null;
-      else cm.type = 'chore';
+      if (cm.scope && cm.scope === multiRepo) cm.scope = null;else cm.type = 'chore';
       transform(cm, cb);
     };
   }
+
   return new Promise((res, rej) => {
-    conventionalChangelog(options)
-      .pipe(fs.createWriteStream(changelogFile))
-      .on('error', rej)
-      .on('finish', () => {
-        fs.appendFileSync(changelogFile, oldChangelog);
-        res(changelogFile);
-      });
+    conventionalChangelog(options).pipe(fs.createWriteStream(changelogFile)).on('error', rej).on('finish', () => {
+      fs.appendFileSync(changelogFile, oldChangelog);
+      res(changelogFile);
+    });
   });
 };
 
 const spawn = child_process.spawn;
 const execa = child_process.exec;
 const splitRegex = /((?:["'][^"]+["'])|(?:[^ ]+))/;
+
 function exec(command, options = {}) {
   if (command.indexOf('sh ') === 0 || options.spawn) {
     process.stdout.write(`Running command: ${command} with spawn \n`);
     options.stdio = options.stdio || 'inherit';
     return new Promise((res, rej) => {
-      const [c, ...args] = command
-        .split(splitRegex)
-        .filter(x => x.trim() !== '');
+      const [c, ...args] = command.split(splitRegex).filter(x => x.trim() !== '');
       const runner = spawn(c, args, options);
       runner.on('close', code => {
         if (code !== 0) {
-          process.stdout.write(
-            `Command exited with code ${code}: ${command} \n`
-          );
+          process.stdout.write(`Command exited with code ${code}: ${command} \n`);
           rej(code);
         } else {
           process.stdout.write(`Finished command: ${command} \n`);
@@ -240,37 +227,43 @@ function exec(command, options = {}) {
       execa(command, options, (err, stdout, stderr) => {
         if (stdout) process.stdout.write(`out: ${stdout} \n`);
         if (stderr) process.stderr.write(`err: ${stderr} \n`);
+
         if (err !== null) {
           process.stderr.write(`exec error: ${err}`);
           rej(err);
         }
-        res({ stdout, stderr });
+
+        res({
+          stdout,
+          stderr
+        });
         process.stdout.write(`Finished command: ${command} \n`);
       });
     });
   }
 }
+
 var exec_1 = exec;
 
 async function checkTag(version, prefix = 'v') {
   version = version || commonjsRequire(path.resolve('./package.json')).version;
   const tag = prefix + version;
   await exec_1('git pull');
-  return exec_1(`git rev-parse ${tag}`)
-    .then(() => {
-      process.stdout.write(`Tag ${tag} already exists.\n`);
-      return true;
-    })
-    .catch(() => {
-      return false;
-    });
+  return exec_1(`git rev-parse ${tag}`).then(() => {
+    process.stdout.write(`Tag ${tag} already exists.\n`);
+    return true;
+  }).catch(() => {
+    return false;
+  });
 }
+
 var checktag = checkTag;
 
 async function releaseTag(version, prefix = 'v') {
   version = version || commonjsRequire(path.resolve('./package.json')).version;
   const tag = prefix + version;
   const exists = await checktag(version, prefix);
+
   if (!exists) {
     await exec_1(`git tag -a ${tag} -m "Release of ${tag}"`);
     process.stdout.write('\n');
@@ -280,9 +273,10 @@ async function releaseTag(version, prefix = 'v') {
     return false;
   }
 }
+
 var releasetag = releaseTag;
 
-var gitaddcommitpush = async function({
+var gitaddcommitpush = async function ({
   preCommand = false,
   files = '*',
   commitMsg = 'chore: add new files',
@@ -297,6 +291,7 @@ var gitaddcommitpush = async function({
       await exec_1(preCommand);
     }
   }
+
   if (Array.isArray(files)) {
     for (let i = 0; i < files.length; i++) {
       await exec_1(`git ls-files '${files[i]}' | xargs git add`);
@@ -304,13 +299,12 @@ var gitaddcommitpush = async function({
   } else {
     await exec_1(`git ls-files '${files}' | xargs git add`);
   }
-  await exec_1(`git commit -m "${commitMsg}"`)
-    .then(() => {
-      if (push) exec_1(`git push`);
-    })
-    .catch(() => {
-      process.stdout.write('Nothing to commit, not running git push. \n');
-    });
+
+  await exec_1(`git commit -m "${commitMsg}"`).then(() => {
+    if (push) exec_1(`git push`);
+  }).catch(() => {
+    process.stdout.write('Nothing to commit, not running git push. \n');
+  });
 };
 
 var _0777 = parseInt('0777', 8);
@@ -391,6 +385,7 @@ mkdirP.sync = function sync (p, opts, made) {
 function hash() {
   return crypto.randomBytes(10).toString('hex');
 }
+
 var writecoverage = function writeCoverage(coverage, folder, prefix = '') {
   const file = path.join(folder, `${Date.now()}-${prefix}-${hash()}.json`);
   mkdirp.sync(path.dirname(file), err => {
@@ -404,19 +399,24 @@ async function writePageCoverage(p, nycReport) {
   const jsCoverage = await p.evaluate(() => window.__coverage__);
   writecoverage(jsCoverage, nycReport, 'browser-coverage');
 }
+
 function setPageForCoverage(p, nycReport) {
   p.goto = async (url, options) => {
     await writePageCoverage(p, nycReport);
     return p.mainFrame().goto(url, options);
   };
+
   p._close = p.close;
+
   p.close = async () => {
     await writePageCoverage(p, nycReport);
     return p._close();
   };
 }
-var loadbrowser = async function(coverage, nycReport, browserWSEndpoint) {
+
+var loadbrowser = async function (coverage, nycReport, browserWSEndpoint) {
   let browser;
+
   if (!commonjsGlobal.browser) {
     if (typeof browserWSEndpoint === 'string') {
       browser = commonjsGlobal.browser = await puppeteer.connect({
@@ -431,27 +431,37 @@ var loadbrowser = async function(coverage, nycReport, browserWSEndpoint) {
         devtools: false
       });
     }
+
     if (coverage && nycReport) {
       browser.__newPage = browser.newPage;
+
       browser.newPage = async () => {
         const p = await browser.__newPage();
         setPageForCoverage(p, nycReport);
         return p;
       };
+
       browser.__close = browser.close;
+
       browser.close = async () => {
         const pages = await browser.pages();
+
         for (let i = 0; i < pages.length; i++) {
           await pages[i].close();
         }
+
         return browser.__close();
       };
     }
   } else {
     browser = commonjsGlobal.browser;
   }
+
   const page = await browser.newPage();
-  await page.setViewport({ width: 1280, height: 800 });
+  await page.setViewport({
+    width: 1280,
+    height: 800
+  });
   if (!commonjsGlobal.page) commonjsGlobal.page = page;
   return {
     browser,
@@ -459,39 +469,37 @@ var loadbrowser = async function(coverage, nycReport, browserWSEndpoint) {
   };
 };
 
-const { fork } = child_process;
-var parallel = async function(options, shareBrowser = true) {
+const {
+  fork
+} = child_process;
+
+var parallel = async function (options, shareBrowser = true) {
   const promises = [];
   let failures = 0;
   if (shareBrowser) await loadbrowser();
+
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
-    opts.browserWSEndpoint = shareBrowser
-      ? commonjsGlobal.browser.wsEndpoint()
-      : opts.browserWSEndpoint;
+    opts.browserWSEndpoint = shareBrowser ? commonjsGlobal.browser.wsEndpoint() : opts.browserWSEndpoint;
     const childRun = fork(path.join(__dirname, './run'), process.argv);
-    promises.push(
-      new Promise(res => {
-        childRun.on('exit', code => {
-          if (code && code > 0)
-            commonjsGlobal.console.log(
-              '\x1b[36m%s\x1b[0m',
-              `Config#${i}: tests from ${opts.root} exited with code ${code}`
-            );
-          res();
-        });
-        childRun.on('message', e => {
-          failures += Number(e);
-        });
-        childRun.on('error', e => {
-          commonjsGlobal.console.error(e);
-        });
-        childRun.send(jsonFn.stringify(opts));
-      })
-    );
+    promises.push(new Promise(res => {
+      childRun.on('exit', code => {
+        if (code && code > 0) commonjsGlobal.console.log('\x1b[36m%s\x1b[0m', `Config#${i}: tests from ${opts.root} exited with code ${code}`);
+        res();
+      });
+      childRun.on('message', e => {
+        failures += Number(e);
+      });
+      childRun.on('error', e => {
+        commonjsGlobal.console.error(e);
+      });
+      childRun.send(jsonFn.stringify(opts));
+    }));
   }
+
   await Promise.all(promises);
   if (shareBrowser) await commonjsGlobal.browser.close();
+
   if (failures > 0) {
     throw failures;
   } else {
@@ -504,18 +512,22 @@ function getCaller() {
     let err = new Error();
     let callerfile;
     let currentfile;
-    Error.prepareStackTrace = function(err, stack) {
+
+    Error.prepareStackTrace = function (err, stack) {
       return stack;
     };
+
     currentfile = err.stack.shift().getFileName();
+
     while (err.stack.length) {
       callerfile = err.stack.shift().getFileName();
       if (currentfile !== callerfile) return callerfile;
     }
-  } catch (err) {
-  }
+  } catch (err) {}
+
   return undefined;
 }
+
 var testglobals = (testOptions, parallel$1) => {
   commonjsGlobal.__pdescribes = [];
   commonjsGlobal.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
@@ -525,54 +537,49 @@ var testglobals = (testOptions, parallel$1) => {
   commonjsGlobal.assert = chai.assert;
   commonjsGlobal.expect = chai.expect;
   commonjsGlobal.should = chai.should();
+
   commonjsGlobal.delay = time => {
     return new Promise(res => {
-      setTimeout(function() {
+      setTimeout(function () {
         res();
       }, time);
     });
   };
-  commonjsGlobal.pdescribe = function(name, fxn) {
+
+  commonjsGlobal.pdescribe = function (name, fxn) {
     const testFile = getCaller();
+
     if (testFile && testOptions && !testOptions.parallel && parallel$1) {
       const newOpts = deepmerge({}, testOptions);
       deepmerge(newOpts, {
-        browserWSEndpoint: commonjsGlobal.browser
-          ? commonjsGlobal.browser.wsEndpoint()
-          : undefined,
+        browserWSEndpoint: commonjsGlobal.browser ? commonjsGlobal.browser.wsEndpoint() : undefined,
         filters: [testFile],
         parallel: true,
-        junitXmlFile: path.join(
-          testOptions.junitXmlFile,
-          `../../${path
-            .basename(getCaller())
-            .replace('.test.js', '')}/results.xml`
-        ),
+        junitXmlFile: path.join(testOptions.junitXmlFile, `../../${path.basename(getCaller()).replace('.test.js', '')}/results.xml`),
         port: 'random'
       });
-      commonjsGlobal.__pdescribes.push(
-        parallel([newOpts], true).catch(e => e)
-      );
+
+      commonjsGlobal.__pdescribes.push(parallel([newOpts], true).catch(e => e));
     } else {
       describe(name, fxn);
     }
   };
+
   chai.use(chaiAsPromised);
 };
 
-const { createInstrumenter } = istanbulLibInstrument,
-  reporter = istanbulApi.createReporter();
+const {
+  createInstrumenter
+} = istanbulLibInstrument,
+      reporter = istanbulApi.createReporter();
 const instrumenter = createInstrumenter({
   esModules: true
 });
-var transformcoverage = function(
-  nycReport,
-  srcFolder,
-  srcFileRegex,
-  reporters = ['html']
-) {
+
+var transformcoverage = function (nycReport, srcFolder, srcFileRegex, reporters = ['html']) {
   const sm = istanbulLibSourceMaps.createSourceMapStore({});
   let map = istanbulLibCoverage.createCoverageMap();
+
   if (fs.existsSync(nycReport)) {
     loaddir({
       dir: nycReport,
@@ -590,11 +597,7 @@ var transformcoverage = function(
     loaddir({
       dir: srcFolder,
       onFile: file => {
-        if (
-          file.slice(-3) === '.js' &&
-          file.match(srcFileRegex) &&
-          !map.data[file]
-        ) {
+        if (file.slice(-3) === '.js' && file.match(srcFileRegex) && !map.data[file]) {
           const content = fs.readFileSync(file).toString();
           instrumenter.instrumentSync(content, file);
           const emptyCov = {};
@@ -609,7 +612,7 @@ var transformcoverage = function(
   }
 };
 
-var getports = async function() {
+var getports = async function () {
   const first = await portfinder.getPortPromise({
     port: 10000
   });
@@ -620,30 +623,21 @@ var getports = async function() {
 };
 
 const instrumenter$1 = istanbulLibInstrument.createInstrumenter();
-const { App, SSLApp } = server$1;
+const {
+  App,
+  SSLApp
+} = server$1;
+
 function staticInstrument(app, folder, coverage = false) {
   loaddir({
     dir: folder,
     onFile: filePath => {
-      if (
-        coverage &&
-        filePath.slice(-3) === '.js' &&
-        fs.existsSync(filePath + '.map')
-      ) {
+      if (coverage && filePath.slice(-3) === '.js' && fs.existsSync(filePath + '.map')) {
         app.get('/' + path.relative(folder, filePath), res => {
           res.onAborted(commonjsGlobal.console.log);
           const text = fs.readFileSync(filePath, 'utf-8');
-          res.writeHeader(
-            'content-type',
-            'application/javascript; charset=UTF-8'
-          );
-          res.end(
-            instrumenter$1.instrumentSync(
-              text,
-              filePath,
-              JSON.parse(fs.readFileSync(filePath + '.map'))
-            )
-          );
+          res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
+          res.end(instrumenter$1.instrumentSync(text, filePath, JSON.parse(fs.readFileSync(filePath + '.map'))));
         });
       } else {
         app.file('/' + path.relative(folder, filePath), filePath);
@@ -651,17 +645,16 @@ function staticInstrument(app, folder, coverage = false) {
     }
   });
 }
-var server = async function(
-  root,
-  {
-    extraStaticFolders = [],
-    setGlobals = true,
-    coverage = true,
-    port = false,
-    securePort = false
-  } = {}
-) {
+
+var server = async function (root, {
+  extraStaticFolders = [],
+  setGlobals = true,
+  coverage = true,
+  port = false,
+  securePort = false
+} = {}) {
   const apps = [];
+
   function startServer(app, hostingPort, secure) {
     staticInstrument(app, root, coverage);
     staticInstrument(app, path.join(root, '../../dist'), coverage);
@@ -670,20 +663,25 @@ var server = async function(
     });
     apps.push([app, hostingPort, secure]);
   }
+
   let normalApp, secureApp;
+
   if (port) {
     let app;
+
     if (fs.existsSync(path.join(root, 'server.js'))) {
       app = commonjsRequire(path.join(root, 'server.js'));
     } else {
       app = new App();
     }
-    if (typeof app.file === 'function') startServer(app, port, false);
-    else apps.push([app, port, false]);
+
+    if (typeof app.file === 'function') startServer(app, port, false);else apps.push([app, port, false]);
     normalApp = app;
   }
+
   if (securePort) {
     let app;
+
     if (fs.existsSync(path.join(root, 'secureserver.js'))) {
       app = commonjsRequire(path.join(root, 'secureserver.js'));
     } else {
@@ -692,10 +690,11 @@ var server = async function(
         cert_file_name: path.join(__dirname, 'keys/server.crt')
       });
     }
-    if (typeof app.file === 'function') startServer(app, securePort, true);
-    else apps.push([app, securePort, true]);
+
+    if (typeof app.file === 'function') startServer(app, securePort, true);else apps.push([app, securePort, true]);
     secureApp = app;
   }
+
   return {
     secureApp: secureApp,
     app: normalApp,
@@ -703,17 +702,15 @@ var server = async function(
       for (let i = 0; i < apps.length; i++) {
         let [app, port, secure] = apps[i];
         if (port === 'random') port = (await getports())[0];
+
         if (setGlobals && port) {
-          commonjsGlobal[secure ? 'SPATH' : 'PATH'] = `http${
-            secure ? 's' : ''
-          }://localhost:${port}`;
+          commonjsGlobal[secure ? 'SPATH' : 'PATH'] = `http${secure ? 's' : ''}://localhost:${port}`;
           commonjsGlobal[secure ? 'securePort' : 'port'] = port;
         }
+
         app.listen(port, socket => {
           if (socket) {
-            commonjsGlobal.console.log(
-              `Test server listening on port ${port}, serving ${root}`
-            );
+            commonjsGlobal.console.log(`Test server listening on port ${port}, serving ${root}`);
           } else {
             commonjsGlobal.console.log('Test server failed to listen to port ' + port);
           }
@@ -737,8 +734,10 @@ function loadTests(dir, mocha, regex, filters) {
     }
   });
 }
+
 async function runCommands(commands) {
   if (!commands) return;
+
   if (Array.isArray(commands)) {
     for (let j = 0; j < commands.length; j++) {
       await exec_1(commands[j]).catch(commonjsGlobal.console.error);
@@ -747,26 +746,28 @@ async function runCommands(commands) {
     await exec_1(commands).catch(commonjsGlobal.console.error);
   }
 }
+
 async function runTests(options = {}, parallel$1 = false, shareBrowser) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
       await runCommands(options[i].preCommand);
       delete options[i].preCommand;
     }
-    if (parallel$1) return parallel(options, shareBrowser);
-    else {
+
+    if (parallel$1) return parallel(options, shareBrowser);else {
       let failures = 0;
+
       for (let i = 0; i < options.length; i++) {
         failures += await runTests(options[i]).catch(f => {
-          if (Number(f)) return Number(f);
-          else process.stderr.write(f + '\n');
+          if (Number(f)) return Number(f);else process.stderr.write(f + '\n');
           return 0;
         });
       }
-      if (failures > 0) throw failures;
-      else return 0;
+
+      if (failures > 0) throw failures;else return 0;
     }
   }
+
   const {
     root = path.resolve('./'),
     serverOnly = false,
@@ -782,10 +783,7 @@ async function runTests(options = {}, parallel$1 = false, shareBrowser) {
     port = 'random',
     securePort = false,
     useJunitReporter = false,
-    junitXmlFile = path.join(
-      root,
-      `./test-results/${path.basename(root)}/results.xml`
-    ),
+    junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
     inspect = false,
     reporters = ['html'],
     mochaOptions = {},
@@ -795,30 +793,29 @@ async function runTests(options = {}, parallel$1 = false, shareBrowser) {
   if (inspect) inspector.open(undefined, undefined, true);
   const beforeRet = typeof before === 'function' ? before() : false;
   if (beforeRet instanceof Promise) await beforeRet;
-  const allFolders = deepmerge(
-    {
-      unitTest: path.join(root, './test/unit'),
-      browserTest: path.join(root, './test/browser'),
-      public: path.join(root, './test/public'),
-      static: [],
-      coverage: path.join(root, './.nyc_output'),
-      source: path.join(root, './src')
-    },
-    folders,
-    true
-  );
+  const allFolders = deepmerge({
+    unitTest: path.join(root, './test/unit'),
+    browserTest: path.join(root, './test/browser'),
+    public: path.join(root, './test/public'),
+    static: [],
+    coverage: path.join(root, './.nyc_output'),
+    source: path.join(root, './src')
+  }, folders, true);
+
   if (coverage && !commonjsGlobal.__s_dev_cov) {
-    const { createInstrumenter } = istanbulLibInstrument;
+    const {
+      createInstrumenter
+    } = istanbulLibInstrument;
     const instrumenter = createInstrumenter();
-    const { hookRequire } = istanbulLibHook;
-    hookRequire(
-      filePath =>
-        filePath.indexOf(allFolders.source) > -1 &&
-        filePath.match(sourceFileRegex),
-      (code, { filename }) => instrumenter.instrumentSync(code, filename)
-    );
+    const {
+      hookRequire
+    } = istanbulLibHook;
+    hookRequire(filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex), (code, {
+      filename
+    }) => instrumenter.instrumentSync(code, filename));
     commonjsGlobal.__s_dev_cov = true;
   }
+
   await runCommands(preCommand);
   const servers = await server(allFolders.public, {
     extraStaticFolders: allFolders.static,
@@ -827,72 +824,65 @@ async function runTests(options = {}, parallel$1 = false, shareBrowser) {
     port,
     securePort
   });
+
   if (serverOnly) {
     await servers.listen();
     return 'server';
   }
+
   if (setGlobals) testglobals(options, parallel$1);
+
   if (useJunitReporter) {
     mochaOptions.reporter = 'mocha-junit-reporter';
     mochaOptions.reporterOptions = {
       mochaFile: junitXmlFile
     };
   }
+
   const mocha$1 = new mocha(mochaOptions);
-  if (
-    (runBrowserTests || !runUnitTests) &&
-    fs.existsSync(allFolders.browserTest)
-  ) {
+
+  if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
     await servers.listen();
     await loadbrowser(coverage, allFolders.coverage, browserWSEndpoint);
     loadTests(allFolders.browserTest, mocha$1, testFileRegex, filters);
   }
-  if (
-    (runUnitTests || !runBrowserTests) &&
-    fs.existsSync(allFolders.unitTest)
-  ) {
+
+  if ((runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest)) {
     loadTests(allFolders.unitTest, mocha$1, testFileRegex, filters);
   }
+
   return new Promise((res, rej) => {
     mocha$1.run(async failures => {
       servers.close();
+
       if (commonjsGlobal.browser && !browserWSEndpoint) {
         await browser.close();
         delete commonjsGlobal.browser;
         delete commonjsGlobal.page;
       }
+
       if (commonjsGlobal.__pdescribes) {
         const fs = await Promise.all(commonjsGlobal.__pdescribes);
         failures += fs.reduce((a, b) => a + b, 0);
       }
+
       if (coverage) {
-        writecoverage(
-          commonjsGlobal.__coverage__,
-          allFolders.coverage,
-          'unit-coverage'
-        );
-        transformcoverage(
-          allFolders.coverage,
-          allFolders.source,
-          sourceFileRegex,
-          reporters
-        );
+        writecoverage(commonjsGlobal.__coverage__, allFolders.coverage, 'unit-coverage');
+        transformcoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
-      if (failures) rej(failures);
-      else res(0);
+
+      if (failures) rej(failures);else res(0);
     });
   });
 }
+
 process.on('message', async options => {
   options = jsonFn.parse(options);
-  await runTests(options, true)
-    .catch(f => {
-      if (Number(f)) process.send(`${f}`);
-      else process.stderr.write(f + '\n');
-    })
-    .then(r => {
-      if (r !== 'server') process.exit();
-    });
+  await runTests(options, true).catch(f => {
+    if (Number(f)) process.send(`${f}`);else process.stderr.write(f + '\n');
+  }).then(r => {
+    if (r !== 'server') process.exit();
+  });
 });
 var run = runTests;
 

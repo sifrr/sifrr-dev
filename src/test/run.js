@@ -69,10 +69,7 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     port = 'random',
     securePort = false,
     useJunitReporter = false,
-    junitXmlFile = path.join(
-      root,
-      `./test-results/${path.basename(root)}/results.xml`
-    ),
+    junitXmlFile = path.join(root, `./test-results/${path.basename(root)}/results.xml`),
     inspect = false,
     reporters = ['html'],
     mochaOptions = {},
@@ -104,9 +101,7 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     const instrumenter = createInstrumenter();
     const { hookRequire } = require('istanbul-lib-hook');
     hookRequire(
-      filePath =>
-        filePath.indexOf(allFolders.source) > -1 &&
-        filePath.match(sourceFileRegex),
+      filePath => filePath.indexOf(allFolders.source) > -1 && filePath.match(sourceFileRegex),
       (code, { filename }) => instrumenter.instrumentSync(code, filename)
     );
     global.__s_dev_cov = true;
@@ -136,19 +131,13 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
   }
   const mocha = new Mocha(mochaOptions);
 
-  if (
-    (runBrowserTests || !runUnitTests) &&
-    fs.existsSync(allFolders.browserTest)
-  ) {
+  if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
     await servers.listen();
     await loadBrowser(coverage, allFolders.coverage, browserWSEndpoint);
     loadTests(allFolders.browserTest, mocha, testFileRegex, filters);
   }
 
-  if (
-    (runUnitTests || !runBrowserTests) &&
-    fs.existsSync(allFolders.unitTest)
-  ) {
+  if ((runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest)) {
     loadTests(allFolders.unitTest, mocha, testFileRegex, filters);
   }
 
@@ -170,17 +159,8 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
 
       // Get and write code coverage
       if (coverage) {
-        writeCoverage(
-          global.__coverage__,
-          allFolders.coverage,
-          'unit-coverage'
-        );
-        transformCoverage(
-          allFolders.coverage,
-          allFolders.source,
-          sourceFileRegex,
-          reporters
-        );
+        writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');
+        transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
 
       if (failures) rej(failures);

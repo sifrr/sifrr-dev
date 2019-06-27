@@ -10,12 +10,7 @@ const instrumenter = createInstrumenter({
   esModules: true
 });
 
-module.exports = function(
-  nycReport,
-  srcFolder,
-  srcFileRegex,
-  reporters = ['html']
-) {
+module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html']) {
   const sm = srcmap.createSourceMapStore({});
   let map = cov.createCoverageMap();
   if (fs.existsSync(nycReport)) {
@@ -41,11 +36,7 @@ module.exports = function(
     loadDir({
       dir: srcFolder,
       onFile: file => {
-        if (
-          file.slice(-3) === '.js' &&
-          file.match(srcFileRegex) &&
-          !map.data[file]
-        ) {
+        if (file.slice(-3) === '.js' && file.match(srcFileRegex) && !map.data[file]) {
           const content = fs.readFileSync(file).toString();
           instrumenter.instrumentSync(content, file);
           const emptyCov = {};

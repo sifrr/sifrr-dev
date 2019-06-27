@@ -1,12 +1,7 @@
 const fs = require('fs'),
   path = require('path');
 
-function loadDir({
-  dir,
-  onFile = () => {},
-  onDir = () => {},
-  deep = 100
-} = {}) {
+function loadDir({ dir, onFile = () => {}, onDir = () => {}, deep = 100 } = {}) {
   if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return false;
   fs.readdirSync(dir).forEach(file => {
     const filePath = path.join(dir, file);

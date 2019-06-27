@@ -8,15 +8,11 @@ function exec(command, options = {}) {
     process.stdout.write(`Running command: ${command} with spawn \n`);
     options.stdio = options.stdio || 'inherit';
     return new Promise((res, rej) => {
-      const [c, ...args] = command
-        .split(splitRegex)
-        .filter(x => x.trim() !== '');
+      const [c, ...args] = command.split(splitRegex).filter(x => x.trim() !== '');
       const runner = spawn(c, args, options);
       runner.on('close', code => {
         if (code !== 0) {
-          process.stdout.write(
-            `Command exited with code ${code}: ${command} \n`
-          );
+          process.stdout.write(`Command exited with code ${code}: ${command} \n`);
           rej(code);
         } else {
           process.stdout.write(`Finished command: ${command} \n`);

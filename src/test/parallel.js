@@ -10,9 +10,7 @@ module.exports = async function(options, shareBrowser = true) {
 
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
-    opts.browserWSEndpoint = shareBrowser
-      ? global.browser.wsEndpoint()
-      : opts.browserWSEndpoint;
+    opts.browserWSEndpoint = shareBrowser ? global.browser.wsEndpoint() : opts.browserWSEndpoint;
 
     const childRun = fork(path.join(__dirname, './run'), process.argv);
     promises.push(

@@ -45,22 +45,16 @@ module.exports = (testOptions, parallel) => {
     if (testFile && testOptions && !testOptions.parallel && parallel) {
       const newOpts = deepMerge({}, testOptions);
       deepMerge(newOpts, {
-        browserWSEndpoint: global.browser
-          ? global.browser.wsEndpoint()
-          : undefined,
+        browserWSEndpoint: global.browser ? global.browser.wsEndpoint() : undefined,
         filters: [testFile],
         parallel: true,
         junitXmlFile: path.join(
           testOptions.junitXmlFile,
-          `../../${path
-            .basename(getCaller())
-            .replace('.test.js', '')}/results.xml`
+          `../../${path.basename(getCaller()).replace('.test.js', '')}/results.xml`
         ),
         port: 'random'
       });
-      global.__pdescribes.push(
-        require('./parallel')([newOpts], true).catch(e => e)
-      );
+      global.__pdescribes.push(require('./parallel')([newOpts], true).catch(e => e));
     } else {
       describe(name, fxn);
     }
