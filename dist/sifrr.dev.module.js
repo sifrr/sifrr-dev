@@ -26,7 +26,6 @@ import istanbulLibSourceMaps from 'istanbul-lib-source-maps';
 import istanbulLibInstrument from 'istanbul-lib-instrument';
 import istanbulApi from 'istanbul-api';
 import inspector from 'inspector';
-import register from '@babel/register';
 import tsNode from 'ts-node';
 import portfinder from 'portfinder';
 import server$1 from '@sifrr/server';
@@ -113,7 +112,7 @@ function moduleConfig({
   const ret = {
     input: inputFile,
     output: output.length === 0 ? output[0] : output,
-    external: Object.keys(commonjsRequire(path.resolve('./package.json')).dependencies || {}),
+    external: Object.keys(commonjsRequire(path.resolve('./package.json')).dependencies || []).concat(),
     plugins: [rollupPluginNodeResolve({
       browser: type === 'browser',
       mainFields: ['module', 'main']
@@ -808,11 +807,6 @@ async function runTests(options = {}, parallel$1 = false, shareBrowser) {
     coverage: path.join(root, './.nyc_output'),
     source: path.join(root, './src')
   }, folders, true);
-  register({
-    presets: ['@babel/env'],
-    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1],
-    plugins: ['istanbul']
-  });
   if (fs.existsSync(path.join(root, 'tsconfig.json'))) tsNode.register({});
   await runCommands(preCommand);
   const servers = await server(allFolders.public, {

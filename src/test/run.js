@@ -95,11 +95,6 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     true
   );
 
-  require('@babel/register')({
-    presets: ['@babel/env'],
-    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1],
-    plugins: ['istanbul']
-  });
   if (fs.existsSync(path.join(root, 'tsconfig.json'))) require('ts-node').register({});
 
   await runCommands(preCommand);

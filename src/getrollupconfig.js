@@ -39,7 +39,7 @@ function moduleConfig(
   const ret = {
     input: inputFile,
     output: output.length === 0 ? output[0] : output,
-    external: Object.keys(require(path.resolve('./package.json')).dependencies || {}),
+    external: Object.keys(require(path.resolve('./package.json')).dependencies || []).concat(),
     plugins: [
       resolve({
         browser: type === 'browser',
