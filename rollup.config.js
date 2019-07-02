@@ -13,7 +13,8 @@ function moduleConfig(name, root, minify = false, type) {
       inputFile: path.join(root, `./src/sifrr.dev.js`),
       outputFolder: path.join(root, './dist'),
       minify,
-      type
+      type,
+      replaceEnv: false
     },
     {
       output: {
@@ -27,6 +28,7 @@ function moduleConfig(name, root, minify = false, type) {
 }
 
 module.exports = [
-  moduleConfig('sifrr.dev', __dirname, false, ['cjs', 'module']),
-  moduleConfig('sifrr.dev', __dirname, true, 'module')
+  moduleConfig('sifrr.dev', __dirname, true, 'module'),
+  moduleConfig('sifrr.dev', __dirname, false, 'cjs'),
+  moduleConfig('sifrr.dev', __dirname, false, 'module')
 ];

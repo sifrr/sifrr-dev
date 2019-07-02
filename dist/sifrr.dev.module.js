@@ -9,6 +9,7 @@ import rollupPluginCleanup from 'rollup-plugin-cleanup';
 import rollupPluginPostcss from 'rollup-plugin-postcss';
 import rollupPluginHtml from 'rollup-plugin-html';
 import rollupPluginTypescript2 from 'rollup-plugin-typescript2';
+import rollupPluginReplace from 'rollup-plugin-replace';
 import typescript from 'typescript';
 import cssnano from 'cssnano';
 import autoprefixer from 'autoprefixer';
@@ -94,7 +95,8 @@ function moduleConfig({
   outputFolder,
   minify = false,
   type = 'cjs',
-  outputFileName
+  outputFileName,
+  replaceEnv = true
 }, extraConfig = {}) {
   const filename = path.basename(inputFile).slice(0, path.basename(inputFile).lastIndexOf('.')).toLowerCase();
   type = Array.isArray(type) ? type : [type];
@@ -111,12 +113,17 @@ function moduleConfig({
   });
   const ret = {
     input: inputFile,
-    output: output.length === 0 ? output[0] : output,
+    output: output.length === 1 ? output[0] : output,
     external: Object.keys(commonjsRequire(path.resolve('./package.json')).dependencies || []).concat(),
     plugins: [rollupPluginNodeResolve({
       browser: type === 'browser',
       mainFields: ['module', 'main']
-    }), fs.existsSync(path.resolve('tsconfig.json')) ? rollupPluginTypescript2({
+    }), replaceEnv ? rollupPluginReplace({
+      ENVIRONMENT: JSON.stringify(process.env.NODE_ENV || process.env.ENV || 'development'),
+      'global.IS_NODE': JSON.stringify(type[0] === 'cjs'),
+      'global.IS_MODULE': JSON.stringify(type[0] === 'module'),
+      'global.IS_BROWSER': JSON.stringify(type[0] === 'browser')
+    }) : false, fs.existsSync(path.resolve('tsconfig.json')) ? rollupPluginTypescript2({
       typescript: typescript,
       declarationDir: 'dist/type',
       cacheRoot: './.ts_cache'

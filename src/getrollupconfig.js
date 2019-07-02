@@ -8,11 +8,20 @@ const cleanup = require('rollup-plugin-cleanup');
 const postcss = require('rollup-plugin-postcss');
 const html = require('rollup-plugin-html');
 const typescript = require('rollup-plugin-typescript2');
+const replace = require('rollup-plugin-replace');
 
 const deepMerge = require('./deepmerge');
 
 function moduleConfig(
-  { name, inputFile, outputFolder, minify = false, type = 'cjs', outputFileName },
+  {
+    name,
+    inputFile,
+    outputFolder,
+    minify = false,
+    type = 'cjs',
+    outputFileName,
+    replaceEnv = true
+  },
   extraConfig = {}
 ) {
   const filename = path
@@ -38,13 +47,21 @@ function moduleConfig(
   });
   const ret = {
     input: inputFile,
-    output: output.length === 0 ? output[0] : output,
+    output: output.length === 1 ? output[0] : output,
     external: Object.keys(require(path.resolve('./package.json')).dependencies || []).concat(),
     plugins: [
       resolve({
         browser: type === 'browser',
         mainFields: ['module', 'main']
       }),
+      replaceEnv
+        ? replace({
+            ENVIRONMENT: JSON.stringify(process.env.NODE_ENV || process.env.ENV || 'development'),
+            'global.IS_NODE': JSON.stringify(type[0] === 'cjs'),
+            'global.IS_MODULE': JSON.stringify(type[0] === 'module'),
+            'global.IS_BROWSER': JSON.stringify(type[0] === 'browser')
+          })
+        : false,
       fs.existsSync(path.resolve('tsconfig.json'))
         ? typescript({
             typescript: require('typescript'),
