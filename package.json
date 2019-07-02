@@ -47,7 +47,7 @@
     "coveralls": "^3.0.2",
     "cssnano": "^4.1.10",
     "eslint": "^6.0.0",
-    "husky": "^2.0.0",
+    "husky": "^3.0.0",
     "istanbul-api": "^3.0.0",
     "istanbul-lib-coverage": "^2.0.1",
     "istanbul-lib-hook": "^2.0.1",
