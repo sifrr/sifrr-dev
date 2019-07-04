@@ -1,8 +1,24 @@
-## [0.0.19](https://github.com/sifrr/sifrr-dev/compare/v0.0.18...v0.0.19) (2019-07-04)
+## [0.0.20](https://github.com/sifrr/sifrr-dev/compare/v0.0.19...v0.0.20) (2019-07-04)
 
 
 
-## 0.0.19 (2019-07-05 01:23:23 +0900)
+## 0.0.20 (2019-07-05 04:04:27 +0900)
+
+
+### Bug Fixes
+
+* don't parse coverage if not present ([9b1a3bf](https://github.com/sifrr/sifrr-dev/commit/9b1a3bf))
+
+
+### Features
+
+* add option to merge arrays in rollup config ([51db34e](https://github.com/sifrr/sifrr-dev/commit/51db34e))
+* handle uncaughtException and unhandledRejection ([1d157e5](https://github.com/sifrr/sifrr-dev/commit/1d157e5))
+* instrument source files ([6d869a5](https://github.com/sifrr/sifrr-dev/commit/6d869a5))
+
+
+
+## [0.0.19](https://github.com/sifrr/sifrr-dev/compare/v0.0.18...v0.0.19) (2019-07-04 16:24:15 +0000)
 
 
 ### Bug Fixes
