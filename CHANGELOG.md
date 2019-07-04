@@ -1,8 +1,17 @@
-## [0.0.17](https://github.com/sifrr/sifrr-dev/compare/v0.0.16...v0.0.17) (2019-07-04)
+## [0.0.18](https://github.com/sifrr/sifrr-dev/compare/v0.0.17...v0.0.18) (2019-07-04)
 
 
 
-## 0.0.17 (2019-07-04 23:35:36 +0900)
+## 0.0.18 (2019-07-04 23:48:54 +0900)
+
+
+### Bug Fixes
+
+* don't npmignore dist files ([0b5e629](https://github.com/sifrr/sifrr-dev/commit/0b5e629))
+
+
+
+## [0.0.17](https://github.com/sifrr/sifrr-dev/compare/v0.0.16...v0.0.17) (2019-07-04 14:37:30 +0000)
 
 
 ### Bug Fixes
