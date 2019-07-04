@@ -22,7 +22,8 @@ function moduleConfig(
     outputFileName,
     replaceEnv = true
   },
-  extraConfig = {}
+  extraConfig = {},
+  mergeArrays = true
 ) {
   const filename = path
     .basename(inputFile)
@@ -108,7 +109,7 @@ function moduleConfig(
   };
 
   delete extraConfig.output;
-  return deepMerge(ret, extraConfig, true);
+  return deepMerge(ret, extraConfig, mergeArrays);
 }
 
 module.exports = moduleConfig;
