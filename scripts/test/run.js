@@ -71,13 +71,13 @@ const opts = {
 
 (async () => {
   let totalFailures = 0;
-  await runTest(opts).then(({ failures }) => {
-    totalFailures += failures;
-  });
-  await runTest([opts], true).then(({ failures }) => {
-    totalFailures += failures;
-  });
+  const { failures: f, coverage: c } = await runTest(opts);
+  totalFailures += f;
 
+  const { failures: f2 } = await runTest([opts], true);
+  totalFailures += f2;
+
+  console.table(c);
   if (totalFailures > 0) {
     global.console.log(`${totalFailures} tests failed!`);
     process.exit(1);
