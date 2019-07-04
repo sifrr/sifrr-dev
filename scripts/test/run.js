@@ -8,7 +8,10 @@ if (coverage) {
   const { createInstrumenter } = require('istanbul-lib-instrument');
   const instrumenter = createInstrumenter();
   const { hookRequire } = require('istanbul-lib-hook');
-  hookRequire((filePath) => filePath.match(/\/src/), (code, { filename }) => instrumenter.instrumentSync(code, filename));
+  hookRequire(
+    filePath => filePath.match(/\/src/),
+    (code, { filename }) => instrumenter.instrumentSync(code, filename)
+  );
   global.cov = true;
 }
 
@@ -67,16 +70,17 @@ const opts = {
 };
 
 (async () => {
-  let failures = 0;
-  await runTest(opts).catch(e => {
-    global.console.log(`${e} tests failed!`);
-    failures += Number(e);
+  let totalFailures = 0;
+  await runTest(opts).then(({ failures }) => {
+    totalFailures += failures;
   });
   await runTest([opts], true).catch(e => {
-    global.console.log(`${e} tests failed!`);
-    failures += Number(e);
+    totalFailures += failures;
   });
 
-  if (failures > 0) process.exit(1);
+  if (totalFailures > 0) {
+    global.console.log(`${totalFailures} tests failed!`);
+    process.exit(1);
+  }
   global.console.log('All tests passed!');
 })();

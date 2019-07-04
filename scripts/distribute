@@ -3,6 +3,6 @@
 const gitAddCommitPush = require('../src/gitaddcommitpush');
 gitAddCommitPush({
   preCommand: ['yarn build', 'sh ./scripts/contributors'],
-  files: ['dist/*.js*', 'misc/*'],
+  files: ['misc/*'],
   commitMsg: 'chore: add auto generated files'
 });
