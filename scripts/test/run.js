@@ -74,7 +74,7 @@ const opts = {
   await runTest(opts).then(({ failures }) => {
     totalFailures += failures;
   });
-  await runTest([opts], true).catch(e => {
+  await runTest([opts], true).then(({ failures }) => {
     totalFailures += failures;
   });
 
