@@ -57,6 +57,7 @@ module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html
     const summary = JSON.parse(
       fs.readFileSync(path.join(nycReport, '../coverage/coverage-summary.json'))
     );
+
     return summary.total;
   }
 };

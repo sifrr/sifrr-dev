@@ -74,7 +74,6 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     mochaOptions = {},
     before,
     browserWSEndpoint,
-    isModule = false,
     isTS = fs.existsSync(path.join(root, 'tsconfig.json'))
   } = options;
 
@@ -96,29 +95,27 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     true
   );
 
-  if (isModule) {
-    require('@babel/register')({
-      root,
-      presets: [
-        [
-          '@babel/preset-env',
-          {
-            targets: {
-              node: 'current'
-            }
+  require('@babel/register')({
+    root,
+    presets: [
+      [
+        '@babel/preset-env',
+        {
+          targets: {
+            node: 'current'
           }
-        ]
-      ],
-      plugins: [
-        [
-          'istanbul',
-          {
-            include: ['src/**']
-          }
-        ]
+        }
       ]
-    });
-  }
+    ],
+    plugins: [
+      [
+        'istanbul',
+        {
+          include: ['src/**']
+        }
+      ]
+    ]
+  });
   if (isTS) require('ts-node').register({});
 
   await runCommands(preCommand);
@@ -172,20 +169,15 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
       }
 
       // Get and write code coverage
-      let coverage;
+      let c;
       if (coverage) {
         writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');
-        coverage = transformCoverage(
-          allFolders.coverage,
-          allFolders.source,
-          sourceFileRegex,
-          reporters
-        );
+        c = transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
       }
 
       res({
         failures,
-        coverage
+        coverage: c
       });
     });
   });
