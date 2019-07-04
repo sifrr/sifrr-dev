@@ -73,7 +73,9 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     reporters = ['html'],
     mochaOptions = {},
     before,
-    browserWSEndpoint
+    browserWSEndpoint,
+    isModule = false,
+    isTS = fs.existsSync(path.join(root, 'tsconfig.json'))
   } = options;
 
   if (inspect) require('inspector').open(undefined, undefined, true);
@@ -94,12 +96,30 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     true
   );
 
-  require('@babel/register')({
-    root,
-    ignore: [new RegExp(allFolders.browserTest), /node_modules/],
-    plugins: ['istanbul']
-  });
-  if (fs.existsSync(path.join(root, 'tsconfig.json'))) require('ts-node').register({});
+  if (isModule) {
+    require('@babel/register')({
+      root,
+      presets: [
+        [
+          '@babel/preset-env',
+          {
+            targets: {
+              node: 'current'
+            }
+          }
+        ]
+      ],
+      plugins: [
+        [
+          'istanbul',
+          {
+            include: ['src/**']
+          }
+        ]
+      ]
+    });
+  }
+  if (isTS) require('ts-node').register({});
 
   await runCommands(preCommand);
 
