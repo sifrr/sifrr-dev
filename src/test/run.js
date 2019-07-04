@@ -152,6 +152,15 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     loadTests(allFolders.unitTest, mocha, testFileRegex, filters);
   }
 
+  // unhandledRejection and uncaughtExceptions
+  process.on('unhandledRejection', (reason, promise) => {
+    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  });
+
+  process.on('uncaughtException', (err, origin) => {
+    console.log(`Uncaught exception: ${err}\n` + `Exception origin: ${origin}`);
+  });
+
   return new Promise(res => {
     mocha.run(async failures => {
       servers.close();
