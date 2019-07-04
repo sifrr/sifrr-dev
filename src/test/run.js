@@ -111,7 +111,7 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
       [
         'istanbul',
         {
-          include: ['src/**']
+          include: [`${path.basename(allFolders.source)}/**`]
         }
       ]
     ]
