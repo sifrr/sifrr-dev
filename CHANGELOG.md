@@ -1,8 +1,18 @@
-## [0.0.18](https://github.com/sifrr/sifrr-dev/compare/v0.0.17...v0.0.18) (2019-07-04)
+## [0.0.19](https://github.com/sifrr/sifrr-dev/compare/v0.0.18...v0.0.19) (2019-07-04)
 
 
 
-## 0.0.18 (2019-07-04 23:48:54 +0900)
+## 0.0.19 (2019-07-05 01:23:23 +0900)
+
+
+### Bug Fixes
+
+* babel for current node, instrument only source files ([aa0cda7](https://github.com/sifrr/sifrr-dev/commit/aa0cda7))
+* returning coverage after running tests ([70df9e7](https://github.com/sifrr/sifrr-dev/commit/70df9e7))
+
+
+
+## [0.0.18](https://github.com/sifrr/sifrr-dev/compare/v0.0.17...v0.0.18) (2019-07-04 14:50:06 +0000)
 
 
 ### Bug Fixes
