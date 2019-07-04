@@ -1,8 +1,24 @@
-## [0.0.16](https://github.com/sifrr/sifrr-dev/compare/v0.0.15...v0.0.16) (2019-06-27)
+## [0.0.17](https://github.com/sifrr/sifrr-dev/compare/v0.0.16...v0.0.17) (2019-07-04)
 
 
 
-## 0.0.16 (2019-06-27 16:26:56 +0900)
+## 0.0.17 (2019-07-04 23:35:36 +0900)
+
+
+### Bug Fixes
+
+* don't use babel register ([96724e7](https://github.com/sifrr/sifrr-dev/commit/96724e7))
+
+
+### Features
+
+* add replace plugin for node, browser, module ([508579e](https://github.com/sifrr/sifrr-dev/commit/508579e))
+* resolve test run with coverage data as well ([cd6da95](https://github.com/sifrr/sifrr-dev/commit/cd6da95))
+* resolve with number of failures instead of rejecting ([4ad5909](https://github.com/sifrr/sifrr-dev/commit/4ad5909))
+
+
+
+## [0.0.16](https://github.com/sifrr/sifrr-dev/compare/v0.0.15...v0.0.16) (2019-06-27 08:01:19 +0000)
 
 
 ### Features
