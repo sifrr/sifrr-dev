@@ -6,25 +6,33 @@ describe('deepMerge', () => {
   });
 
   it('shallow merges', () => {
-    expect(deepMerge({ a: 'b' }, { a: 'haha', c: 'd', e: false, f: null })).to.deep.equal({ a: 'haha', c: 'd', e: false, f: null });
+    expect(deepMerge({ a: 'b' }, { a: 'haha', c: 'd', e: false, f: null })).to.deep.equal({
+      a: 'haha',
+      c: 'd',
+      e: false,
+      f: null
+    });
   });
 
   it('deep merges', () => {
-    const newObj = deepMerge({
-      a: 'b',
-      b: {
-        random: 'ok'
+    const newObj = deepMerge(
+      {
+        a: 'b',
+        b: {
+          random: 'ok'
+        }
+      },
+      {
+        a: undefined,
+        c: 'd',
+        e: false,
+        f: null,
+        b: {
+          random: 'oo',
+          next: 'yes'
+        }
       }
-    }, {
-      a: undefined,
-      c: 'd',
-      e: false,
-      f: null,
-      b: {
-        random: 'oo',
-        next: 'yes'
-      }
-    });
+    );
     expect(newObj).to.deep.equal({
       a: 'b',
       c: 'd',
@@ -39,6 +47,8 @@ describe('deepMerge', () => {
 
   it('merges arrays when asked', () => {
     expect(deepMerge({ a: ['b'] }, { a: ['ok', 'haha'] })).to.deep.equal({ a: ['ok', 'haha'] });
-    expect(deepMerge({ a: ['b'] }, { a: ['ok', 'haha'] }, true)).to.deep.equal({ a: ['b', 'ok', 'haha'] });
+    expect(deepMerge({ a: ['b'] }, { a: ['ok', 'haha'] }, true)).to.deep.equal({
+      a: ['b', 'ok', 'haha']
+    });
   });
 });

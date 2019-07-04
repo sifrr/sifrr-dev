@@ -49,8 +49,7 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
           return 0;
         });
       }
-      if (failures > 0) throw failures;
-      else return 0;
+      return { failures };
     }
   }
 
@@ -96,8 +95,8 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
   );
 
   require('@babel/register')({
-    presets: ['@babel/env'],
-    only: [f => f.indexOf(allFolders.source) > -1, f => f.indexOf(allFolders.unitTest) > -1],
+    root,
+    ignore: [new RegExp(allFolders.browserTest), /node_modules/],
     plugins: ['istanbul']
   });
   if (fs.existsSync(path.join(root, 'tsconfig.json'))) require('ts-node').register({});
@@ -153,13 +152,20 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
       }
 
       // Get and write code coverage
+      let coverage;
       if (coverage) {
         writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');
-        transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
+        coverage = transformCoverage(
+          allFolders.coverage,
+          allFolders.source,
+          sourceFileRegex,
+          reporters
+        );
       }
 
       res({
-        failures
+        failures,
+        coverage
       });
     });
   });
@@ -169,9 +175,8 @@ process.on('message', async options => {
   options = JsonFn.parse(options);
 
   await runTests(options, true)
-    .catch(f => {
-      if (Number(f)) process.send(`${f}`);
-      else process.stderr.write(f + '\n');
+    .then(result => {
+      process.send(JSON.stringify(result));
     })
     .then(r => {
       if (r !== 'server') process.exit();

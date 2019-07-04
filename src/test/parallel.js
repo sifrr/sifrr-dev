@@ -4,7 +4,8 @@ const JsonFn = require('json-fn');
 const loadBrowser = require('./loadbrowser');
 
 module.exports = async function(options, shareBrowser = true) {
-  const promises = [];
+  const promises = [],
+    coverage = {};
   let failures = 0;
   if (shareBrowser) await loadBrowser();
 
@@ -24,8 +25,10 @@ module.exports = async function(options, shareBrowser = true) {
           res();
         });
 
-        childRun.on('message', e => {
-          failures += Number(e);
+        childRun.on('message', r => {
+          const { failures: f, coverage: c } = JSON.parse(r);
+          coverage[opts.root] = c;
+          failures += Number(f);
         });
 
         childRun.on('error', e => {
@@ -39,10 +42,5 @@ module.exports = async function(options, shareBrowser = true) {
 
   await Promise.all(promises);
   if (shareBrowser) await global.browser.close();
-
-  if (failures > 0) {
-    throw failures;
-  } else {
-    return 0;
-  }
+  return { failures, coverage };
 };

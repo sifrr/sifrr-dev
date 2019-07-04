@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 const cov = require('istanbul-lib-coverage'),
   srcmap = require('istanbul-lib-source-maps'),
@@ -50,6 +51,12 @@ module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html
     map.filter(file => file.match(srcFileRegex));
 
     reporters.forEach(r => reporter.add(r));
+    reporter.add('json-summary');
     reporter.write(map);
+
+    const summary = JSON.parse(
+      fs.readFileSync(path.join(nycReport, '../coverage/coverage-summary.json'))
+    );
+    return summary.total;
   }
 };
