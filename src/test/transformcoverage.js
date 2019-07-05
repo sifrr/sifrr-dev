@@ -56,7 +56,12 @@ module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html
 
     try {
       const jsonCovPath = path.join(nycReport, '../coverage/coverage-summary.json');
-      return JSON.parse(fs.readFileSync(jsonCovPath));
+      const total = JSON.parse(fs.readFileSync(jsonCovPath)).total;
+      const ret = {};
+      for (let type in total) {
+        ret[type] = total[type].pct;
+      }
+      return ret;
     } catch (e) {
       return;
     }
