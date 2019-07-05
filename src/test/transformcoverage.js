@@ -54,12 +54,11 @@ module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html
     reporter.add('json-summary');
     reporter.write(map);
 
-    const jsonCovPath = path.join(nycReport, '../coverage/coverage-summary.json');
-    let summary = {};
-    if (fs.existsSync(jsonCovPath)) {
-      summary = JSON.parse(fs.readFileSync(jsonCovPath));
+    try {
+      const jsonCovPath = path.join(nycReport, '../coverage/coverage-summary.json');
+      return JSON.parse(fs.readFileSync(jsonCovPath));
+    } catch (e) {
+      return;
     }
-
-    return summary.total;
   }
 };
