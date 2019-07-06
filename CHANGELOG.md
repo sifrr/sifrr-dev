@@ -1,8 +1,22 @@
-## [0.0.20](https://github.com/sifrr/sifrr-dev/compare/v0.0.19...v0.0.20) (2019-07-04)
+## [0.0.21](https://github.com/sifrr/sifrr-dev/compare/v0.0.20...v0.0.21) (2019-07-06)
 
 
 
-## 0.0.20 (2019-07-05 04:04:27 +0900)
+## 0.0.21 (2019-07-07 02:37:39 +0900)
+
+
+### Bug Fixes
+
+* don't fail if json file is corrupt ([e45cb52](https://github.com/sifrr/sifrr-dev/commit/e45cb52))
+
+
+### Features
+
+* return only percentages in coverage ([f3886e2](https://github.com/sifrr/sifrr-dev/commit/f3886e2))
+
+
+
+## [0.0.20](https://github.com/sifrr/sifrr-dev/compare/v0.0.19...v0.0.20) (2019-07-04 19:05:33 +0000)
 
 
 ### Bug Fixes
