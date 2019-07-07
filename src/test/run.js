@@ -77,11 +77,7 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     isTS = fs.existsSync(path.join(root, 'tsconfig.json'))
   } = options;
 
-  if (inspect) require('inspector').open(undefined, undefined, true);
-
-  const beforeRet = typeof before === 'function' ? before() : false;
-  if (beforeRet instanceof Promise) await beforeRet;
-
+  // merge options
   const allFolders = deepMerge(
     {
       unitTest: path.join(root, './test/unit'),
@@ -94,7 +90,16 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     folders,
     true
   );
+  const runBT = (runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest);
+  const runUT = (runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest);
 
+  // inspect?
+  if (inspect) require('inspector').open(undefined, undefined, true);
+
+  const beforeRet = typeof before === 'function' ? before() : false;
+  if (beforeRet instanceof Promise) await beforeRet;
+
+  // instrument code
   require('@babel/register')({
     root,
     presets: [
@@ -132,6 +137,7 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     await servers.listen();
     return 'server';
   }
+  if (runBT) await loadBrowser(coverage, allFolders.coverage, browserWSEndpoint);
   if (setGlobals) testGlobals(options, parallel);
 
   if (useJunitReporter) {
@@ -142,23 +148,22 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
   }
   const mocha = new Mocha(mochaOptions);
 
-  if ((runBrowserTests || !runUnitTests) && fs.existsSync(allFolders.browserTest)) {
+  if (runBT) {
     await servers.listen();
-    await loadBrowser(coverage, allFolders.coverage, browserWSEndpoint);
     loadTests(allFolders.browserTest, mocha, testFileRegex, filters);
   }
 
-  if ((runUnitTests || !runBrowserTests) && fs.existsSync(allFolders.unitTest)) {
+  if (runUT) {
     loadTests(allFolders.unitTest, mocha, testFileRegex, filters);
   }
 
   // unhandledRejection and uncaughtExceptions
   process.on('unhandledRejection', (reason, promise) => {
-    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+    console.log(`Unhandled Rejection: ${promise}\n`, 'reason:', reason);
   });
 
   process.on('uncaughtException', (err, origin) => {
-    console.log(`Uncaught exception: ${err}\n` + `Exception origin: ${origin}`);
+    console.log(`Uncaught exception: ${err}\n`, `origin: ${origin}`);
   });
 
   return new Promise(res => {
@@ -174,7 +179,7 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
 
       if (global.__pdescribes) {
         const fs = await Promise.all(global.__pdescribes);
-        failures += fs.reduce((a, b) => a + b, 0);
+        failures += fs.reduce((a, b) => a + b.failures, 0);
       }
 
       // Get and write code coverage
