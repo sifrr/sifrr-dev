@@ -1,8 +1,18 @@
-## [0.0.21](https://github.com/sifrr/sifrr-dev/compare/v0.0.20...v0.0.21) (2019-07-06)
+## [0.0.22](https://github.com/sifrr/sifrr-dev/compare/v0.0.21...v0.0.22) (2019-07-08)
 
 
 
-## 0.0.21 (2019-07-07 02:37:39 +0900)
+## 0.0.22 (2019-07-08 15:06:19 +0900)
+
+
+### Bug Fixes
+
+* coverage directory, coverage  correct calculation ([90652b7](https://github.com/sifrr/sifrr-dev/commit/90652b7))
+* pdescirbe usage for new return from runTests ([a34641c](https://github.com/sifrr/sifrr-dev/commit/a34641c))
+
+
+
+## [0.0.21](https://github.com/sifrr/sifrr-dev/compare/v0.0.20...v0.0.21) (2019-07-06 17:39:39 +0000)
 
 
 ### Bug Fixes
