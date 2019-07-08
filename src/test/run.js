@@ -41,15 +41,15 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
     }
     if (parallel) return require('./parallel')(options, shareBrowser);
     else {
-      let failures = 0;
+      let failures = 0,
+        coverage = {};
       for (let i = 0; i < options.length; i++) {
-        failures += await runTests(options[i]).catch(f => {
-          if (Number(f)) return Number(f);
-          else process.stderr.write(f + '\n');
-          return 0;
+        await runTests(options[i]).then(({ failures: f, coverage: c }) => {
+          if (Number(f)) failures += Number(f);
+          coverage[options.root] = c;
         });
       }
-      return { failures };
+      return { failures, coverage };
     }
   }
 
@@ -113,13 +113,16 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
       ]
     ],
     plugins: [
-      [
-        'istanbul',
-        {
-          include: [`${path.basename(allFolders.source)}/**`]
-        }
-      ]
-    ]
+      coverage
+        ? [
+            'istanbul',
+            {
+              include: [`${path.basename(allFolders.source)}/**`]
+            }
+          ]
+        : false
+    ].filter(p => p),
+    ignore: [/node_modules/]
   });
   if (isTS) require('ts-node').register({});
 

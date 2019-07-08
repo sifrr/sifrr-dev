@@ -55,14 +55,15 @@ module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html
     reporter.write(map);
 
     try {
-      const jsonCovPath = path.join(nycReport, '../coverage/coverage-summary.json');
+      const jsonCovPath = path.resolve('./coverage/coverage-summary.json');
       const total = JSON.parse(fs.readFileSync(jsonCovPath)).total;
       const ret = {};
       for (let type in total) {
-        ret[type] = total[type].pct;
+        ret[type] = total[type].pct + '%';
       }
       return ret;
     } catch (e) {
+      console.error(e);
       return;
     }
   }
