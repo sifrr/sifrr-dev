@@ -46,11 +46,11 @@ async function runTests(options = {}, parallel = false) {
       return result;
     } else {
       let failures = 0,
-        coverage = {};
+        coverage;
       for (let i = 0; i < options.length; i++) {
         await runTests(options[i]).then(({ failures: f, coverage: c }) => {
           if (Number(f)) failures += Number(f);
-          coverage[options.root] = c;
+          coverage = c;
         });
       }
       return { failures, coverage };

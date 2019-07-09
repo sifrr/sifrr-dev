@@ -3,9 +3,9 @@ const { fork } = require('child_process');
 const JsonFn = require('json-fn');
 
 module.exports = async function(options) {
-  const promises = [],
-    coverage = {};
-  let failures = 0;
+  const promises = [];
+  let failures = 0,
+    coverage;
 
   for (let i = 0; i < options.length; i++) {
     const opts = options[i];
@@ -25,7 +25,7 @@ module.exports = async function(options) {
 
         childRun.on('message', r => {
           const { failures: f, coverage: c } = JSON.parse(r);
-          coverage[opts.root] = c;
+          coverage = c;
           failures += Number(f);
         });
 
