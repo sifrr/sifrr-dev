@@ -56,7 +56,7 @@ module.exports = function(nycReport, srcFolder, srcFileRegex, reporters = ['html
 
     try {
       const jsonCovPath = path.resolve('./coverage/coverage-summary.json');
-      const total = JSON.parse(fs.readFileSync(jsonCovPath)).total;
+      const total = JSON.parse(fs.readFileSync(jsonCovPath, 'UTF-8').replace('{,', '{')).total;
       const ret = {};
       for (let type in total) {
         ret[type] = total[type].pct + '%';

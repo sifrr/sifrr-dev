@@ -33,14 +33,18 @@ async function runCommands(commands) {
   }
 }
 
-async function runTests(options = {}, parallel = false, shareBrowser) {
+async function runTests(options = {}, parallel = false) {
   if (Array.isArray(options)) {
     for (let i = 0; i < options.length; i++) {
       await runCommands(options[i].preCommand);
       delete options[i].preCommand;
     }
-    if (parallel) return require('./parallel')(options, shareBrowser);
-    else {
+    if (parallel) {
+      await loadBrowser();
+      const result = await require('./parallel')(options);
+      await global.browser.close();
+      return result;
+    } else {
       let failures = 0,
         coverage = {};
       for (let i = 0; i < options.length; i++) {
@@ -100,30 +104,34 @@ async function runTests(options = {}, parallel = false, shareBrowser) {
   if (beforeRet instanceof Promise) await beforeRet;
 
   // instrument code
-  require('@babel/register')({
-    root,
-    presets: [
-      [
-        '@babel/preset-env',
-        {
-          targets: {
-            node: 'current'
-          }
-        }
-      ]
-    ],
-    plugins: [
-      coverage
-        ? [
-            'istanbul',
-            {
-              include: [`${path.basename(allFolders.source)}/**`]
+  if (!global.___instrumented) {
+    require('@babel/register')({
+      root,
+      presets: [
+        [
+          '@babel/preset-env',
+          {
+            targets: {
+              node: 'current'
             }
-          ]
-        : false
-    ].filter(p => p),
-    ignore: [/node_modules/]
-  });
+          }
+        ]
+      ],
+      plugins: [
+        coverage
+          ? [
+              'istanbul',
+              {
+                include: [`${path.basename(allFolders.source)}/**`]
+              }
+            ]
+          : false
+      ].filter(p => p),
+      ignore: [/node_modules/]
+    });
+    global.___instrumented = true;
+  }
+
   if (isTS) require('ts-node').register({});
 
   await runCommands(preCommand);

@@ -54,7 +54,7 @@ module.exports = (testOptions, parallel) => {
         ),
         port: 'random'
       });
-      global.__pdescribes.push(require('./parallel')([newOpts], true).catch(e => e));
+      global.__pdescribes.push(require('./parallel')([newOpts]));
     } else {
       describe(name, fxn);
     }
