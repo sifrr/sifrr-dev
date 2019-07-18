@@ -77,7 +77,7 @@
     "rollup-plugin-typescript2": "^0.22.0",
     "sinon": "^7.3.2",
     "ts-node": "^8.3.0",
-    "typescript": "^3.5.2",
+    "typescript": "^3.5.3",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v15.11.0"
   }
 }

@@ -66,7 +66,7 @@ function moduleConfig(
       fs.existsSync(path.resolve('tsconfig.json'))
         ? typescript({
             typescript: require('typescript'),
-            declarationDir: 'dist/type',
+            useTsconfigDeclarationDir: true,
             cacheRoot: './.ts_cache'
           })
         : false,
