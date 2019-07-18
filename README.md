@@ -17,7 +17,7 @@
 
 ## Tools
 
-- `getRollupConfig` Rollup configs to bundle JavaScripts for node packages, es modules and browser packs.
+- `getRollupConfig` Rollup configs to bundle JavaScript/TypeScript for node packages, es modules and browser packs. Supports node syntax as well as es module syntax, and TypeScript.
 - `generateChangelog` Generate Changelog during release
 - `loadDir` Load directory recursively
 - `eslintrc` ESLint config and prettier
@@ -25,7 +25,7 @@
 - `checkTag` check if a tag exists on github
 - `exec` async execute a shell command with stdout and stderr
 - `gitAddCommitPush` run command > git add files > git commit > git push
-- `runTests` Run a full fledged test suite using mocha, chai, sinon, puppeteer, etc.
+- `runTests` Run a full fledged test suite using mocha, chai, sinon, puppeteer, etc. Supports node syntax as well as es module syntax.
 
 ## Other packages
 
