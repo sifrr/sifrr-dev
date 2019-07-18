@@ -1,8 +1,22 @@
-## [0.0.22](https://github.com/sifrr/sifrr-dev/compare/v0.0.21...v0.0.22) (2019-07-08)
+## [0.0.23](https://github.com/sifrr/sifrr-dev/compare/v0.0.22...v0.0.23) (2019-07-18)
 
 
 
-## 0.0.22 (2019-07-08 15:06:19 +0900)
+## 0.0.23 (2019-07-19 01:56:11 +0900)
+
+
+### Bug Fixes
+
+* coverage is always the total ([f9eb95e](https://github.com/sifrr/sifrr-dev/commit/f9eb95e))
+
+
+### Features
+
+* respect declarationDir in tsconfig.json ([f765c74](https://github.com/sifrr/sifrr-dev/commit/f765c74))
+
+
+
+## [0.0.22](https://github.com/sifrr/sifrr-dev/compare/v0.0.21...v0.0.22) (2019-07-08 06:07:18 +0000)
 
 
 ### Bug Fixes
