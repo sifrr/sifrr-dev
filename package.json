@@ -34,6 +34,7 @@
     "@babel/core": "^7.4.0",
     "@babel/plugin-external-helpers": "^7.2.0",
     "@babel/preset-env": "^7.4.1",
+    "@babel/preset-typescript": "^7.3.3",
     "@babel/register": "^7.4.4",
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
@@ -76,7 +77,6 @@
     "rollup-plugin-terser": "^5.0.0",
     "rollup-plugin-typescript2": "^0.22.0",
     "sinon": "^7.3.2",
-    "ts-node": "^8.3.0",
     "typescript": "^3.5.3",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v15.11.0"
   }

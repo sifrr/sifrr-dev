@@ -65,7 +65,6 @@ async function runTests(options = {}, parallel = false) {
     coverage = false,
     setGlobals = true,
     testFileRegex = /\.test\.js$/,
-    sourceFileRegex = /\.js$/,
     filters = [''],
     folders = {},
     preCommand = false,
@@ -107,6 +106,7 @@ async function runTests(options = {}, parallel = false) {
   if (!global.___instrumented) {
     require('@babel/register')({
       root,
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
       presets: [
         [
           '@babel/preset-env',
@@ -115,14 +115,16 @@ async function runTests(options = {}, parallel = false) {
               node: 'current'
             }
           }
-        ]
-      ],
+        ],
+        isTS ? ['@babel/preset-typescript'] : false
+      ].filter(p => p),
       plugins: [
         coverage
           ? [
               'istanbul',
               {
-                include: [`${path.basename(allFolders.source)}/**`]
+                include: [`${path.basename(allFolders.source)}/**`],
+                all: true
               }
             ]
           : false
@@ -131,8 +133,6 @@ async function runTests(options = {}, parallel = false) {
     });
     global.___instrumented = true;
   }
-
-  if (isTS) require('ts-node').register({});
 
   await runCommands(preCommand);
 
@@ -197,7 +197,7 @@ async function runTests(options = {}, parallel = false) {
       let c;
       if (coverage) {
         writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');
-        c = transformCoverage(allFolders.coverage, allFolders.source, sourceFileRegex, reporters);
+        c = transformCoverage(allFolders.coverage, reporters);
       }
 
       res({

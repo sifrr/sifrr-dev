@@ -67,7 +67,12 @@ function moduleConfig(
         ? typescript({
             typescript: require('typescript'),
             useTsconfigDeclarationDir: true,
-            cacheRoot: './.ts_cache'
+            cacheRoot: './.ts_cache',
+            tsconfigOverride: {
+              compilerOptions: {
+                sourceMap: true
+              }
+            }
           })
         : false,
       commonjs(),
@@ -95,6 +100,7 @@ function moduleConfig(
       }),
       cleanup(),
       babel({
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
         exclude: 'node_modules/**',
         rootMode: 'upward'
       }),
