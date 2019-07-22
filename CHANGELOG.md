@@ -1,8 +1,18 @@
+## [0.0.24](https://github.com/sifrr/sifrr-dev/compare/v0.0.23...v0.0.24) (2019-07-22)
+
+
+### Bug Fixes
+
+* instrumenting source code ([205f506](https://github.com/sifrr/sifrr-dev/commit/205f506))
+
+
+### Features
+
+* use babel for ts also ([a13be46](https://github.com/sifrr/sifrr-dev/commit/a13be46))
+
+
+
 ## [0.0.23](https://github.com/sifrr/sifrr-dev/compare/v0.0.22...v0.0.23) (2019-07-18)
-
-
-
-## 0.0.23 (2019-07-19 01:56:11 +0900)
 
 
 ### Bug Fixes
@@ -16,7 +26,7 @@
 
 
 
-## [0.0.22](https://github.com/sifrr/sifrr-dev/compare/v0.0.21...v0.0.22) (2019-07-08 06:07:18 +0000)
+## [0.0.22](https://github.com/sifrr/sifrr-dev/compare/v0.0.21...v0.0.22) (2019-07-08)
 
 
 ### Bug Fixes
@@ -26,7 +36,7 @@
 
 
 
-## [0.0.21](https://github.com/sifrr/sifrr-dev/compare/v0.0.20...v0.0.21) (2019-07-06 17:39:39 +0000)
+## [0.0.21](https://github.com/sifrr/sifrr-dev/compare/v0.0.20...v0.0.21) (2019-07-06)
 
 
 ### Bug Fixes
@@ -40,7 +50,7 @@
 
 
 
-## [0.0.20](https://github.com/sifrr/sifrr-dev/compare/v0.0.19...v0.0.20) (2019-07-04 19:05:33 +0000)
+## [0.0.20](https://github.com/sifrr/sifrr-dev/compare/v0.0.19...v0.0.20) (2019-07-04)
 
 
 ### Bug Fixes
@@ -56,7 +66,7 @@
 
 
 
-## [0.0.19](https://github.com/sifrr/sifrr-dev/compare/v0.0.18...v0.0.19) (2019-07-04 16:24:15 +0000)
+## [0.0.19](https://github.com/sifrr/sifrr-dev/compare/v0.0.18...v0.0.19) (2019-07-04)
 
 
 ### Bug Fixes
@@ -66,7 +76,7 @@
 
 
 
-## [0.0.18](https://github.com/sifrr/sifrr-dev/compare/v0.0.17...v0.0.18) (2019-07-04 14:50:06 +0000)
+## [0.0.18](https://github.com/sifrr/sifrr-dev/compare/v0.0.17...v0.0.18) (2019-07-04)
 
 
 ### Bug Fixes
@@ -75,7 +85,7 @@
 
 
 
-## [0.0.17](https://github.com/sifrr/sifrr-dev/compare/v0.0.16...v0.0.17) (2019-07-04 14:37:30 +0000)
+## [0.0.17](https://github.com/sifrr/sifrr-dev/compare/v0.0.16...v0.0.17) (2019-07-04)
 
 
 ### Bug Fixes
@@ -91,7 +101,7 @@
 
 
 
-## [0.0.16](https://github.com/sifrr/sifrr-dev/compare/v0.0.15...v0.0.16) (2019-06-27 08:01:19 +0000)
+## [0.0.16](https://github.com/sifrr/sifrr-dev/compare/v0.0.15...v0.0.16) (2019-06-27)
 
 
 ### Features
@@ -100,7 +110,7 @@
 
 
 
-## [0.0.15](https://github.com/sifrr/sifrr-dev/compare/v0.0.14...v0.0.15) (2019-06-27 06:40:10 +0000)
+## [0.0.15](https://github.com/sifrr/sifrr-dev/compare/v0.0.14...v0.0.15) (2019-06-27)
 
 
 ### Bug Fixes
@@ -109,7 +119,7 @@
 
 
 
-## [0.0.14](https://github.com/sifrr/sifrr-dev/compare/v0.0.13...v0.0.14) (2019-06-27 06:18:48 +0000)
+## [0.0.14](https://github.com/sifrr/sifrr-dev/compare/v0.0.13...v0.0.14) (2019-06-27)
 
 
 ### Features
@@ -121,7 +131,7 @@
 
 
 
-## [0.0.13](https://github.com/sifrr/sifrr-dev/compare/v0.0.12...v0.0.13) (2019-06-25 09:06:36 +0000)
+## [0.0.13](https://github.com/sifrr/sifrr-dev/compare/v0.0.12...v0.0.13) (2019-06-25)
 
 
 ### Features
@@ -130,7 +140,7 @@
 
 
 
-## [0.0.12](https://github.com/sifrr/sifrr-dev/compare/v0.0.11...v0.0.12) (2019-06-25 06:12:22 +0000)
+## [0.0.12](https://github.com/sifrr/sifrr-dev/compare/v0.0.11...v0.0.12) (2019-06-25)
 
 
 ### Features
@@ -143,7 +153,7 @@
 
 
 
-## [0.0.11](https://github.com/sifrr/sifrr-dev/compare/v0.0.10...v0.0.11) (2019-06-15 14:32:16 +0000)
+## [0.0.11](https://github.com/sifrr/sifrr-dev/compare/v0.0.10...v0.0.11) (2019-06-15)
 
 
 ### Bug Fixes
@@ -159,7 +169,7 @@
 
 
 
-## [0.0.10](https://github.com/sifrr/sifrr-dev/compare/v0.0.9...v0.0.10) (2019-06-13 06:08:06 +0000)
+## [0.0.10](https://github.com/sifrr/sifrr-dev/compare/v0.0.9...v0.0.10) (2019-06-13)
 
 
 ### Features
@@ -168,7 +178,7 @@
 
 
 
-## [0.0.9](https://github.com/sifrr/sifrr-dev/compare/v0.0.8...v0.0.9) (2019-06-11 17:00:25 +0000)
+## [0.0.9](https://github.com/sifrr/sifrr-dev/compare/v0.0.8...v0.0.9) (2019-06-11)
 
 
 ### Bug Fixes
@@ -187,7 +197,7 @@
 
 
 
-## [0.0.8](https://github.com/sifrr/sifrr-dev/compare/v0.0.7...v0.0.8) (2019-06-07 08:15:24 +0000)
+## [0.0.8](https://github.com/sifrr/sifrr-dev/compare/v0.0.7...v0.0.8) (2019-06-07)
 
 
 ### Bug Fixes
@@ -205,7 +215,7 @@
 
 
 
-## [0.0.7](https://github.com/sifrr/sifrr-dev/compare/v0.0.6...v0.0.7) (2019-06-06 09:34:35 +0000)
+## [0.0.7](https://github.com/sifrr/sifrr-dev/compare/v0.0.6...v0.0.7) (2019-06-06)
 
 
 ### Bug Fixes
@@ -214,7 +224,7 @@
 
 
 
-## [0.0.6](https://github.com/sifrr/sifrr-dev/compare/v0.0.5...v0.0.6) (2019-06-06 08:59:31 +0000)
+## [0.0.6](https://github.com/sifrr/sifrr-dev/compare/v0.0.5...v0.0.6) (2019-06-06)
 
 
 ### Bug Fixes
@@ -231,7 +241,7 @@
 
 
 
-## [0.0.5](https://github.com/sifrr/sifrr-dev/compare/v0.0.4...v0.0.5) (2019-06-04 18:11:05 +0000)
+## [0.0.5](https://github.com/sifrr/sifrr-dev/compare/v0.0.4...v0.0.5) (2019-06-04)
 
 
 ### Bug Fixes
@@ -241,7 +251,7 @@
 
 
 
-## [0.0.4](https://github.com/sifrr/sifrr-dev/compare/v0.0.3...v0.0.4) (2019-06-04 11:26:10 +0000)
+## [0.0.4](https://github.com/sifrr/sifrr-dev/compare/v0.0.3...v0.0.4) (2019-06-04)
 
 
 ### Features
@@ -250,7 +260,7 @@
 
 
 
-## [0.0.3](https://github.com/sifrr/sifrr-dev/compare/v0.0.2...v0.0.3) (2019-06-04 10:46:18 +0000)
+## [0.0.3](https://github.com/sifrr/sifrr-dev/compare/v0.0.2...v0.0.3) (2019-06-04)
 
 
 ### Bug Fixes
@@ -259,15 +269,15 @@
 
 
 
-## [0.0.2](https://github.com/sifrr/sifrr-dev/compare/v0.0.1...v0.0.2) (2019-06-04 10:21:53 +0000)
+## [0.0.2](https://github.com/sifrr/sifrr-dev/compare/v0.0.1...v0.0.2) (2019-06-04)
 
 
 
-## [0.0.1](https://github.com/sifrr/sifrr-dev/compare/v0.0.1-rc3...v0.0.1) (2019-06-04 09:08:12 +0000)
+## [0.0.1](https://github.com/sifrr/sifrr-dev/compare/v0.0.1-rc3...v0.0.1) (2019-06-04)
 
 
 
-## [0.0.1-rc3](https://github.com/sifrr/sifrr-dev/compare/v0.0.1-rc2...v0.0.1-rc3) (2019-06-04 07:55:59 +0000)
+## [0.0.1-rc3](https://github.com/sifrr/sifrr-dev/compare/v0.0.1-rc2...v0.0.1-rc3) (2019-06-04)
 
 
 ### Bug Fixes
@@ -288,7 +298,7 @@
 
 
 
-## [0.0.1-rc2](https://github.com/sifrr/sifrr-dev/compare/72d3a3c...v0.0.1-rc2) (2019-05-30 10:39:49 +0000)
+## [0.0.1-rc2](https://github.com/sifrr/sifrr-dev/compare/72d3a3c...v0.0.1-rc2) (2019-05-30)
 
 
 ### Bug Fixes

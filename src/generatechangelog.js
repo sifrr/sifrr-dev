@@ -11,18 +11,6 @@ module.exports = ({
   multiRepo = false
 } = {}) => {
   let oldChangelog = '';
-  let first = false;
-  let packageVersion = require(path.join(folder, './package.json')).version;
-  const transform = function(cm, cb) {
-    if (outputUnreleased && !first) {
-      cm.version = packageVersion;
-      first = true;
-    }
-    let match = rtag.exec(cm.gitTags);
-    rtag.lastIndex = 0;
-    if (match) cm.version = match[1];
-    cb(null, cm);
-  };
   const options = {
     pkg: {
       path: path.join(folder, './package.json')
@@ -32,8 +20,7 @@ module.exports = ({
     outputUnreleased,
     gitRawCommitsOpts: {
       path: folder
-    },
-    transform
+    }
   };
 
   if (fs.existsSync(changelogFile)) {
@@ -44,7 +31,10 @@ module.exports = ({
     options.transform = (cm, cb) => {
       if (cm.scope && cm.scope === multiRepo) cm.scope = null;
       else cm.type = 'chore';
-      transform(cm, cb);
+      let match = rtag.exec(cm.gitTags);
+      rtag.lastIndex = 0;
+      if (match) cm.version = match[1];
+      cb(null, cm);
     };
   }
   return new Promise((res, rej) => {
