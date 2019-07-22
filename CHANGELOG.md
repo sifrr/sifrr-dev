@@ -3,6 +3,7 @@
 
 ### Bug Fixes
 
+* double changelog tags for last tag ([bc55962](https://github.com/sifrr/sifrr-dev/commit/bc55962))
 * instrumenting source code ([205f506](https://github.com/sifrr/sifrr-dev/commit/205f506))
 
 
