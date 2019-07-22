@@ -33,30 +33,36 @@ async function runCommands(commands) {
   }
 }
 
-async function runTests(options = {}, parallel = false) {
-  if (Array.isArray(options)) {
-    for (let i = 0; i < options.length; i++) {
-      await runCommands(options[i].preCommand);
-      delete options[i].preCommand;
-    }
-    if (parallel) {
-      await loadBrowser();
-      const result = await require('./parallel')(options);
-      await global.browser.close();
-      return result;
-    } else {
-      let failures = 0,
-        coverage;
-      for (let i = 0; i < options.length; i++) {
-        await runTests(options[i]).then(({ failures: f, coverage: c }) => {
-          if (Number(f)) failures += Number(f);
-          coverage = c;
-        });
-      }
-      return { failures, coverage };
-    }
+async function runTests(options, parallel = false) {
+  if (!Array.isArray(options)) options = [options];
+
+  // run precommands
+  for (let i = 0; i < options.length; i++) {
+    await runCommands(options[i].preCommand);
+    delete options[i].preCommand;
   }
 
+  let result;
+  if (parallel) {
+    await loadBrowser();
+    result = await require('./parallel')(options);
+    await global.browser.close();
+  } else {
+    let failures = 0,
+      coverage;
+    for (let i = 0; i < options.length; i++) {
+      await runTest(options[i]).then(({ failures: f, coverage: c }) => {
+        if (Number(f)) failures += Number(f);
+        coverage = c;
+      });
+    }
+    result = { failures, coverage };
+  }
+
+  return result;
+}
+
+async function runTest(options, parallel = false) {
   const {
     root = path.resolve('./'),
     serverOnly = false,
@@ -67,7 +73,6 @@ async function runTests(options = {}, parallel = false) {
     testFileRegex = /\.test\.js$/,
     filters = [''],
     folders = {},
-    preCommand = false,
     port = 'random',
     securePort = false,
     useJunitReporter = false,
@@ -106,7 +111,7 @@ async function runTests(options = {}, parallel = false) {
   if (!global.___instrumented) {
     require('@babel/register')({
       root,
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs'],
       presets: [
         [
           '@babel/preset-env',
@@ -123,8 +128,8 @@ async function runTests(options = {}, parallel = false) {
           ? [
               'istanbul',
               {
-                include: [`${path.basename(allFolders.source)}/**`],
-                all: true
+                include: ['**/src/**'],
+                exclude: ['**/test/**']
               }
             ]
           : false
@@ -133,8 +138,6 @@ async function runTests(options = {}, parallel = false) {
     });
     global.___instrumented = true;
   }
-
-  await runCommands(preCommand);
 
   const servers = await require('./server')(allFolders.public, {
     extraStaticFolders: allFolders.static,
@@ -196,6 +199,7 @@ async function runTests(options = {}, parallel = false) {
       // Get and write code coverage
       let c;
       if (coverage) {
+        console.log('UNITTTTTTTT', global.__coverage__);
         writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');
         c = transformCoverage(allFolders.coverage, reporters);
       }
@@ -211,7 +215,7 @@ async function runTests(options = {}, parallel = false) {
 process.on('message', async options => {
   options = JsonFn.parse(options);
 
-  await runTests(options, true)
+  await runTest(options, true)
     .then(result => {
       process.send(JSON.stringify(result));
     })
