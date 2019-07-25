@@ -1,3 +1,12 @@
+## [0.0.25](https://github.com/sifrr/sifrr-dev/compare/v0.0.24...v0.0.25) (2019-07-25)
+
+
+### Features
+
+* add sifrr-fetch and node-fetch ([e0a326a](https://github.com/sifrr/sifrr-dev/commit/e0a326a))
+
+
+
 ## [0.0.24](https://github.com/sifrr/sifrr-dev/compare/v0.0.23...v0.0.24) (2019-07-22)
 
 
