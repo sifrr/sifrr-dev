@@ -199,7 +199,6 @@ async function runTest(options, parallel = false) {
       // Get and write code coverage
       let c;
       if (coverage) {
-        console.log('UNITTTTTTTT', global.__coverage__);
         writeCoverage(global.__coverage__, allFolders.coverage, 'unit-coverage');
         c = transformCoverage(allFolders.coverage, reporters);
       }
