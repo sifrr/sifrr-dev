@@ -1,3 +1,12 @@
+## [0.0.26](https://github.com/sifrr/sifrr-dev/compare/v0.0.25...v0.0.26) (2019-07-25)
+
+
+### Bug Fixes
+
+* remove console.log ([fe899bb](https://github.com/sifrr/sifrr-dev/commit/fe899bb))
+
+
+
 ## [0.0.25](https://github.com/sifrr/sifrr-dev/compare/v0.0.24...v0.0.25) (2019-07-25)
 
 
