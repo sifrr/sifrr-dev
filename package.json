@@ -39,7 +39,7 @@
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
     "@sifrr/eslint-config": "^0.0.2",
-    "@sifrr/fetch": "^0.0.5",
+    "@sifrr/fetch": "^0.0.6",
     "@sifrr/server": "^0.0.5",
     "autoprefixer": "^9.6.0",
     "babel-plugin-istanbul": "^5.1.4",
