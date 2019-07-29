@@ -860,10 +860,10 @@
     eslint-plugin-mocha "^5.3.0"
     eslint-plugin-prettier "^3.1.0"
 
-"@sifrr/fetch@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@sifrr/fetch/-/fetch-0.0.5.tgz#1ebc78447fe47c5ccffa9576dd5b266906fb80ac"
-  integrity sha512-oUxgFNsSO/RltRPrhNg/U1NW3NVYbTCi4J7ml6A5gGnDBkzuVnHK233ai/Ho/mOogDzHxobdTRs1W9iAdhoyQQ==
+"@sifrr/fetch@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@sifrr/fetch/-/fetch-0.0.6.tgz#4baa1e363f012f0df9cdf77fecd406ccd8246e34"
+  integrity sha512-nYMaDakLcSRN8yuXsSZ4sDOKqST1JTsFlcHONhcvA74wlX/kReImef4bADRX3H84VMgyKBs+gHqkTg5yQV5/5Q==
 
 "@sifrr/server@^0.0.5":
   version "0.0.5"
