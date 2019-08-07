@@ -1,3 +1,12 @@
+## [0.0.27](https://github.com/sifrr/sifrr-dev/compare/v0.0.26...v0.0.27) (2019-08-07)
+
+
+### Bug Fixes
+
+* put babel in top for rollup plugins ([2745b91](https://github.com/sifrr/sifrr-dev/commit/2745b91))
+
+
+
 ## [0.0.26](https://github.com/sifrr/sifrr-dev/compare/v0.0.25...v0.0.26) (2019-07-25)
 
 
