@@ -55,6 +55,11 @@ function moduleConfig(
         browser: type === 'browser',
         mainFields: ['module', 'main']
       }),
+      babel({
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        exclude: 'node_modules/**',
+        rootMode: 'upward'
+      }),
       replaceEnv
         ? replace({
             ENVIRONMENT: JSON.stringify(process.env.NODE_ENV || process.env.ENV || 'development'),
@@ -99,11 +104,6 @@ function moduleConfig(
           : {}
       }),
       cleanup(),
-      babel({
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        exclude: 'node_modules/**',
-        rootMode: 'upward'
-      }),
       minify
         ? terser({
             output: {

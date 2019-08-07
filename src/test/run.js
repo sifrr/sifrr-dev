@@ -132,7 +132,8 @@ async function runTest(options, parallel = false) {
                 exclude: ['**/test/**']
               }
             ]
-          : false
+          : false,
+        ['@babel/plugin-proposal-class-properties', { loose: true }]
       ].filter(p => p),
       ignore: [/node_modules/]
     });
