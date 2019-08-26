@@ -33,7 +33,6 @@
   "dependencies": {
     "@babel/core": "^7.5.5",
     "@babel/plugin-external-helpers": "^7.2.0",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.3.3",
     "@babel/register": "^7.5.5",
@@ -50,6 +49,7 @@
     "conventional-changelog": "^3.1.10",
     "coveralls": "^3.0.6",
     "cssnano": "^4.1.10",
+    "graphql": "^14.5.3",
     "husky": "^3.0.3",
     "istanbul-api": "^3.0.0",
     "istanbul-lib-coverage": "^2.0.5",
