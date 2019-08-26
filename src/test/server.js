@@ -71,7 +71,9 @@ module.exports = async function(
       app = require(path.join(root, 'secureserver.js'));
     } else {
       app = new SSLApp({
+        // eslint-disable-next-line camelcase
         key_file_name: path.join(__dirname, 'keys/server.key'),
+        // eslint-disable-next-line camelcase
         cert_file_name: path.join(__dirname, 'keys/server.crt')
       });
     }

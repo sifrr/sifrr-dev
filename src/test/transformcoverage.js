@@ -42,7 +42,7 @@ module.exports = function(nycReport, reporters = ['html']) {
       return ret;
     } catch (e) {
       console.error(e);
-      return;
     }
   }
+  return {};
 };
