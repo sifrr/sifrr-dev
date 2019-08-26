@@ -1,3 +1,12 @@
+## [0.0.28](https://github.com/sifrr/sifrr-dev/compare/v0.0.27...v0.0.28) (2019-08-26)
+
+
+### Bug Fixes
+
+* remove class properties babel plugin ([a7196ab](https://github.com/sifrr/sifrr-dev/commit/a7196ab))
+
+
+
 ## [0.0.27](https://github.com/sifrr/sifrr-dev/compare/v0.0.26...v0.0.27) (2019-08-07)
 
 
