@@ -1,3 +1,12 @@
+## [0.0.29](https://github.com/sifrr/sifrr-dev/compare/v0.0.28...v0.0.29) (2019-08-28)
+
+
+### Bug Fixes
+
+* don't use error to get file name in pdescribe, pass filename to call ([44ce68c](https://github.com/sifrr/sifrr-dev/commit/44ce68c))
+
+
+
 ## [0.0.28](https://github.com/sifrr/sifrr-dev/compare/v0.0.27...v0.0.28) (2019-08-26)
 
 
