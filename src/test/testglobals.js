@@ -1,29 +1,6 @@
 const path = require('path');
 const deepMerge = require('../deepmerge');
 
-function getCaller() {
-  try {
-    let err = new Error();
-    let callerfile;
-    let currentfile;
-
-    Error.prepareStackTrace = function(err, stack) {
-      return stack;
-    };
-
-    currentfile = err.stack.shift().getFileName();
-
-    while (err.stack.length) {
-      callerfile = err.stack.shift().getFileName();
-
-      if (currentfile !== callerfile) return callerfile;
-    }
-  } catch (err) {
-    // do nothing
-  }
-  return undefined;
-}
-
 module.exports = (testOptions, parallel) => {
   global.__pdescribes = [];
   global.ENV = process.env.NODE_ENV = process.env.NODE_ENV || 'test';
@@ -40,17 +17,16 @@ module.exports = (testOptions, parallel) => {
       }, time);
     });
   };
-  global.pdescribe = function(name, fxn) {
-    const testFile = getCaller();
-    if (testFile && testOptions && !testOptions.parallel && parallel) {
+  global.pdescribe = function(filename, name, fxn) {
+    if (typeof filename === 'string' && testOptions && !testOptions.parallel && parallel) {
       const newOpts = deepMerge({}, testOptions);
       deepMerge(newOpts, {
         browserWSEndpoint: global.browser ? global.browser.wsEndpoint() : undefined,
-        filters: [testFile],
+        filters: [filename],
         parallel: true,
         junitXmlFile: path.join(
           testOptions.junitXmlFile,
-          `../../${path.basename(getCaller()).replace('.test.js', '')}/results.xml`
+          `../../${path.basename(filename).replace('.test.js', '')}/results.xml`
         ),
         port: 'random'
       });
