@@ -55,6 +55,18 @@ function moduleConfig(
         browser: type === 'browser',
         mainFields: ['module', 'main']
       }),
+      fs.existsSync(path.resolve('tsconfig.json'))
+        ? typescript({
+            typescript: require('typescript'),
+            useTsconfigDeclarationDir: true,
+            cacheRoot: './.ts_cache',
+            tsconfigOverride: {
+              compilerOptions: {
+                sourceMap: true
+              }
+            }
+          })
+        : false,
       babel({
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
         exclude: 'node_modules/**',
@@ -66,18 +78,6 @@ function moduleConfig(
             'global.IS_NODE': JSON.stringify(type[0] === 'cjs'),
             'global.IS_MODULE': JSON.stringify(type[0] === 'module'),
             'global.IS_BROWSER': JSON.stringify(type[0] === 'browser')
-          })
-        : false,
-      fs.existsSync(path.resolve('tsconfig.json'))
-        ? typescript({
-            typescript: require('typescript'),
-            useTsconfigDeclarationDir: true,
-            cacheRoot: './.ts_cache',
-            tsconfigOverride: {
-              compilerOptions: {
-                sourceMap: true
-              }
-            }
           })
         : false,
       commonjs(),
