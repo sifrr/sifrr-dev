@@ -1,3 +1,17 @@
+## [0.0.30](https://github.com/sifrr/sifrr-dev/compare/v0.0.29...v0.0.30) (2019-08-29)
+
+
+### Bug Fixes
+
+* parse typescript before babel, 0.0.30 ([0200f3d](https://github.com/sifrr/sifrr-dev/commit/0200f3d))
+
+
+### Features
+
+* parallel precommand execution ([a23e413](https://github.com/sifrr/sifrr-dev/commit/a23e413))
+
+
+
 ## [0.0.29](https://github.com/sifrr/sifrr-dev/compare/v0.0.28...v0.0.29) (2019-08-28)
 
 
