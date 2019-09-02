@@ -4,30 +4,36 @@ const fs = require('fs');
 const loadDir = require('../loaddir');
 const getPorts = require('./getports');
 const instrumenter = require('istanbul-lib-instrument').createInstrumenter();
-const { App, SSLApp } = require('@sifrr/server');
+const { App, SSLApp, sendFile } = require('@sifrr/server');
 
 function staticInstrument(app, folder, coverage = false) {
-  loadDir({
-    dir: folder,
-    onFile: filePath => {
-      if (coverage && filePath.slice(-3) === '.js' && fs.existsSync(filePath + '.map')) {
-        app.get('/' + path.relative(folder, filePath), res => {
+  if (coverage) {
+    loadDir({
+      dir: folder,
+      onFile: filePath => {
+        app.get('/' + path.relative(folder, filePath), (res, req) => {
           res.onAborted(global.console.log);
           const text = fs.readFileSync(filePath, 'utf-8');
           res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-          res.end(
-            instrumenter.instrumentSync(
-              text,
-              filePath,
-              JSON.parse(fs.readFileSync(filePath + '.map'))
-            )
-          );
+          if (filePath.slice(-3) === '.js' && fs.existsSync(filePath + '.map')) {
+            res.end(
+              instrumenter.instrumentSync(
+                text,
+                filePath,
+                JSON.parse(fs.readFileSync(filePath + '.map'))
+              )
+            );
+          } else {
+            sendFile(res, req, filePath);
+          }
         });
-      } else {
-        app.file('/' + path.relative(folder, filePath), filePath);
       }
-    }
-  });
+    });
+  } else {
+    app.folder('/', folder, {
+      watch: true
+    });
+  }
 }
 
 module.exports = async function(
