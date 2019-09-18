@@ -831,10 +831,10 @@
     mkdirp "^0.5.1"
     rimraf "^2.5.2"
 
-"@sifrr/eslint-config@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@sifrr/eslint-config/-/eslint-config-0.0.3.tgz#ca06c84b2eeb605f174ebb0f2375f7f6014a3191"
-  integrity sha512-/me2FvsaoQrJJOFTazEjQGN2wAmqyXYzL2IdZYGn1ujMj2pk+PathJy908CCpPclNUgmamjflm4zE1DJcEwSoQ==
+"@sifrr/eslint-config@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@sifrr/eslint-config/-/eslint-config-0.0.4.tgz#c6108b5249e06a2ebad3583a958895167a515cbc"
+  integrity sha512-75bW9MU6L0NGwOJeog+hY+AOlWX7+IEy39e7ECimIU7EMU5sQ5NYjCvJlVgcQbL46mfgEx5lyONEkQ/UfIP7SQ==
   dependencies:
     babel-eslint "^10.0.2"
     eslint "^6.0.1"

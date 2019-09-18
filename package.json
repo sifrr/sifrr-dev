@@ -38,7 +38,7 @@
     "@babel/register": "^7.5.5",
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
-    "@sifrr/eslint-config": "^0.0.3",
+    "@sifrr/eslint-config": "^0.0.4",
     "@sifrr/fetch": "^0.0.6",
     "@sifrr/server": "^0.0.6",
     "autoprefixer": "^9.6.1",
