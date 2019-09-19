@@ -1,3 +1,17 @@
+## [0.0.31](https://github.com/sifrr/sifrr-dev/compare/v0.0.30...v0.0.31) (2019-09-19)
+
+
+### Bug Fixes
+
+* don't serve node_modules ([8f604dc](https://github.com/sifrr/sifrr-dev/commit/8f604dc))
+
+
+### Features
+
+* watch static folders if coverage is not on ([0733da4](https://github.com/sifrr/sifrr-dev/commit/0733da4))
+
+
+
 ## [0.0.30](https://github.com/sifrr/sifrr-dev/compare/v0.0.29...v0.0.30) (2019-08-29)
 
 
