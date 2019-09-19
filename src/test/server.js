@@ -6,7 +6,7 @@ const getPorts = require('./getports');
 const instrumenter = require('istanbul-lib-instrument').createInstrumenter();
 const { App, SSLApp, sendFile } = require('@sifrr/server');
 
-function staticInstrument(app, folder, coverage = false) {
+function staticInstrument(app, folder, coverage = false, filter) {
   if (coverage) {
     loadDir({
       dir: folder,
@@ -27,11 +27,13 @@ function staticInstrument(app, folder, coverage = false) {
             sendFile(res, req, filePath);
           }
         });
-      }
+      },
+      filter
     });
   } else {
     app.folder('/', folder, {
-      watch: true
+      watch: true,
+      filter
     });
   }
 }
@@ -43,15 +45,16 @@ module.exports = async function(
     setGlobals = true,
     coverage = true,
     port = false,
-    securePort = false
+    securePort = false,
+    filter = () => true
   } = {}
 ) {
   const apps = [];
   function startServer(app, hostingPort, secure) {
-    staticInstrument(app, root, coverage);
-    staticInstrument(app, path.join(root, '../../dist'), coverage);
+    staticInstrument(app, root, coverage, filter);
+    staticInstrument(app, path.join(root, '../../dist'), coverage, filter);
     extraStaticFolders.forEach(folder => {
-      staticInstrument(app, folder, coverage);
+      staticInstrument(app, folder, coverage, filter);
     });
 
     apps.push([app, hostingPort, secure]);

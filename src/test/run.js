@@ -11,14 +11,15 @@ const writeCoverage = require('./writecoverage');
 const loadBrowser = require('./loadbrowser');
 const transformCoverage = require('./transformcoverage');
 
-function loadTests(dir, mocha, regex, filters) {
+function loadTests(dir, mocha, regex, filters, filter) {
   loadDir({
     dir: dir,
     onFile: filePath => {
       if (filters.map(bf => filePath.indexOf(bf) >= 0).indexOf(true) >= 0) {
         if (filePath.match(regex)) mocha.addFile(filePath);
       }
-    }
+    },
+    filter
   });
 }
 
@@ -84,6 +85,7 @@ async function runTest(options, parallel = false) {
     mochaOptions = {},
     before,
     browserWSEndpoint,
+    excludeRegex = /node_modules/,
     isTS = fs.existsSync(path.join(root, 'tsconfig.json'))
   } = options;
 
@@ -141,12 +143,14 @@ async function runTest(options, parallel = false) {
     global.___instrumented = true;
   }
 
+  const filter = path => !path.match(excludeRegex);
   const servers = await require('./server')(allFolders.public, {
     extraStaticFolders: allFolders.static,
     setGlobals,
     coverage,
     port,
-    securePort
+    securePort,
+    filter
   });
 
   if (serverOnly) {
@@ -166,11 +170,11 @@ async function runTest(options, parallel = false) {
 
   if (runBT) {
     await servers.listen();
-    loadTests(allFolders.browserTest, mocha, testFileRegex, filters);
+    loadTests(allFolders.browserTest, mocha, testFileRegex, filters, filter);
   }
 
   if (runUT) {
-    loadTests(allFolders.unitTest, mocha, testFileRegex, filters);
+    loadTests(allFolders.unitTest, mocha, testFileRegex, filters, filter);
   }
 
   // unhandledRejection and uncaughtExceptions
