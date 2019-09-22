@@ -35,7 +35,8 @@ function staticInstrument(app, folder, coverage = false, filter) {
   } else {
     app.folder('/', folder, {
       watch: true,
-      filter
+      filter,
+      livereload: true
     });
   }
 }

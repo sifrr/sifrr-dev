@@ -38,12 +38,10 @@ async function runTests(options, parallel = false) {
   if (!Array.isArray(options)) options = [options];
 
   // run precommands
-  let preCommandsPromises = [];
   for (let i = 0; i < options.length; i++) {
-    preCommandsPromises.push(runCommands(options[i].preCommand));
+    await runCommands(options[i].preCommand);
     delete options[i].preCommand;
   }
-  await Promise.all(preCommandsPromises);
 
   let result;
   if (parallel) {
