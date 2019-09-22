@@ -1,3 +1,12 @@
+## [0.0.32](https://github.com/sifrr/sifrr-dev/compare/v0.0.31...v0.0.32) (2019-09-22)
+
+
+### Bug Fixes
+
+* don't add static server if folder doesn't exist ([790d9c3](https://github.com/sifrr/sifrr-dev/commit/790d9c3))
+
+
+
 ## [0.0.31](https://github.com/sifrr/sifrr-dev/compare/v0.0.30...v0.0.31) (2019-09-19)
 
 
