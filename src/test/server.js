@@ -7,6 +7,8 @@ const instrumenter = require('istanbul-lib-instrument').createInstrumenter();
 const { App, SSLApp, sendFile } = require('@sifrr/server');
 
 function staticInstrument(app, folder, coverage = false, filter) {
+  if (!fs.existsSync(folder)) return;
+
   if (coverage) {
     loadDir({
       dir: folder,
