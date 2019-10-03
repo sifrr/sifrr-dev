@@ -38,10 +38,13 @@ async function runTests(options, parallel = false) {
   if (!Array.isArray(options)) options = [options];
 
   // run precommands
-  for (let i = 0; i < options.length; i++) {
-    await runCommands(options[i].preCommand);
-    delete options[i].preCommand;
-  }
+  await Promise.all(
+    options.map(o => {
+      const promise = runCommands(o.preCommand);
+      delete o.preCommand;
+      return promise;
+    })
+  );
 
   let result;
   if (parallel) {
@@ -148,7 +151,8 @@ async function runTest(options, parallel = false) {
     coverage,
     port,
     securePort,
-    filter
+    filter,
+    serverOnly
   });
 
   if (serverOnly) {

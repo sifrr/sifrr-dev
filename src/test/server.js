@@ -6,10 +6,10 @@ const getPorts = require('./getports');
 const instrumenter = require('istanbul-lib-instrument').createInstrumenter();
 const { App, SSLApp, sendFile } = require('@sifrr/server');
 
-function staticInstrument(app, folder, coverage = false, filter) {
+function staticInstrument(app, folder, coverage = false, filter, serverOnly = false) {
   if (!fs.existsSync(folder)) return;
 
-  if (coverage) {
+  if (coverage || !serverOnly) {
     loadDir({
       dir: folder,
       onFile: filePath => {
@@ -17,7 +17,7 @@ function staticInstrument(app, folder, coverage = false, filter) {
           res.onAborted(global.console.log);
           const text = fs.readFileSync(filePath, 'utf-8');
           res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-          if (filePath.slice(-3) === '.js' && fs.existsSync(filePath + '.map')) {
+          if (coverage && filePath.slice(-3) === '.js' && fs.existsSync(filePath + '.map')) {
             res.end(
               instrumenter.instrumentSync(
                 text,
@@ -49,15 +49,16 @@ module.exports = async function(
     coverage = true,
     port = false,
     securePort = false,
-    filter = () => true
+    filter = () => true,
+    serverOnly
   } = {}
 ) {
   const apps = [];
   function startServer(app, hostingPort, secure) {
-    staticInstrument(app, root, coverage, filter);
-    staticInstrument(app, path.join(root, '../../dist'), coverage, filter);
+    staticInstrument(app, root, coverage, filter, serverOnly);
+    staticInstrument(app, path.join(root, '../../dist'), coverage, filter, serverOnly);
     extraStaticFolders.forEach(folder => {
-      staticInstrument(app, folder, coverage, filter);
+      staticInstrument(app, folder, coverage, filter, serverOnly);
     });
 
     apps.push([app, hostingPort, secure]);
