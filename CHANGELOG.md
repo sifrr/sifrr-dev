@@ -1,3 +1,12 @@
+## [0.0.35](https://github.com/sifrr/sifrr-dev/compare/v0.0.34...v0.0.35) (2019-10-03)
+
+
+### Bug Fixes
+
+* watch only if serverOnly, 0.0.35 ([963bb89](https://github.com/sifrr/sifrr-dev/commit/963bb89))
+
+
+
 ## [0.0.34](https://github.com/sifrr/sifrr-dev/compare/v0.0.33...v0.0.34) (2019-10-01)
 
 
