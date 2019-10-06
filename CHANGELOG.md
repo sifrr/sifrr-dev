@@ -1,3 +1,12 @@
+## [0.0.36](https://github.com/sifrr/sifrr-dev/compare/v0.0.35...v0.0.36) (2019-10-06)
+
+
+### Bug Fixes
+
+* revert to 0.0.30 version, release 0.0.36 ([0711b52](https://github.com/sifrr/sifrr-dev/commit/0711b52))
+
+
+
 ## [0.0.35](https://github.com/sifrr/sifrr-dev/compare/v0.0.34...v0.0.35) (2019-10-03)
 
 
