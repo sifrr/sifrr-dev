@@ -4,41 +4,30 @@ const fs = require('fs');
 const loadDir = require('../loaddir');
 const getPorts = require('./getports');
 const instrumenter = require('istanbul-lib-instrument').createInstrumenter();
-const { App, SSLApp, sendFile } = require('@sifrr/server');
+const { App, SSLApp } = require('@sifrr/server');
 
-function staticInstrument(app, folder, coverage = false, filter, serverOnly = false) {
-  if (!fs.existsSync(folder)) return;
-
-  if (coverage || !serverOnly) {
-    loadDir({
-      dir: folder,
-      onFile: filePath => {
-        app.get('/' + path.relative(folder, filePath), (res, req) => {
+function staticInstrument(app, folder, coverage = false) {
+  loadDir({
+    dir: folder,
+    onFile: filePath => {
+      if (coverage && filePath.slice(-3) === '.js' && fs.existsSync(filePath + '.map')) {
+        app.get('/' + path.relative(folder, filePath), res => {
           res.onAborted(global.console.log);
           const text = fs.readFileSync(filePath, 'utf-8');
           res.writeHeader('content-type', 'application/javascript; charset=UTF-8');
-          if (coverage && filePath.slice(-3) === '.js' && fs.existsSync(filePath + '.map')) {
-            res.end(
-              instrumenter.instrumentSync(
-                text,
-                filePath,
-                JSON.parse(fs.readFileSync(filePath + '.map'))
-              )
-            );
-          } else {
-            sendFile(res, req, filePath);
-          }
+          res.end(
+            instrumenter.instrumentSync(
+              text,
+              filePath,
+              JSON.parse(fs.readFileSync(filePath + '.map'))
+            )
+          );
         });
-      },
-      filter
-    });
-  } else {
-    app.folder('/', folder, {
-      watch: true,
-      filter,
-      livereload: true
-    });
-  }
+      } else {
+        app.file('/' + path.relative(folder, filePath), filePath);
+      }
+    }
+  });
 }
 
 module.exports = async function(
@@ -48,17 +37,15 @@ module.exports = async function(
     setGlobals = true,
     coverage = true,
     port = false,
-    securePort = false,
-    filter = () => true,
-    serverOnly
+    securePort = false
   } = {}
 ) {
   const apps = [];
   function startServer(app, hostingPort, secure) {
-    staticInstrument(app, root, coverage, filter, serverOnly);
-    staticInstrument(app, path.join(root, '../../dist'), coverage, filter, serverOnly);
+    staticInstrument(app, root, coverage);
+    staticInstrument(app, path.join(root, '../../dist'), coverage);
     extraStaticFolders.forEach(folder => {
-      staticInstrument(app, folder, coverage, filter, serverOnly);
+      staticInstrument(app, folder, coverage);
     });
 
     apps.push([app, hostingPort, secure]);
