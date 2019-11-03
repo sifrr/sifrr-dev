@@ -37,7 +37,7 @@ async function runTests(options, parallel = false) {
   if (!Array.isArray(options)) options = [options];
 
   // run precommands
-  let preCommandsPromises = [];
+  const preCommandsPromises = [];
   for (let i = 0; i < options.length; i++) {
     preCommandsPromises.push(runCommands(options[i].preCommand));
     delete options[i].preCommand;
@@ -113,6 +113,7 @@ async function runTest(options, parallel = false) {
   if (!global.___instrumented) {
     require('@babel/register')({
       root,
+      rootMode: 'upward-optional',
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs'],
       presets: [
         [
