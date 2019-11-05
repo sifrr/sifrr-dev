@@ -1,3 +1,12 @@
+## [0.0.38](https://github.com/sifrr/sifrr-dev/compare/v0.0.37...v0.0.38) (2019-11-05)
+
+
+### Bug Fixes
+
+* typescript version and release 0.0.38 ([7afda0a](https://github.com/sifrr/sifrr-dev/commit/7afda0a3e065b58df613a1f231fa756bbdba893f))
+
+
+
 ## [0.0.37](https://github.com/sifrr/sifrr-dev/compare/v0.0.36...v0.0.37) (2019-11-04)
 
 
