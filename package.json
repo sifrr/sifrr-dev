@@ -80,7 +80,7 @@
     "rollup-plugin-typescript2": "^0.25.2",
     "sinon": "^7.4.1",
     "typescript": "^3.5.3",
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v16.1.0"
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v16.2.0"
   },
   "resolutions": {
     "uWebSockets.js": "uNetworking/uWebSockets.js#v16.1.0"

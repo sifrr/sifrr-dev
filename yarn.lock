@@ -6014,6 +6014,11 @@ uWebSockets.js@uNetworking/uWebSockets.js#v16.1.0:
   version "16.1.0"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/b49dfbaefa34118b954c82823fe0a23927cf4d3b"
 
+uWebSockets.js@uNetworking/uWebSockets.js#v16.2.0:
+  version "16.2.0"
+  uid "8df7212c3e0117631fdd8e8e5c90094f5f97fb08"
+  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/8df7212c3e0117631fdd8e8e5c90094f5f97fb08"
+
 uglify-js@3.4.x:
   version "3.4.10"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.10.tgz#9ad9563d8eb3acdfb8d38597d2af1d815f6a755f"
