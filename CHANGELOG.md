@@ -1,3 +1,17 @@
+## [0.0.39](https://github.com/sifrr/sifrr-dev/compare/v0.0.38...v0.0.39) (2019-11-14)
+
+
+### Bug Fixes
+
+* rollup config takes root directory now to resolve paths ([d566065](https://github.com/sifrr/sifrr-dev/commit/d566065c79eb020392d2de72b71d3a6bfa3142af))
+
+
+### Features
+
+* give tsconfig path to rollup-plugin-typescript2 ([aadb7bd](https://github.com/sifrr/sifrr-dev/commit/aadb7bdd5fc3827b2bfd720ef7afe60eb5f075be))
+
+
+
 ## [0.0.38](https://github.com/sifrr/sifrr-dev/compare/v0.0.37...v0.0.38) (2019-11-05)
 
 
