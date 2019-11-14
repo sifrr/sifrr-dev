@@ -1,3 +1,12 @@
+## [0.0.40](https://github.com/sifrr/sifrr-dev/compare/v0.0.39...v0.0.40) (2019-11-14)
+
+
+### Bug Fixes
+
+* path.swd doesn't exist ([35dbcae](https://github.com/sifrr/sifrr-dev/commit/35dbcae6e5160fc0cbf0266cf0becb8db668178e))
+
+
+
 ## [0.0.39](https://github.com/sifrr/sifrr-dev/compare/v0.0.38...v0.0.39) (2019-11-14)
 
 
