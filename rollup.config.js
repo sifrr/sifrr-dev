@@ -9,6 +9,7 @@ function moduleConfig(name, root, minify = false, type) {
   } - sifrr project | MIT licensed | https://github.com/sifrr/sifrr-dev */`;
   return getRollupConfig(
     {
+      root,
       name,
       inputFile: path.join(root, `./src/sifrr.dev.js`),
       outputFolder: path.join(root, './dist'),
