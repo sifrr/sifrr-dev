@@ -14,6 +14,7 @@ const deepMerge = require('./deepmerge');
 
 function moduleConfig(
   {
+    root,
     name,
     inputFile,
     outputFolder,
@@ -29,7 +30,10 @@ function moduleConfig(
     .basename(inputFile)
     .slice(0, path.basename(inputFile).lastIndexOf('.'))
     .toLowerCase();
+  const tsConfig = path.join(root, 'tsconfig.json');
+
   type = Array.isArray(type) ? type : [type];
+
   const output = type.map(t => {
     const format = t === 'cjs' ? 'cjs' : t === 'browser' ? 'iife' : 'es';
     return {
@@ -49,13 +53,12 @@ function moduleConfig(
   const ret = {
     input: inputFile,
     output: output.length === 1 ? output[0] : output,
-    external: Object.keys(require(path.resolve('./package.json')).dependencies || []).concat(),
     plugins: [
       resolve({
         browser: type === 'browser',
         mainFields: ['module', 'main']
       }),
-      fs.existsSync(path.resolve('tsconfig.json'))
+      fs.existsSync(tsConfig)
         ? typescript({
             typescript: require('typescript'),
             useTsconfigDeclarationDir: true,
@@ -68,7 +71,7 @@ function moduleConfig(
           })
         : false,
       babel({
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs'],
         exclude: 'node_modules/**',
         rootMode: 'upward'
       }),
