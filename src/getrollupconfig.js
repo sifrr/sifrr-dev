@@ -14,7 +14,7 @@ const deepMerge = require('./deepmerge');
 
 function moduleConfig(
   {
-    root = path.cwd(),
+    root = process.cwd(),
     name,
     inputFile,
     outputFolder,
