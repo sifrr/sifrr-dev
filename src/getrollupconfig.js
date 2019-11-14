@@ -8,7 +8,7 @@ const cleanup = require('rollup-plugin-cleanup');
 const postcss = require('rollup-plugin-postcss');
 const html = require('rollup-plugin-html');
 const typescript = require('rollup-plugin-typescript2');
-const replace = require('rollup-plugin-replace');
+const replace = require('@rollup/plugin-replace');
 
 const deepMerge = require('./deepmerge');
 
@@ -53,6 +53,7 @@ function moduleConfig(
   const ret = {
     input: inputFile,
     output: output.length === 1 ? output[0] : output,
+    external: Object.keys(require(path.join(root, './package.json')).dependencies || []),
     plugins: [
       resolve({
         browser: type === 'browser',
