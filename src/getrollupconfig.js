@@ -14,7 +14,7 @@ const deepMerge = require('./deepmerge');
 
 function moduleConfig(
   {
-    root,
+    root = path.cwd(),
     name,
     inputFile,
     outputFolder,
@@ -30,7 +30,7 @@ function moduleConfig(
     .basename(inputFile)
     .slice(0, path.basename(inputFile).lastIndexOf('.'))
     .toLowerCase();
-  const tsConfig = path.join(root, 'tsconfig.json');
+  const tsconfig = path.join(root, 'tsconfig.json');
 
   type = Array.isArray(type) ? type : [type];
 
@@ -58,11 +58,12 @@ function moduleConfig(
         browser: type === 'browser',
         mainFields: ['module', 'main']
       }),
-      fs.existsSync(tsConfig)
+      fs.existsSync(tsconfig)
         ? typescript({
             typescript: require('typescript'),
             useTsconfigDeclarationDir: true,
             cacheRoot: './.ts_cache',
+            tsconfig,
             tsconfigOverride: {
               compilerOptions: {
                 sourceMap: true
