@@ -5361,14 +5361,6 @@ rollup-plugin-postcss@^2.0.3:
     rollup-pluginutils "^2.0.1"
     style-inject "^0.3.0"
 
-rollup-plugin-replace@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-replace/-/rollup-plugin-replace-2.2.0.tgz#f41ae5372e11e7a217cde349c8b5d5fd115e70e3"
-  integrity sha512-/5bxtUPkDHyBJAKketb4NfaeZjL5yLZdeUihSfbF2PQMz+rSTEb8ARKoOl3UBT4m7/X+QOXJo3sLTcq+yMMYTA==
-  dependencies:
-    magic-string "^0.25.2"
-    rollup-pluginutils "^2.6.0"
-
 rollup-plugin-terser@^5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/rollup-plugin-terser/-/rollup-plugin-terser-5.1.2.tgz#3e41256205cb75f196fc70d4634227d1002c255c"
@@ -6022,10 +6014,10 @@ uWebSockets.js@uNetworking/uWebSockets.js#v16.1.0:
   version "16.1.0"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/b49dfbaefa34118b954c82823fe0a23927cf4d3b"
 
-uWebSockets.js@uNetworking/uWebSockets.js#v16.2.0:
-  version "16.2.0"
-  uid "8df7212c3e0117631fdd8e8e5c90094f5f97fb08"
-  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/8df7212c3e0117631fdd8e8e5c90094f5f97fb08"
+uWebSockets.js@uNetworking/uWebSockets.js#v16.3.0:
+  version "16.3.0"
+  uid c92868ab39af6d22e46b295e1a123f0519edbce0
+  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/c92868ab39af6d22e46b295e1a123f0519edbce0"
 
 uglify-js@3.4.x:
   version "3.4.10"
