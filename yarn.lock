@@ -334,9 +334,9 @@
   integrity sha512-GqL+Z0d7B7ADlQBMXlJgvXEbtt5qlqd1YQ5fr12hTSfh7O/vgrEIvJxU2e7aSVrEUn75zTZ6Nd0s8tthrlZnrQ==
 
 "@babel/plugin-external-helpers@^7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-external-helpers/-/plugin-external-helpers-7.2.0.tgz#7f4cb7dee651cd380d2034847d914288467a6be4"
-  integrity sha512-QFmtcCShFkyAsNtdCM3lJPmRe1iB+vPZymlB4LnDIKEBj2yKQLQKtoxXxJ8ePT5fwMl4QGg303p4mB0UsSI2/g==
+  version "7.7.4"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-external-helpers/-/plugin-external-helpers-7.7.4.tgz#8aa7aa402f0e2ecb924611cbf30942a497dfd17e"
+  integrity sha512-RVGNajLaFlknbZLutaP/uv7Q+xmVs2LMlEWFXbcjLnwtBdPqAVpV3nzYIAJqri/VjJCUrhG5nALijtg0aND+XA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
 
