@@ -43,7 +43,7 @@
     "@sifrr/fetch": "^0.0.6",
     "@sifrr/server": "^0.0.6",
     "autoprefixer": "^9.6.1",
-    "babel-plugin-istanbul": "^5.2.0",
+    "babel-plugin-istanbul": "^6.0.0",
     "browserslist": "^4.6.6",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
