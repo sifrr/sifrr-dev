@@ -57,7 +57,7 @@
     "istanbul-lib-hook": "^3.0.0",
     "istanbul-lib-instrument": "^3.3.0",
     "istanbul-lib-report": "^3.0.0",
-    "istanbul-lib-source-maps": "^3.0.6",
+    "istanbul-lib-source-maps": "^4.0.0",
     "istanbul-reports": "^2.2.6",
     "json-fn": "^1.1.1",
     "mocha": "^6.2.0",
