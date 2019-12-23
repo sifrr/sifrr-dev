@@ -55,7 +55,7 @@
     "istanbul-api": "^3.0.0",
     "istanbul-lib-coverage": "^2.0.5",
     "istanbul-lib-hook": "^3.0.0",
-    "istanbul-lib-instrument": "^3.3.0",
+    "istanbul-lib-instrument": "^4.0.0",
     "istanbul-lib-report": "^3.0.0",
     "istanbul-lib-source-maps": "^4.0.0",
     "istanbul-reports": "^2.2.6",
