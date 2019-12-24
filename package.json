@@ -58,7 +58,7 @@
     "istanbul-lib-instrument": "^4.0.0",
     "istanbul-lib-report": "^3.0.0",
     "istanbul-lib-source-maps": "^4.0.0",
-    "istanbul-reports": "^2.2.6",
+    "istanbul-reports": "^3.0.0",
     "json-fn": "^1.1.1",
     "mocha": "^6.2.0",
     "mocha-junit-reporter": "^1.23.1",
