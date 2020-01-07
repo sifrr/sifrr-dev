@@ -1,3 +1,7 @@
+## [0.0.41](https://github.com/sifrr/sifrr-dev/compare/v0.0.40...v0.0.41) (2020-01-07)
+
+
+
 ## [0.0.40](https://github.com/sifrr/sifrr-dev/compare/v0.0.39...v0.0.40) (2019-11-14)
 
 
