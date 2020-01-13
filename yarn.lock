@@ -5971,6 +5971,11 @@ uWebSockets.js@uNetworking/uWebSockets.js#v16.5.0:
   uid "69026e121ae4a8d4f285c68b565710ef697b5dac"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/69026e121ae4a8d4f285c68b565710ef697b5dac"
 
+uWebSockets.js@uNetworking/uWebSockets.js#v17.0.0:
+  version "17.0.0"
+  uid e7afaaf5c96311578b3c4477f662d02aab2e41ec
+  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/e7afaaf5c96311578b3c4477f662d02aab2e41ec"
+
 uglify-js@3.4.x:
   version "3.4.10"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.4.10.tgz#9ad9563d8eb3acdfb8d38597d2af1d815f6a755f"
