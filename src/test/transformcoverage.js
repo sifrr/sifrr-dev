@@ -28,15 +28,15 @@ module.exports = function(nycReport, reporters = ['html']) {
       }
     });
 
-    reporters.forEach(r => reporter.add(r));
-    reporter.add('json-summary');
-    reporter.write(map);
-
     try {
+      reporters.forEach(r => reporter.add(r));
+      reporter.add('json-summary');
+      reporter.write(map);
+
       const jsonCovPath = path.resolve('./coverage/coverage-summary.json');
       const total = JSON.parse(fs.readFileSync(jsonCovPath, 'UTF-8').replace('{,', '{')).total;
       const ret = {};
-      for (let type in total) {
+      for (const type in total) {
         ret[type] = total[type].pct + '%';
       }
       return ret;
