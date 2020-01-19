@@ -6021,14 +6021,8 @@ typescript@^3.5.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
   integrity sha512-/P5lkRXkWHNAbcJIiHPfRoKqyd7bsyCma1hZNUGfn20qm64T6ZBlrzprymeu918H+mB/0rIg2gGK/BXkhhYgBw==
 
-uWebSockets.js@uNetworking/uWebSockets.js#v16.5.0:
-  version "16.5.0"
-  uid "69026e121ae4a8d4f285c68b565710ef697b5dac"
-  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/69026e121ae4a8d4f285c68b565710ef697b5dac"
-
 uWebSockets.js@uNetworking/uWebSockets.js#v17.0.0:
   version "17.0.0"
-  uid e7afaaf5c96311578b3c4477f662d02aab2e41ec
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/e7afaaf5c96311578b3c4477f662d02aab2e41ec"
 
 uglify-js@3.4.x:
