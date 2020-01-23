@@ -1,3 +1,12 @@
+## [0.0.44](https://github.com/sifrr/sifrr-dev/compare/v0.0.43...v0.0.44) (2020-01-23)
+
+
+### Bug Fixes
+
+* istanbul versions, release 0.0.44 ([b601542](https://github.com/sifrr/sifrr-dev/commit/b6015428454c91da95a88a51ac7f25f568bf9f71))
+
+
+
 ## [0.0.43](https://github.com/sifrr/sifrr-dev/compare/v0.0.42...v0.0.43) (2020-01-23)
 
 
