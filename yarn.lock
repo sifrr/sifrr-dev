@@ -6011,10 +6011,10 @@ uWebSockets.js@uNetworking/uWebSockets.js#v17.0.0:
   version "17.0.0"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/e7afaaf5c96311578b3c4477f662d02aab2e41ec"
 
-uWebSockets.js@uNetworking/uWebSockets.js#v17.2.0:
-  version "17.2.0"
-  uid d867ae494981123760e2986cfaeaea24a4cf76b3
-  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/d867ae494981123760e2986cfaeaea24a4cf76b3"
+uWebSockets.js@uNetworking/uWebSockets.js#v17.3.0:
+  version "17.3.0"
+  uid f54d0b45d1d9924d2562fd8f6f59cbca2bcbcc2c
+  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/f54d0b45d1d9924d2562fd8f6f59cbca2bcbcc2c"
 
 uglify-js@3.4.x:
   version "3.4.10"
