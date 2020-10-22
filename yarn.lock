@@ -6661,10 +6661,10 @@ uWebSockets.js@uNetworking/uWebSockets.js#v17.0.0:
   version "17.0.0"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/e7afaaf5c96311578b3c4477f662d02aab2e41ec"
 
-uWebSockets.js@uNetworking/uWebSockets.js#v18.3.0:
-  version "18.3.0"
-  uid "63c610cefde1ef71c27cba6dd1072495977ee34d"
-  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/63c610cefde1ef71c27cba6dd1072495977ee34d"
+uWebSockets.js@uNetworking/uWebSockets.js#v18.8.0:
+  version "18.8.0"
+  uid "55540c25d74dca5d018db44174c3a558032da10e"
+  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/55540c25d74dca5d018db44174c3a558032da10e"
 
 uglify-js@3.4.x:
   version "3.4.10"
