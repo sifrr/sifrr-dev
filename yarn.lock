@@ -1109,13 +1109,14 @@
   resolved "https://registry.yarnpkg.com/@sifrr/fetch/-/fetch-0.0.8.tgz#6fa144cbf089d3e823f516671a1da2e5e3dd5e65"
   integrity sha512-My7Ers2L44YRt1CQEh/Fbdy5l4AxI00LEBGyGMocwVU+SPhjUhtswIeOMV4Td5ikPcI1d0s6R8G3pHkCe600Wg==
 
-"@sifrr/server@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@sifrr/server/-/server-0.0.6.tgz#4dcf105ed9a60687c977271edb157d0e79dbf6dc"
-  integrity sha512-erEjm9QnR6fWVo6gQakWZO0xopo8Xbtw0JGpgVH0D2L/vCJ4aDCt3Hx/r5Huz9E8X/JYJfUMDnOnQ6MPtGpmxQ==
+"@sifrr/server@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@sifrr/server/-/server-0.0.8.tgz#6f97badd1a720abcb8657e81cfbb6cf4b3af25f8"
+  integrity sha512-SUL2lL2DvtLurKgHDjl7bwf+LmR6dcxjP+YYf6XgCatGWryB19KTpv0Zv++vrD071zlmR9QVdopfi9on7O+YDQ==
   dependencies:
     busboy "^0.3.0"
     chokidar "^3.0.1"
+    iterall "^1.2.2"
     mkdirp "^0.5.1"
     query-string "^6.8.1"
 
