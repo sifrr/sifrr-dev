@@ -1104,10 +1104,10 @@
     eslint-plugin-mocha "^6.0.0"
     eslint-plugin-prettier "^3.1.0"
 
-"@sifrr/fetch@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@sifrr/fetch/-/fetch-0.0.6.tgz#4baa1e363f012f0df9cdf77fecd406ccd8246e34"
-  integrity sha512-nYMaDakLcSRN8yuXsSZ4sDOKqST1JTsFlcHONhcvA74wlX/kReImef4bADRX3H84VMgyKBs+gHqkTg5yQV5/5Q==
+"@sifrr/fetch@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@sifrr/fetch/-/fetch-0.0.8.tgz#6fa144cbf089d3e823f516671a1da2e5e3dd5e65"
+  integrity sha512-My7Ers2L44YRt1CQEh/Fbdy5l4AxI00LEBGyGMocwVU+SPhjUhtswIeOMV4Td5ikPcI1d0s6R8G3pHkCe600Wg==
 
 "@sifrr/server@^0.0.6":
   version "0.0.6"
