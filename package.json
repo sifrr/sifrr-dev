@@ -83,6 +83,6 @@
     "uWebSockets.js": "uNetworking/uWebSockets.js#v18.9.0"
   },
   "resolutions": {
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v17.0.0"
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v18.9.0"
   }
 }
