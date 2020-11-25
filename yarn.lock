@@ -870,7 +870,7 @@
     pirates "^4.0.0"
     source-map-support "^0.5.16"
 
-"@babel/runtime@^7.11.2", "@babel/runtime@^7.6.3", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.11.2", "@babel/runtime@^7.8.4":
   version "7.12.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
   integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
@@ -2125,17 +2125,6 @@ cosmiconfig@^5.0.0:
     is-directory "^0.3.1"
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
-
-cosmiconfig@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-6.0.0.tgz#da4fee853c52f6b1e6935f41c1a2fc50bd4a9982"
-  integrity sha512-xb3ZL6+L8b9JLLCx3ZdoZy4+2ECphCMo2PwqgP1tlfVq6M6YReyzBJtvWWtbDSpNr9hn96pkCiZqUcFEc+54Qg==
-  dependencies:
-    "@types/parse-json" "^4.0.0"
-    import-fresh "^3.1.0"
-    parse-json "^5.0.0"
-    path-type "^4.0.0"
-    yaml "^1.7.2"
 
 cosmiconfig@^7.0.0:
   version "7.0.0"
@@ -3417,14 +3406,6 @@ import-fresh@^3.0.0:
     parent-module "^1.0.0"
     resolve-from "^4.0.0"
 
-import-fresh@^3.1.0:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-3.2.1.tgz#633ff618506e793af5ac91bf48b72677e15cbe66"
-  integrity sha512-6e1q1cnWP2RXD9/keSkxHScg508CdXqXWgWBaETNhyuBFz+kUZlKboh+ISK+bU++DmbHimVBrOz/zzPe0sZ3sQ==
-  dependencies:
-    parent-module "^1.0.0"
-    resolve-from "^4.0.0"
-
 import-fresh@^3.2.1:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-3.2.2.tgz#fc129c160c5d68235507f4331a6baad186bdbc3e"
@@ -3853,12 +3834,12 @@ js-base64@^2.1.8:
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.5.1.tgz#1efa39ef2c5f7980bb1784ade4a8af2de3291121"
   integrity sha512-M7kLczedRMYX4L8Mdh4MzyAMM9O5osx+4FcOQuTvr3A9F2D9S5JXheN0ewNbrvK2UatkTRhL5ejGmGSjNMiZuw==
 
-js-cleanup@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/js-cleanup/-/js-cleanup-1.0.1.tgz#1d38080c7ee92e1d2d2b94054d0a33c48951e0df"
-  integrity sha512-wyHeWKqbcQV78/tiMJ6pgJrkG7p2u3b2xX9IJFvvurpJL9/++89dHfkUebhWvSMS84LG0uQ7BnG5GGyAzY21Ag==
+js-cleanup@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/js-cleanup/-/js-cleanup-1.2.0.tgz#8dbc65954b1d38b255f1e8cf02cd17b3f7a053f9"
+  integrity sha512-JeDD0yiiSt80fXzAVa/crrS0JDPQljyBG/RpOtaSbyDq03VHa9szJWMaWOYU/bcTn412uMN2MxApXq8v79cUiQ==
   dependencies:
-    magic-string "^0.25.1"
+    magic-string "^0.25.7"
     perf-regexes "^1.0.1"
     skip-regex "^1.0.2"
 
@@ -4143,7 +4124,7 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-magic-string@^0.25.1, magic-string@^0.25.2, magic-string@^0.25.7:
+magic-string@^0.25.2, magic-string@^0.25.7:
   version "0.25.7"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.25.7.tgz#3f497d6fd34c669c6798dcb821f2ef31f5445051"
   integrity sha512-4CrMT5DOHTDk4HYDlzmwu4FVCcIYI8gauveasrdCu2IKIFOJ3f0v/8MDGJCDL9oD2ppz/Av1b0Nj345H9M+XIA==
@@ -5752,12 +5733,12 @@ rollup-plugin-babel@^4.3.3:
     rollup-pluginutils "^2.8.1"
 
 rollup-plugin-cleanup@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-cleanup/-/rollup-plugin-cleanup-3.1.1.tgz#d012faab5e212b1c4bfa8144ace70fc6ac7b3315"
-  integrity sha512-wMS9JQm4ShvlMqno1pOfqvh0yYgNLO2ZgmzDsVvKuDt4XCn+9DcMoUwRQ5t9p9b113dR5FhPFFUHnvvQ/yuEtA==
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-cleanup/-/rollup-plugin-cleanup-3.2.1.tgz#8cbc92ecf58babd7c210051929797f137bbf777c"
+  integrity sha512-zuv8EhoO3TpnrU8MX8W7YxSbO4gmOR0ny06Lm3nkFfq0IVKdBUtHwhVzY1OAJyNCIAdLiyPnOrU0KnO0Fri1GQ==
   dependencies:
-    js-cleanup "^1.0.1"
-    rollup-pluginutils "^2.3.3"
+    js-cleanup "^1.2.0"
+    rollup-pluginutils "^2.8.2"
 
 rollup-plugin-commonjs@^10.0.0:
   version "10.1.0"
@@ -5838,7 +5819,7 @@ rollup-pluginutils@^1.5.0:
     estree-walker "^0.2.1"
     minimatch "^3.0.2"
 
-rollup-pluginutils@^2.3.3, rollup-pluginutils@^2.8.1, rollup-pluginutils@^2.8.2:
+rollup-pluginutils@^2.8.1, rollup-pluginutils@^2.8.2:
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/rollup-pluginutils/-/rollup-pluginutils-2.8.2.tgz#72f2af0748b592364dbd3389e600e5a9444a351e"
   integrity sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==
@@ -6538,10 +6519,6 @@ typescript@^4.0.2:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.2.tgz#7ea7c88777c723c681e33bf7988be5d008d05ac2"
   integrity sha512-e4ERvRV2wb+rRZ/IQeb3jm2VxBsirQLpQhdxplZ2MEzGvDkkMmPglecnNDfSUBivMjP93vRbngYYDQqQ/78bcQ==
 
-uWebSockets.js@uNetworking/uWebSockets.js#v17.0.0:
-  version "17.0.0"
-  resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/e7afaaf5c96311578b3c4477f662d02aab2e41ec"
-
 uWebSockets.js@uNetworking/uWebSockets.js#v18.9.0:
   version "18.9.0"
   uid b1410f2b5771bc81b5dbda73ed7520dda619ec9e
@@ -6786,13 +6763,6 @@ yaml@^1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.0.tgz#3b593add944876077d4d683fee01081bd9fff31e"
   integrity sha512-yr2icI4glYaNG+KWONODapy2/jDdMSDnrONSjblABjD9B4Z5LgiircSt8m8sRZFNi08kG9Sm0uSHtEmP3zaEGg==
-
-yaml@^1.7.2:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.7.2.tgz#f26aabf738590ab61efaca502358e48dc9f348b2"
-  integrity sha512-qXROVp90sb83XtAoqE8bP9RwAkTTZbugRUTm5YeFCBfNRPEp2YzTeqWiz7m5OORHzEvrA/qcGS8hp/E+MMROYw==
-  dependencies:
-    "@babel/runtime" "^7.6.3"
 
 yargs-parser@13.1.2, yargs-parser@^13.1.2:
   version "13.1.2"
