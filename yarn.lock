@@ -1041,10 +1041,10 @@
   resolved "https://registry.yarnpkg.com/@sifrr/fetch/-/fetch-0.0.9.tgz#2973858a35795b2a4782476f7bb2d5a5c3b26ab0"
   integrity sha512-2SsAP5nYPcyDFjvR44h2t7qCctIsLgKDQ+R+I3+QaU2HHE8w8fZgDXIpSC7H5ThV2nPF/1XHZa56qZIhGDALpA==
 
-"@sifrr/server@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@sifrr/server/-/server-0.0.8.tgz#6f97badd1a720abcb8657e81cfbb6cf4b3af25f8"
-  integrity sha512-SUL2lL2DvtLurKgHDjl7bwf+LmR6dcxjP+YYf6XgCatGWryB19KTpv0Zv++vrD071zlmR9QVdopfi9on7O+YDQ==
+"@sifrr/server@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@sifrr/server/-/server-0.0.9.tgz#2dd4cdab220f3dc54ff5302c8eac7c1cdaf1bba0"
+  integrity sha512-KtiRAgom2DehCk1MU+1hdezOfHOcGsx9weiuovXHlzd8krsJHMC/zXZFaKYCmmOA2oKQvGMtPk1cqBlMRdgOCQ==
   dependencies:
     busboy "^0.3.0"
     chokidar "^3.0.1"
