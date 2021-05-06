@@ -67,7 +67,7 @@
     "node-sass": "^5.0.0",
     "portfinder": "^1.0.21",
     "prettier": "^2.0.2",
-    "puppeteer": "5.5.0",
+    "puppeteer": "9.1.1",
     "repl": "^0.1.3",
     "rollup": "^2.6.1",
     "rollup-plugin-babel": "^4.3.3",
